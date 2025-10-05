@@ -1,0 +1,18 @@
+{
+  "colors": {
+    "primary": "#FF4D00",
+    "secondary": "#FF7A1A",
+    "background": "#0E0E0F",
+    "text": "#F2F2F3",
+    "card": "#161618",
+    "optionBackground": "#17181A",
+    "optionSelected": "#222326",
+    "button": "#FF4D00",
+    "buttonText": "#FFFFFF",
+    "emailButton": "#FF7A1A",
+    "emailButtonText": "#0E0E0F"
+  },
+  "radius": 12,
+  "border": 0,
+  "logoUrl": "/viril-logo.svg"
+} 

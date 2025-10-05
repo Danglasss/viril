@@ -1,0 +1,34 @@
+{
+  "fr": {
+    "start_test": "Démarrer le test",
+    "next_question": "Suivant",
+    "finish_test": "Terminer",
+    "your_answer": "Votre réponse",
+    "language": "Langue",
+    "question": "Question",
+    "enter_email": "Entrez votre email pour voir vos résultats",
+    "email_placeholder": "votre@email.com",
+    "see_results": "Voir mes résultats",
+    "invalid_email": "Email invalide",
+    "results_title": "Vos résultats",
+    "landing_headline_fr": "Comment reçois-tu l’amour ?",
+    "landing_subtitle_fr": "Découvre si tu es comblé(e) / nourri(e)",
+    "enter_first_name": "Entre ton prénom"
+  },
+  "en": {
+    "start_test": "Start test",
+    "next_question": "Next",
+    "finish_test": "Finish",
+    "your_answer": "Your answer",
+    "language": "Language",
+    "question": "Question",
+    "enter_email": "Enter your email to see your results",
+    "email_placeholder": "you@example.com",
+    "see_results": "See my results",
+    "invalid_email": "Invalid email",
+    "results_title": "Your results",
+    "landing_headline_en": "Test: Why you never feel truly chosen",
+    "landing_subtitle_en": "Uncover what you truly need to feel loved",
+    "enter_first_name": "Enter your first name"
+  }
+} 
