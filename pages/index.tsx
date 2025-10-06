@@ -76,7 +76,7 @@ export default function Home({ theme, lang, test, langCode, step }: { theme: The
     id: '__landing',
     type: 'Landing',
     headline: { fr: 'Solution pour éjaculation précoce', en: 'Premature ejaculation solution' },
-    subtitle: { fr: 'Améliore ton contrôle et ta confiance au lit', en: 'Improve control and confidence in bed' },
+    subtitle: { fr: 'Passe ce test et recois un plan personnalisé pour ne plus jamais venir trop tôt', en: 'Take this test and receive a personalized plan to never be early again' },
     first: test.questions[0]
   }), [lang, test]);
 
@@ -182,6 +182,8 @@ export default function Home({ theme, lang, test, langCode, step }: { theme: The
       </div>
       {/* Client bundle for current UMD app to preserve behavior */}
       <div id="root" />
+      <Script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" strategy="beforeInteractive" />
+      <Script src="/supabaseClient.js" strategy="beforeInteractive" />
       <Script src="/app.js" strategy="afterInteractive" />
       <Script id="remove-ssr-landing" strategy="afterInteractive">{`
         (function(){

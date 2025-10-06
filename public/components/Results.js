@@ -1,46 +1,76 @@
 // Results: self-contained – loads dict, chooses top with random tie
 (function(){
   function Results({ question }) {
-    const r = question.results || { top: '', scores: {} };
-    const [dict, setDict] = React.useState(null);
-    const lang = new URL(location.href).searchParams.get('lang') || 'en';
-    React.useEffect(()=>{ fetch('/data/results.json').then(x=>x.json()).then(setDict).catch(()=>setDict({})); },[]);
-    const entries = Object.entries(r.scores || {}).sort((a,b)=>b[1]-a[1]);
-    const calcTop = () => {
-      const pairs = Object.entries(r.scores||{}); if (!pairs.length) return '';
-      const max = Math.max(...pairs.map(([,v])=>v));
-      const tied = pairs.filter(([,v])=>v===max).map(([k])=>k);
-      return tied[Math.floor(Math.random()*tied.length)];
-    };
-    const topKey = r.top || calcTop();
-    if (!dict || !topKey || !dict[topKey]) return React.createElement('div', null, 'Loading results…');
-    const top = dict[topKey], common = dict.common || {};
-    const t = (obj, def='') => (obj && (obj[lang] || obj.en)) || def;
-    const para = (text) => { const blocks = text.indexOf('\n')>=0 ? text.split(/\n\n+/) : (text.match(/[^.!?]+[.!?]+/g) || [text]); const out=[]; for(let i=0;i<blocks.length;i+=3) out.push(blocks.slice(i,i+3).join(' ').trim()); return out.filter(Boolean); };
-    const pStyle = { lineHeight: 1.7, margin: '0 0 14px' };
+    const lang = new URL(location.href).searchParams.get('lang') || 'fr';
+    React.useEffect(()=>{ try { if (window.sbApi) window.sbApi.finalizePlan({ scores: {}, plan: { type: 'kegel_v1' } }); } catch(e) {} }, []);
+
+    const Title = lang==='fr' ? 'Tes résultats – plan gratuit Kegel' : 'Your results – Free Kegel plan';
+    const Subtitle = lang==='fr'
+      ? 'Renforce ton plancher pelvien, retarde l’éjaculation et gagne en contrôle.'
+      : 'Strengthen your pelvic floor to delay ejaculation and gain control.';
+
+    const Stat = (v,l) => React.createElement('div', { style: { flex: 1, background: 'var(--color-card)', borderRadius: 14, padding: '10px 12px', textAlign: 'center' } },
+      React.createElement('div', { style: { fontWeight: 800, fontSize: 18 } }, v),
+      React.createElement('div', { style: { opacity: .85, fontSize: 12 } }, l)
+    );
+
+    const Card = (title, children) => React.createElement('div', { style: { background: 'var(--color-card)', borderRadius: 16, padding: 14, marginBottom: 12 } },
+      React.createElement('div', { style: { fontWeight: 800, marginBottom: 8 } }, title),
+      children
+    );
+
+    const Bullet = (t) => React.createElement('li', { style: { margin: '6px 0' } }, t);
+
     return React.createElement('div', null,
-      t(top.style) && React.createElement('div', { style: { opacity: .7, marginBottom: 6 } }, t(top.style)),
-      t(top.title) && React.createElement('h3', { style: { margin: '0 0 8px' } }, t(top.title)),
-      t(top.tagline) && React.createElement('p', { style: { fontWeight: 600, margin: '0 0 12px' } }, t(top.tagline)),
-      para(t(top.detail, t(top.summary,''))).map((p,i)=>React.createElement('p',{key:i,style:pStyle},p)),
-      top.suggestions?.[lang] && React.createElement('div', null,
-        React.createElement('h4', { style: { margin: '12px 0 8px' } }, lang==='fr'?'À essayer':'Try this'),
-        React.createElement('ul', { style: { margin: '0 0 12px 18px' } }, top.suggestions[lang].map((s,i)=>React.createElement('li',{key:i,style:{margin:'4px 0'}},s)))
+      React.createElement('p', { style: { opacity: .85, marginTop: -6, marginBottom: 14 } }, Subtitle),
+
+      React.createElement('div', { className: 'row', style: { marginBottom: 12 } },
+        Stat(lang==='fr'?'3×/jour':'3×/day', lang==='fr'?'Micro‑séances':'Micro sessions'),
+        Stat('8–12', lang==='fr'?'Contractions/série':'Contractions/set'),
+        Stat('4 semaines', lang==='fr'?'Progression':'Progression')
       ),
-      React.createElement('hr', { style: { margin: '18px 0', opacity: .2 } }),
-      React.createElement('div', { style: { fontWeight: 700, marginBottom: 8 } }, lang==='fr'?'Vos scores':'Your scores'),
-      React.createElement('ul', { style: { listStyle: 'none', padding: 0, margin: 0 } },
-        entries.map(([k,v]) => React.createElement('li', { key: k, style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--color-card)', borderRadius: 12, padding: '8px 12px', marginBottom: 8 } },
-          React.createElement('span', null, k),
-          React.createElement('span', { style: { background: 'var(--color-option-selected)', borderRadius: 999, padding: '2px 8px', fontWeight: 700 } }, String(v))
-        ))
+
+      Card(lang==='fr'?'1) Localiser le plancher pelvien':'1) Find your pelvic floor',
+        React.createElement('ul', { style: { margin: '0 0 0 18px', padding: 0 } },
+          Bullet(lang==='fr'?'Contracte comme pour retenir l’urine; ne bloque pas la respiration.':'Contract as if to stop urinating; don’t hold your breath.'),
+          Bullet(lang==='fr'?'Le bas-ventre, les fessiers et les cuisses doivent rester détendus.':'Keep abs, glutes and thighs relaxed.')
+        )
       ),
-      common && React.createElement('div', null,
-        React.createElement('hr', { style: { margin: '18px 0', opacity: .2 } }),
-        React.createElement('h3', { style: { margin: '0 0 8px' } }, t(common.title)),
-        para(t(common.detail,'')).map((p,i)=>React.createElement('p',{key:'c'+i,style:pStyle},p))
-      )
+
+      Card(lang==='fr'?'2) Technique (4‑4)':'2) Technique (4‑4)',
+        React.createElement('ul', { style: { margin: '0 0 0 18px', padding: 0 } },
+          Bullet(lang==='fr'?'Inspire 4 s, contracte 4 s. Relâche 4 s, respire normalement.':'Inhale 4 s, contract 4 s. Release 4 s, breathe normally.'),
+          Bullet(lang==='fr'?'Fais 8–12 répétitions = 1 série.':'Do 8–12 reps = 1 set.')
+        )
+      ),
+
+      Card(lang==='fr'?'3) Programme 4 semaines':'3) 4‑week plan',
+        React.createElement('ul', { style: { margin: 0, padding: 0, listStyle: 'none' } },
+          React.createElement('li', { style: { margin: '6px 0' } }, lang==='fr'?'S1: 3 séries × 8 reps, 3×/jour':'W1: 3 sets × 8 reps, 3×/day'),
+          React.createElement('li', { style: { margin: '6px 0' } }, lang==='fr'?'S2: 3 séries × 10 reps (ajoute 1 pause longue)':'W2: 3 sets × 10 reps (add 1 long hold)'),
+          React.createElement('li', { style: { margin: '6px 0' } }, lang==='fr'?'S3: 4 séries × 10 reps (rythme 4‑6)':'W3: 4 sets × 10 reps (tempo 4‑6)'),
+          React.createElement('li', { style: { margin: '6px 0' } }, lang==='fr'?'S4: 4 séries × 12 reps + 2 pauses longues':'W4: 4 sets × 12 reps + 2 long holds')
+        )
+      ),
+
+      Card(lang==='fr'?'4) Pendant le rapport: réflexe STOP‑START':'4) During sex: STOP‑START',
+        React.createElement('ul', { style: { margin: '0 0 0 18px', padding: 0 } },
+          Bullet(lang==='fr'?'Quand l’excitation monte trop: stop 10–20 s, respire profondément, puis reprends.':'When arousal spikes: pause 10–20 s, breathe deep, resume.'),
+          Bullet(lang==='fr'?'Combine avec 3 contractions Kegel lentes pour faire retomber la pression.':'Combine with 3 slow Kegels to reduce arousal.')
+        )
+      ),
+
+      Card(lang==='fr'?'Erreurs fréquentes':'Common mistakes',
+        React.createElement('ul', { style: { margin: '0 0 0 18px', padding: 0 } },
+          Bullet(lang==='fr'?'Serrer les abdos/fessiers au lieu du plancher pelvien.':'Squeezing abs or glutes instead of pelvic floor.'),
+          Bullet(lang==='fr'?'Couper la respiration.':'Holding your breath.'),
+          Bullet(lang==='fr'?'Trop forcer: la qualité > quantité.':'Over‑tensing: quality > quantity.')
+        )
+      ),
+
+      React.createElement('div', { style: { height: 8 } }),
+      React.createElement('div', { style: { opacity: .7, fontSize: 12 } }, lang==='fr' ? 'Ton plan est enregistré.' : 'Your plan is saved.')
     );
   }
   window.__registerQuestionComponent('Results', Results);
-})(); 
+})();

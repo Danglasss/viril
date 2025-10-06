@@ -66,6 +66,9 @@ function App() {
   }, []);
 
   React.useEffect(() => {
+    try {
+      if (window.sbApi) { console.info('[app] ensureSession call'); window.sbApi.ensureSession(); }
+    } catch(e) { console.error('[app] ensureSession error', e); }
     if (!theme) return;
     const r = document.documentElement;
     r.style.setProperty('--color-primary', theme.colors.primary);
@@ -87,6 +90,17 @@ function App() {
     r.style.setProperty('--border', theme.border + 'px');
   }, [theme]);
 
+  // Persist progress even during early loading renders (use step, not derived current)
+  React.useEffect(()=>{
+    try {
+      if (window.sbApi) {
+        console.info('[app] saveProgress call', { step });
+        Promise.resolve(window.sbApi.saveProgress({ step, answers }))
+          .then(function(ok){ console.info('[app] saveProgress result', ok); })
+          .catch(function(e){ console.error('[app] saveProgress error', e); });
+      }
+    } catch(e) { console.error('[app] saveProgress thrown', e); }
+  }, [step, answers]);
   if (!theme || !langDict || !test) return React.createElement('div', { className: 'container' }, 'Loading...');
 
   const t = (k) => (langDict[langCode] && langDict[langCode][k]) || k;
@@ -97,7 +111,7 @@ function App() {
     id: '__landing',
     type: 'Landing',
     headline: { fr: 'Solution pour éjaculation précoce', en: 'Premature ejaculation solution' },
-    subtitle: { fr: 'Améliore ton contrôle et ta confiance au lit', en: 'Improve control and confidence in bed' },
+    subtitle: { fr: 'Passe ce test et recois un plan personnalisé pour ne plus jamais venir trop tôt', en: 'Improve control and confidence in bed' },
     first: firstQuestion
   };
   // Build questions with an explanatory step after partner satisfaction
@@ -136,13 +150,15 @@ function App() {
   const flow = [
     landingStep,
     ...withExplainer,
-    { id: '__email', type: 'Email', text: { [langCode]: t('enter_email') }, placeholder: t('email_placeholder'), cta: t('see_results') },
-    { id: '__results', type: 'Results', results: results || { top: '', scores: {} }, title: t('results_title') }
+    { id: '__email', type: 'Email', text: { [langCode]: (langCode==='fr' ? 'Récupère ton plan personnalisé' : 'Enter your email to get your personalized plan') }, placeholder: (langCode==='fr' ? 'ton@email.com' : 'your@email.com'), cta: (langCode==='fr' ? 'Voir mon plan' : 'See my plan') },
+    { id: '__results', type: 'Results', results: results || { top: '', scores: {} }, title: (langCode==='fr' ? 'Ton plan personnalisé' : 'Your personalized plan') }
   ];
 
   const totalQuestions = test.questions.length;
   const total = flow.length;
-  const current = Math.max(0, Math.min(step, total - 1));
+  // Allow alternate routing: ?view=plan to jump directly to plan screen (for GTM events)
+  const viewParam = getParam('view', '');
+  const current = viewParam === 'plan' ? (total - 1) : Math.max(0, Math.min(step, total - 1));
 
   const q = flow[current];
   const qText = q.text && (q.text[langCode] || q.text['en'] || '');
@@ -181,7 +197,14 @@ function App() {
     if (!okEmail) { alert(t('invalid_email')); return; }
     const r = computeScores();
     setResults(r);
-    goTo(flow.length - 1);
+    // Switch URL to view=plan (remove step) so GTM peut écouter un event clair
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('view', 'plan');
+      url.searchParams.delete('step');
+      window.history.pushState({}, '', url.toString());
+    } catch(_) {}
+    setStep(flow.length - 1);
   };
 
   const isChoice = q.type === 'QCM' || q.type === 'ImageChoice';
@@ -233,7 +256,8 @@ function loadComponent(name) {
   });
 }
 const componentsToLoad = ['Landing','QCM','Slider','ImageChoice','Text','Email','Results','Graphique','Cycle'];
-Promise.all(componentsToLoad.map(loadComponent)).then(function(){
+function waitForSb(){ return new Promise(function(res){ var t=0; var id=setInterval(function(){ if (window.sbApi || t++>200){ clearInterval(id); res(); } }, 25); }); }
+Promise.all(componentsToLoad.map(loadComponent).concat([waitForSb()])).then(function(){
   const root = ReactDOM.createRoot(document.getElementById('root'));
   root.render(React.createElement(App));
 });
