@@ -20,7 +20,7 @@
         title && React.createElement('h2', { style:{ textAlign:'center' } }, title),
         subtitle && React.createElement('p', { style:{opacity:.85, marginTop:-6, textAlign:'center'} }, subtitle),
         img && React.createElement('div', { style:{ display:'flex', justifyContent:'center', margin:'10px 0' } },
-          React.createElement('img', { src: img, alt:'illustration', style:{ maxWidth:'80%', height:'auto' } })
+          React.createElement('img', { src: img, alt:'illustration', style:{ maxWidth:'80%', height:'auto', borderRadius:10 } })
         ),
         (columns.length>0 ? (
           React.createElement('div', { style:{ display:'flex', gap:10, flexWrap:'nowrap', alignItems:'stretch', justifyContent:'center', maxWidth:320, margin:'8px auto 0' } },
