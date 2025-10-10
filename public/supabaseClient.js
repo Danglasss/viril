@@ -14,6 +14,20 @@
   const url = 'https://jlxmjcwckikwohndadue.supabase.co';
   const anonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpseG1qY3dja2lrd29obmRhZHVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3Mjg2MTQsImV4cCI6MjA3NTMwNDYxNH0.yt9-Blx8SObkxj7ZhaCRENxNhH5fNj906dNOigZst5w';
 
+  function uuidv4(){
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
+      const r = Math.random()*16|0, v = c==='x'?r:(r&0x3|0x8); return v.toString(16);
+    });
+  }
+
+  function getClientId(){
+    try {
+      let id = localStorage.getItem('client_id');
+      if (!id) { id = uuidv4(); localStorage.setItem('client_id', id); document.cookie = 'client_id='+id+'; path=/; max-age='+(3600*24*400); }
+      return id;
+    } catch(_) { return undefined; }
+  }
+
   function ensure(){
     if (!window._sb) {
       if (!(window.supabase && typeof window.supabase.createClient === 'function')) return null;
@@ -28,7 +42,15 @@
     const sb = ensure(); if (!sb) return null;
     let { data: { session } } = await sb.auth.getSession();
     if (!session) {
-      try { await sb.auth.signInAnonymously(); console.info('[sb] anon signin ok'); } catch(e) { console.error('[sb] anon signin failed', e); }
+      try {
+        const lockKey = 'sb_signing_lock';
+        if (!localStorage.getItem(lockKey)) {
+          localStorage.setItem(lockKey, '1');
+          await sb.auth.signInAnonymously();
+          console.info('[sb] anon signin ok');
+        }
+      } catch(e) { console.error('[sb] anon signin failed', e); }
+      finally { try { localStorage.removeItem('sb_signing_lock'); } catch(_) {} }
       ({ data: { session } } = await sb.auth.getSession());
     }
     // upsert profile shell
@@ -62,7 +84,7 @@
     const sb = ensure(); if (!sb) return false;
     const { data: u } = await sb.auth.getUser(); const user_id = u && u.user && u.user.id;
     if (!user_id) return false;
-    const payload = { user_id, step: step||0, answers: answers||{} };
+    const payload = { user_id, client_id: getClientId(), step: step||0, answers: answers||{} };
     const { error } = await sb.from('quiz_sessions').upsert(payload, { onConflict: 'user_id' });
     if (error) { console.error('[sb] saveProgress error', error); return false; }
     console.info('[sb] saveProgress ok', { step: payload.step });
@@ -74,7 +96,7 @@
     const sb = ensure(); if (!sb) return false;
     const { data: u } = await sb.auth.getUser(); const user_id = u && u.user && u.user.id;
     if (!user_id) return false;
-    const { error } = await sb.from('plans').insert({ user_id, version: 1, plan: plan||{}, created_at: new Date().toISOString() });
+    const { error } = await sb.from('plans').insert({ user_id, client_id: getClientId(), version: 1, plan: plan||{}, created_at: new Date().toISOString() });
     if (error) { console.error('[sb] finalizePlan error', error); return false; }
     console.info('[sb] finalizePlan ok');
     return true;

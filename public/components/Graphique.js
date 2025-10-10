@@ -99,7 +99,7 @@
     return React.createElement('div', null,
       title && React.createElement('h2', { style: { textAlign: 'center', fontWeight: 800, fontFamily: 'Manrope, ui-sans-serif', lineHeight: 1.2, marginBottom: 8 } }, title),
       React.createElement('div', { style: { display: 'flex', justifyContent: 'center', marginTop: 12, marginBottom: 56 } },
-        React.createElement('svg', { width: '100%', height: H, viewBox: `0 0 ${W} ${H}` },
+        React.createElement('svg', { width: 360, height: H, viewBox: `0 0 ${W} ${H}` },
           // defs for gradient fill
           React.createElement('defs', null,
             React.createElement('linearGradient', { id: 'areaFill', x1: '0', y1: '0', x2: '0', y2: '1' },

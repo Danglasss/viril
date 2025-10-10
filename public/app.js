@@ -116,37 +116,60 @@ function App() {
   };
   // Build questions with an explanatory step after partner satisfaction
   const qs = test.questions.slice(1);
-  const insertAfterId = 'diag_partner_satisfaction';
-  const idxInsert = qs.findIndex(function(q){ return q.id === insertAfterId; });
   const withExplainer = qs.slice();
-  if (idxInsert !== -1) {
-    withExplainer.splice(idxInsert + 1, 0, {
-      id: '__exp_fem_duration',
-      type: 'Graphique',
-      title: { fr: 'En moyenne, une femme atteint l’orgasme après 14 minutes de stimulation' },
-      subtitle: { fr: 'En dessous de 6 minutes, la satisfaction féminine chute fortement.' },
-      cta: { fr: 'Je comprends' },
-      x: { domain: [1,15], ticks: [1,3,5,10,15] },
-      y: { domain: [0,100], ticks: [0,50,100] },
-      // Courbe plus lente au début, plateau seulement proche de 15 min
-      lines: [ { color: 'var(--slider-fill)', points: [[1,3],[2,5],[3,8],[5,14],[7,25],[9,38],[12,72],[14,90],[15,100]] } ],
-      orgasmeX: 14,
-      // Repères dynamiques (uniquement le temps de l'utilisateur)
-      markers: [
-        { x: parseFloat((answers['diag_duration'] === '<1' ? 1 : answers['diag_duration'] === '1-2' ? 2 : answers['diag_duration'] === '3-5' ? 4 : 6) || 0), label: 'Toi', color: '#FFFFFF', bg: 'rgba(255,255,255,.08)' }
-      ]
-    });
-    // Insert "Cycle" component right after frustration question
-    const idxFrustration = withExplainer.findIndex(function(q){ return q.id === 'pain_relationship'; });
-    if (idxFrustration !== -1) {
-      withExplainer.splice(idxFrustration + 1, 0, {
-        id: '__cycle_ep',
-        type: 'Cycle',
-        title: { fr: 'Le cercle vicieux de l’éjaculation précoce' },
-        cta: { fr: 'Je comprends' }
-      });
+  // Insert Graphique right after partner satisfaction question (content from test.json)
+  (function(){
+    const idxPartner = withExplainer.findIndex(function(q){ return q && q.id === 'diag_partner_satisfaction'; });
+    const already = withExplainer.some(function(s){ return s && s.id === '__exp_fem_duration'; });
+    if (idxPartner !== -1 && !already) {
+      // find the Graphique config from test data
+      const g = test.questions.find(function(q){ return q && q.id === '__exp_fem_duration'; });
+      if (g) {
+        // enrich with dynamic marker from prior answer
+        const xFrom = g.dynamicMarkerFrom || 'diag_duration';
+        const ans = (answers && answers[xFrom]) || null;
+        // map buckets to conservative minimum values
+        let val = 0;
+        if (ans === '<1') val = 0;
+        else if (ans === '1-2') val = 1;
+        else if (ans === '3-5') val = 3;
+        else if (ans === '5+' || ans === '6-10') val = 5;
+        else if (typeof ans === 'number') val = ans;
+        const merged = Object.assign({}, g, { markers: [{ x: val, label: 'Ton temps', color: '#FFFFFF', bg: 'rgba(255,255,255,.08)' }] });
+        withExplainer.splice(idxPartner + 1, 0, merged);
+      }
     }
+    // Always refresh the dynamic marker on the existing Graphique slide
+    const idxGraph = withExplainer.findIndex(function(q){ return q && q.id === '__exp_fem_duration'; });
+    if (idxGraph !== -1) {
+      const g = withExplainer[idxGraph];
+      const xFrom = (g && g.dynamicMarkerFrom) || 'diag_duration';
+      const ans = (answers && answers[xFrom]) || null;
+      let val = 0;
+      if (ans === '<1') val = 0;
+      else if (ans === '1-2') val = 1;
+      else if (ans === '3-5') val = 3;
+      else if (ans === '5+' || ans === '6-10') val = 5;
+      else if (typeof ans === 'number') val = ans;
+      withExplainer[idxGraph] = Object.assign({}, g, { markers: [{ x: val, label: 'Ton temps', color: '#FFFFFF', bg: 'rgba(255,255,255,.08)' }] });
+    }
+  })();
+  // Ensure AnalyzeResults is placed just before Email step
+  if (!withExplainer.some(function(s){ return s && s.id === '__analyze'; })) {
+    withExplainer.push({ id: '__analyze', type: 'AnalyzeResults' });
   }
+  // Move engagement question just after AnalyzeResults and before Email
+  (function(){
+    let engIdx = withExplainer.findIndex(function(q){ return q && q.id === 'eng_try_program'; });
+    let eng = null;
+    if (engIdx !== -1) { eng = withExplainer.splice(engIdx, 1)[0]; }
+    if (!eng) { eng = test.questions.find(function(q){ return q && q.id === 'eng_try_program'; }); }
+    const idxAnalyze = withExplainer.findIndex(function(q){ return q && q.id === '__analyze'; });
+    if (eng) {
+      const insertPos = (idxAnalyze !== -1 ? idxAnalyze + 1 : withExplainer.length);
+      withExplainer.splice(insertPos, 0, eng);
+    }
+  })();
   const flow = [
     landingStep,
     ...withExplainer,
@@ -154,7 +177,9 @@ function App() {
     { id: '__results', type: 'Results', results: results || { top: '', scores: {} }, title: (langCode==='fr' ? 'Ton plan personnalisé' : 'Your personalized plan') }
   ];
 
-  const totalQuestions = test.questions.length;
+  const totalQuestions = (test.questions || []).filter(function(it){
+    return it && (it.type === 'QCM' || it.type === 'ImageChoice' || it.type === 'Slider' || it.type === 'Text');
+  }).length;
   const total = flow.length;
   // Allow alternate routing: ?view=plan to jump directly to plan screen (for GTM events)
   const viewParam = getParam('view', '');
@@ -208,7 +233,7 @@ function App() {
   };
 
   const isChoice = q.type === 'QCM' || q.type === 'ImageChoice';
-  const hideNav = q.type === 'Email' || q.type === 'Landing' || q.type === 'Results' || q.type === 'Graphique' || q.type === 'Cycle';
+  const hideNav = q.type === 'Email' || q.type === 'Landing' || q.type === 'Results' || q.type === 'Graphique' || q.type === 'Cycle' || q.type === 'InfoSlide' || q.type === 'PerineeDiag' || q.type === 'EightOfTen' || q.type === 'PlanProjection' || q.type === 'Benefits' || q.type === 'AnalyzeResults';
 
   function isQuestionType(item) { return item && (item.type === 'QCM' || item.type === 'ImageChoice' || item.type === 'Slider' || item.type === 'Text'); }
   const questionNumber = Math.min(
@@ -255,7 +280,7 @@ function loadComponent(name) {
     document.body.appendChild(s);
   });
 }
-const componentsToLoad = ['Landing','QCM','Slider','ImageChoice','Text','Email','Results','Graphique','Cycle'];
+const componentsToLoad = ['Landing','QCM','Slider','ImageChoice','Text','Email','Results','Graphique','AnalyzeResults','InfoSlide','PerineeDiag','EightOfTen','PlanProjection','Benefits'];
 function waitForSb(){ return new Promise(function(res){ var t=0; var id=setInterval(function(){ if (window.sbApi || t++>200){ clearInterval(id); res(); } }, 25); }); }
 Promise.all(componentsToLoad.map(loadComponent).concat([waitForSb()])).then(function(){
   const root = ReactDOM.createRoot(document.getElementById('root'));

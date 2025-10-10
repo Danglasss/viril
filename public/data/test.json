@@ -1,38 +1,38 @@
 {
   "title": "Test éjaculation précoce — contrôle & endurance",
-  "questions": [
-    {
+    "questions": [
+      {
       "id": "demo_age",
-      "type": "QCM",
-      "text": {"en": "Age", "fr": "Âge"},
-      "options": [
+        "type": "QCM",
+        "text": {"en": "Age", "fr": "Âge"},
+        "options": [
         {"value": "18-29", "label": {"en": "18–29 years", "fr": "18–29 ans"}},
         {"value": "30-39", "label": {"en": "30–39 years", "fr": "30–39 ans"}},
         {"value": "40-49", "label": {"en": "40–49 years", "fr": "40–49 ans"}},
         {"value": "50+", "label": {"en": "50+ years", "fr": "50+ ans"}}
-      ]
-    },
-    {
-      "id": "demo_status",
-      "type": "QCM",
-      "text": {"en": "Relationship status", "fr": "Statut relationnel"},
-      "options": [
-        {"value": "single", "label": {"en": "Single", "fr": "Célibataire"}},
-        {"value": "couple", "label": {"en": "In a relationship", "fr": "En couple"}},
+        ]
+      },
+      {
+        "id": "demo_status",
+        "type": "QCM",
+        "text": {"en": "Relationship status", "fr": "Statut relationnel"},
+        "options": [
+          {"value": "single", "label": {"en": "Single", "fr": "Célibataire"}},
+          {"value": "couple", "label": {"en": "In a relationship", "fr": "En couple"}},
         {"value": "married", "label": {"en": "Married", "fr": "Marié(e)"}},
         {"value": "other", "label": {"en": "Other", "fr": "Autre"}}
-      ]
-    },
+        ]
+      },
 
     
-    {
+      {
       "id": "diag_duration",
-      "type": "QCM",
+        "type": "QCM",
       "text": {
         "en": "On average, how long do you last before ejaculating?",
         "fr": "En moyenne, combien de temps tiens-tu avant d’éjaculer ?"
       },
-      "options": [
+        "options": [
         {"value": "<1", "label": {"en": "Less than 1 min", "fr": "Moins d’1 min"}},
         {"value": "1-2", "label": {"en": "1–2 min", "fr": "1–2 min"}},
         {"value": "3-5", "label": {"en": "3–5 min", "fr": "3–5 min"}},
@@ -41,78 +41,51 @@
     },
     {
       "id": "diag_erection",
-      "type": "QCM",
+        "type": "QCM",
       "text": {
-        "en": "Do you sometimes struggle to maintain an erection?",
-        "fr": "As-tu parfois du mal à garder une érection ?"
+        "en": "How often do you ejaculate before you want to?",
+        "fr": "À quelle fréquence éjacules-tu plus tôt que tu ne le souhaiterais ?"
       },
-      "options": [
-        {"value": "yes", "label": {"en": "Yes", "fr": "Oui"}},
-        {"value": "no", "label": {"en": "No", "fr": "Non"}}
+        "options": [
+        {"value": "always", "label": {"en": "Always", "fr": "Toujours"}},
+        {"value": "often", "label": {"en": "Often", "fr": "Souvent"}},
+        {"value": "sometimes", "label": {"en": "Sometimes", "fr": "Parfois"}},
+        {"value": "rarely", "label": {"en": "Rarely", "fr": "Rarement"}}
       ]
     },
     {
       "id": "diag_partner_satisfaction",
-      "type": "QCM",
+        "type": "QCM",
       "text": {
         "en": "Do you think your partner is satisfied with the duration of your intercourse?",
         "fr": "Est-ce que ta partenaire est satisfaite de la durée de vos rapports ?"
       },
-      "options": [
+        "options": [
         {"value": "yes", "label": {"en": "Yes", "fr": "Oui"}},
         {"value": "no", "label": {"en": "No", "fr": "Non"}},
         {"value": "unsure", "label": {"en": "Not sure", "fr": "Pas sûr"}}
       ]
     },
-
-    
     {
-      "id": "pain_avoidance",
-      "type": "QCM",
-      "text": {
-        "en": "Do you sometimes avoid sex for fear of ejaculating too fast?",
-        "fr": "Évites-tu parfois d’avoir des rapports par peur d’éjaculer trop vite ?"
-      },
-      "options": [
-        {"value": "yes", "label": {"en": "Yes", "fr": "Oui"}},
-        {"value": "no", "label": {"en": "No", "fr": "Non"}}
-      ]
-    },
-    {
-      "id": "pain_confidence",
-      "type": "QCM",
-      "text": {
-        "en": "Do you feel less confident in your role as a man because of this?",
-        "fr": "Te sens-tu moins confiant dans ton rôle d’homme à cause de ça ?"
-      },
-      "options": [
-        {"value": "yes", "label": {"en": "Yes", "fr": "Oui"}},
-        {"value": "no", "label": {"en": "No", "fr": "Non"}}
-      ]
-    },
-    {
-      "id": "pain_relationship",
-      "type": "QCM",
-      "text": {
-        "en": "Has this already created frustration in your relationship(s)?",
-        "fr": "Est-ce que cela a déjà créé de la frustration dans tes relations ?"
-      },
-      "options": [
-        {"value": "yes", "label": {"en": "Yes", "fr": "Oui"}},
-        {"value": "no", "label": {"en": "No", "fr": "Non"}},
-        {"value": "unsure", "label": {"en": "Not sure", "fr": "Pas sûr"}}
-      ]
+      "id": "__exp_fem_duration",
+      "type": "Graphique",
+      "title": { "fr": "En moyenne, une femme atteint l’orgasme après 14 minutes de stimulation", "en": "On average, female orgasm occurs after ~14 minutes of stimulation" },
+      "subtitle": { "fr": "En dessous de 6 minutes, la satisfaction féminine est très faible.", "en": "Below 6 minutes, satisfaction drops significantly." },
+      "x": { "domain": [1,15], "ticks": [1,3,5,10,15] },
+      "y": { "domain": [0,100], "ticks": [0,50,100] },
+      "lines": [ { "color": "var(--slider-fill)", "points": [[1,3],[2,5],[3,8],[5,14],[7,25],[9,38],[12,72],[14,90],[15,100]] } ],
+      "orgasmeX": 14,
+      "dynamicMarkerFrom": "diag_duration"
     },
 
-    
     {
       "id": "proj_target_duration",
-      "type": "QCM",
+        "type": "QCM",
       "text": {
         "en": "How long would you like to last?",
         "fr": "Combien de temps aimerais-tu durer au lit ?"
       },
-      "options": [
+        "options": [
         {"value": "5", "label": {"en": "5 min", "fr": "5 min"}},
         {"value": "10", "label": {"en": "10 min", "fr": "10 min"}},
         {"value": "15", "label": {"en": "15 min", "fr": "15 min"}},
@@ -121,12 +94,12 @@
     },
     {
       "id": "proj_main_reason",
-      "type": "QCM",
+        "type": "QCM",
       "text": {
         "en": "Your main reason to last longer?",
         "fr": "Quelle est ta raison principale pour vouloir durer plus longtemps ?"
       },
-      "options": [
+        "options": [
         {"value": "partner_pleasure", "label": {"en": "Give more pleasure to my partner", "fr": "Pour donner plus de plaisir à ma partenaire"}},
         {"value": "confidence", "label": {"en": "Feel more confident and powerful", "fr": "Pour me sentir plus confiant et puissant"}},
         {"value": "avoid_frustration", "label": {"en": "Avoid frustration", "fr": "Pour éviter la frustration"}},
@@ -135,58 +108,148 @@
       ]
     },
     {
+      "id": "info_perinee_fact",
+      "type": "InfoSlide",
+      "title": {"en":"Your ability to control ejaculation depends on a muscle called the perineum","fr":"Ta capacité à contrôler ton éjaculation dépend d’un muscle appelé le périnée"},
+      "subtitle": {"en":"This muscle plays a central role in the ejaculatory reflex. Its tone determines your level of control.","fr":"ll existe 2 types de dysfonctionnements du périnée qui causent la perte de contrôle."},
+      "imageUrl": "/perinee.png",
+      "cta": {"en":"Got it","fr":"Diagnostiquer mon perinée"}
+    },
+
+
+    
+    {
+      "id": "hx_sport_core",
+        "type": "QCM",
+      "text": {"en": "Do you practice a sport that often contracts the core (weights, crossfit, abs)?", "fr": "Pratiques-tu un sport qui te fait souvent contracter le ventre (muscu, crossfit, abdos) ?"},
+        "options": [
+        {"value": "often", "label": {"en": "Yes, several times/week", "fr": "Oui, plusieurs fois/semaine"}},
+        {"value": "occasionally", "label": {"en": "Occasionally", "fr": "Occasionnellement"}},
+        {"value": "never", "label": {"en": "Not at all", "fr": "Pas du tout"}}
+      ]
+    },
+    {
+      "id": "hx_ejac_precoce_always",
+        "type": "QCM",
+      "text": {"en": "Have you always experienced premature ejaculation?", "fr": "As-tu toujours souffert d'éjaculation précoce ?"},
+        "options": [
+        {"value": "yes", "label": {"en": "Yes", "fr": "Oui"}},
+        {"value": "no", "label": {"en": "No", "fr": "Non"}},
+        {"value": "sometimes", "label": {"en": "Sometimes", "fr": "Parfois"}}
+      ]
+    },
+    {
+      "id": "hx_erection_difficulty",
+        "type": "QCM",
+      "text": {"en": "Do you sometimes struggle to maintain an erection?", "fr": "As-tu parfois du mal à garder une érection ?"},
+        "options": [
+        {"value": "yes", "label": {"en": "Yes", "fr": "Oui"}},
+        {"value": "no", "label": {"en": "No", "fr": "Non"}},
+        {"value": "sometimes", "label": {"en": "Sometimes", "fr": "Parfois"}}
+      ]
+    },
+    {
+      "id": "hx_urine_leak",
+        "type": "QCM",
+      "text": {"en": "Do you have urinary leaks?", "fr": "As-tu des fuite urinaire ?"},
+        "options": [
+        {"value": "yes", "label": {"en": "Yes", "fr": "Oui"}},
+        {"value": "no", "label": {"en": "No", "fr": "Non"}}
+      ]
+    },
+    {
+      "id": "hx_post_act_feel",
+        "type": "QCM",
+      "text": {"en": "After sex, do you feel rather pleasant relaxation or muscle fatigue?", "fr": "Après l’acte, tu ressens plutôt une détente agréable ou une fatigue musculaire ?"},
+        "options": [
+        {"value": "relaxed", "label": {"en": "Relaxed", "fr": "Détente"}},
+        {"value": "fatigue", "label": {"en": "Fatigue", "fr": "Fatigue"}}
+      ]
+    },
+    {
+      "id": "hx_tension_pattern",
+        "type": "QCM",
+      "text": {"en": "During sex, do you tend to tense your body (abs, glutes, jaw…) or stay relaxed?", "fr": "Pendant tes rapports, tu as plutôt tendance à contracter ton corps (ventre, fessiers, mâchoire…) ou à rester détendu ?"},
+        "options": [
+        {"value": "tense", "label": {"en": "I often tense without noticing", "fr": "Je contracte souvent sans m’en rendre compte"}},
+        {"value": "relaxed", "label": {"en": "I try to stay relaxed", "fr": "J’essaie de rester détendu"}},
+        {"value": "unsure", "label": {"en": "Not sure", "fr": "Je ne sais pas trop"}}
+      ]
+    },
+    {
+      "id": "hx_penetration_sensation",
+        "type": "QCM",
+      "text": {"en": "During penetration, do you sometimes feel a decrease in sensations?", "fr": "Quand tu as un rapport, est-ce que tu ressens parfois une baisse de sensations pendant la pénétration ?"},
+        "options": [
+        {"value": "yes", "label": {"en": "Yes", "fr": "Oui"}},
+        {"value": "no", "label": {"en": "No", "fr": "Non"}}
+      ]
+    },
+    {
+      "id": "perinee_diag",
+      "type": "PerineeDiag"
+    },
+    {
+      "id": "perinee_eight_of_ten",
+      "type": "EightOfTen",
+      "title": {"fr":"8 hommes sur 10 retrouvent une vie sexuelle épanoui grace à la rééducation du périnée", "en": "8 out of 10 men regain a more stable sex life with simple pelvic floor exercises."},
+      "filled": 8
+    },
+
+
+    {
       "id": "proj_timeframe",
-      "type": "QCM",
+        "type": "QCM",
       "text": {
         "en": "When would you like to see results?",
         "fr": "En combien de temps aimerais-tu voir des résultats ?"
       },
-      "options": [
+        "options": [
         {"value": "1w", "label": {"en": "1 week", "fr": "1 semaine"}},
         {"value": "2w", "label": {"en": "2 weeks", "fr": "2 semaines"}},
         {"value": "1m", "label": {"en": "1 month", "fr": "1 mois"}},
         {"value": "any", "label": {"en": "Doesn't matter, as long as it works", "fr": "Peu importe, tant que ça marche"}}
       ]
     },
-    {
-      "id": "proj_life_change",
-      "type": "QCM",
-      "allow_multiple": true,
-      "text": {
-        "en": "If you could last exactly as long as you want, what would change for you?",
-        "fr": "Imagine que tu tiens exactement le temps que tu veux : qu’est-ce que ça changerait pour toi ?"
-      },
-      "options": [
-        {"value": "more_confidence", "label": {"en": "I'd be more confident", "fr": "Je serais plus sûr de moi"}},
-        {"value": "more_pleasure", "label": {"en": "I'd enjoy sex more", "fr": "Je prendrais plus de plaisir"}},
-        {"value": "better_relationship", "label": {"en": "My relationship would be better", "fr": "Ma relation serait plus épanouie"}},
-        {"value": "all", "label": {"en": "All of the above", "fr": "Tout ça à la fois"}}
-      ]
-    },
 
     
     {
       "id": "eng_daily_invest",
-      "type": "QCM",
+        "type": "QCM",
       "text": {
         "en": "How much time per day could you invest to improve?",
         "fr": "Combien de temps serais-tu prêt à investir par jour pour améliorer tes performances ?"
       },
-      "options": [
+        "options": [
         {"value": "5", "label": {"en": "5 min", "fr": "5 min"}},
         {"value": "10", "label": {"en": "10 min", "fr": "10 min"}},
         {"value": "15", "label": {"en": "15 min", "fr": "15 min"}},
         {"value": "more", "label": {"en": "More", "fr": "Plus"}}
       ]
     },
+    { "id": "plan_projection", "type": "PlanProjection" },
+    {
+      "id": "benefits_slide",
+      "type": "Benefits",
+      "title": {"fr":"En retrouvant un périnée équilibré, tu vas naturellement :","en":"By rebalancing your pelvic floor, you will naturally:"},
+      "items": [
+        {"fr":"Retrouver des rapports plus longs et plus maîtrisés"},
+        {"fr":"Ressentir davantage de plaisir"},
+        {"fr":"Retrouver confiance dans ton corps"},
+        {"fr":"Reconnecter avec ta partenaire"},
+        {"fr":"Et surtout… ne plus subir ton éjaculation"}
+      ]
+    },
+
+
     {
       "id": "eng_try_program",
-      "type": "QCM",
+        "type": "QCM",
       "text": {
-        "en": "If a step-by-step program could deliver visible results in a few weeks, would you try it?",
-        "fr": "Si un guide étape par étape pouvait donner des résultats visibles en quelques semaines, serais-tu prêt à essayer ?"
+        "en": "How your ready to start the exercice today?",
+        "fr": "Es-tu prêt à commencer l'exercice aujourd'hui ?"
       },
-      "options": [
+            "options": [
         {"value": "yes", "label": {"en": "Yes", "fr": "Oui"}},
         {"value": "no", "label": {"en": "No", "fr": "Non"}}
       ]
