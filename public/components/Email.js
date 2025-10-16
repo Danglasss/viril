@@ -12,6 +12,12 @@
           }
         }
       } catch (e) { console.warn('supabase upsert profile failed', e); }
+      try {
+        window.dataLayer = window.dataLayer || [];
+        if (data && data.email && data.firstName) {
+          window.dataLayer.push({ event: 'sign_up', method: 'email' });
+        }
+      } catch(_) {}
       if (window.__submitEmail) window.__submitEmail();
     };
     return React.createElement('div', null,
