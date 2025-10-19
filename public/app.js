@@ -103,6 +103,17 @@ function App() {
   }, [step, answers]);
   if (!theme || !langDict || !test) return React.createElement('div', { className: 'container' }, 'Loading...');
 
+  // Ensure quiz version from test.json is propagated to Supabase writes
+  const quizVersion = (test && (test.version || test.quiz_version)) || (typeof window !== 'undefined' && window.__QUIZ_VERSION) || 'A';
+  try {
+    if (typeof window !== 'undefined') {
+      window.__QUIZ_VERSION = quizVersion;
+      window.dataLayer = window.dataLayer || [];
+      // push once per load
+      if (!(window.__QV_Pushed)) { window.dataLayer.push({ event: 'quiz_version', quiz_version: quizVersion }); window.__QV_Pushed = true; }
+    }
+  } catch(_) {}
+
   const t = (k) => (langDict[langCode] && langDict[langCode][k]) || k;
 
   // Build flow: Landing + remaining questions (excluding first) + Email + Results
@@ -173,7 +184,7 @@ function App() {
   const flow = [
     landingStep,
     ...withExplainer,
-    { id: '__email', type: 'Email', text: { [langCode]: (langCode==='fr' ? 'Récupère ton plan personnalisé' : 'Enter your email to get your personalized plan') }, placeholder: (langCode==='fr' ? 'ton@email.com' : 'your@email.com'), cta: (langCode==='fr' ? 'Voir mon plan' : 'See my plan') },
+    { id: '__email', type: 'Email', text: { placeholder: (langCode==='fr' ? 'ton@email.com' : 'your@email.com'), cta: (langCode==='fr' ? 'Voir mon plan' : 'See my plan') } },
     { id: '__results', type: 'Results', results: results || { top: '', scores: {} }, title: (langCode==='fr' ? 'Ton plan personnalisé' : 'Your personalized plan') }
   ];
 
@@ -189,10 +200,13 @@ function App() {
   const qText = q.text && (q.text[langCode] || q.text['en'] || '');
 
   const onChange = (v) => setAnswers(a => ({ ...a, [q.id]: v }));
+  // expose answers getter for components needing dynamic copy
+  try { if (typeof window !== 'undefined') { window.__getAnswers = function(){ return answers; }; } } catch(_) {}
   const goTo = (n) => { setParam('step', n); setStep(n); };
 
   // expose global next for components that auto-advance
   window.__goNext = () => {
+    try { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'quiz_step', step: Math.min(current + 1, total - 1) }); } catch(_) {}
     goTo(Math.min(current + 1, total - 1));
   };
 

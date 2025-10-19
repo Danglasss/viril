@@ -11,8 +11,13 @@
       }, 25);
     });
   }
-  const url = 'https://jlxmjcwckikwohndadue.supabase.co';
-  const anonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpseG1qY3dja2lrd29obmRhZHVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3Mjg2MTQsImV4cCI6MjA3NTMwNDYxNH0.yt9-Blx8SObkxj7ZhaCRENxNhH5fNj906dNOigZst5w';
+  // Read from env (Next.js public env) or window injections; fallback to provided defaults for reliability
+  const DEFAULT_SUPABASE_URL = 'https://jlxmjcwckikwohndadue.supabase.co';
+  const DEFAULT_SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpseG1qY3dja2lrd29obmRhZHVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3Mjg2MTQsImV4cCI6MjA3NTMwNDYxNH0.yt9-Blx8SObkxj7ZhaCRENxNhH5fNj906dNOigZst5w';
+  const url = (function(){ try { return (typeof process!=='undefined' && process.env && process.env.NEXT_PUBLIC_SUPABASE_URL) || window.__SUPABASE_URL || DEFAULT_SUPABASE_URL; } catch(_) { return window.__SUPABASE_URL || DEFAULT_SUPABASE_URL; } })();
+  const anonKey = (function(){ try { return (typeof process!=='undefined' && process.env && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) || window.__SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON; } catch(_) { return window.__SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON; } })();
+  try { if (url) window.__SUPABASE_URL = url; if (anonKey) window.__SUPABASE_ANON_KEY = anonKey; } catch(_) {}
+  if (!url || !anonKey) { console.error('[sb] Missing Supabase env: NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY'); }
 
   function uuidv4(){
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
@@ -37,6 +42,17 @@
     return window._sb;
   }
 
+  // quiz version: env -> window flag -> url ?qv=
+  function getQuizVersion(){
+    try {
+      var fromEnv = (typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_QUIZ_VERSION) || undefined;
+    } catch(_) { var fromEnv = undefined; }
+    const fromWin = (window && window.__QUIZ_VERSION) || undefined;
+    let fromUrl = undefined;
+    try { fromUrl = new URL(window.location.href).searchParams.get('qv') || undefined; } catch(_) {}
+    return fromEnv || fromWin || fromUrl || 'A';
+  }
+
   async function ensureSession(){
     await waitForClient();
     const sb = ensure(); if (!sb) return null;
@@ -53,10 +69,19 @@
       finally { try { localStorage.removeItem('sb_signing_lock'); } catch(_) {} }
       ({ data: { session } } = await sb.auth.getSession());
     }
-    // upsert profile shell
+    // upsert profile shell (one row per user_id)
     try { const { data: u } = await sb.auth.getUser(); if (u && u.user) {
       const { error } = await sb.from('profiles').upsert({ id: u.user.id }, { onConflict: 'id' });
       if (error) console.error('[sb] profiles upsert shell error', error); else console.info('[sb] profiles upsert shell ok');
+      // Ensure a quiz_session row exists at step 0 for this user (but do NOT override higher steps)
+      try {
+        const { data: existing, error: selErr } = await sb.from('quiz_sessions').select('user_id').eq('user_id', u.user.id).maybeSingle();
+        if (!selErr && !existing) {
+          const init = { user_id: u.user.id, client_id: getClientId(), step: 0, answers: {}, quiz_version: getQuizVersion() };
+          const { error: insErr } = await sb.from('quiz_sessions').insert(init);
+          if (insErr) console.warn('[sb] init quiz_session insert failed', insErr); else console.info('[sb] init quiz_session created');
+        }
+      } catch(e2) { console.warn('[sb] init quiz_session check failed', e2 && e2.message); }
     } } catch(e) { console.warn('[sb] profiles upsert shell skipped', e && e.message); }
     return session;
   }
@@ -73,7 +98,7 @@
     const sb = ensure(); if (!sb) return null;
     const { data: u } = await sb.auth.getUser(); const id = u && u.user && u.user.id;
     if (!id) throw new Error('no user');
-    const { error } = await sb.from('profiles').upsert({ id, ...partial }, { onConflict: 'id' });
+    const { error } = await sb.from('profiles').upsert({ id, quiz_version: getQuizVersion(), ...partial }, { onConflict: 'id' });
     if (error) { console.error('[sb] upsertProfile error', error); throw error; }
     console.info('[sb] upsertProfile ok');
     return true;
@@ -84,10 +109,18 @@
     const sb = ensure(); if (!sb) return false;
     const { data: u } = await sb.auth.getUser(); const user_id = u && u.user && u.user.id;
     if (!user_id) return false;
-    const payload = { user_id, client_id: getClientId(), step: step||0, answers: answers||{} };
+    // Read current to avoid decreasing the stored step; merge answers
+    let currentStep = 0; let currentAnswers = {};
+    try {
+      const { data: cur, error: selErr } = await sb.from('quiz_sessions').select('step, answers').eq('user_id', user_id).maybeSingle();
+      if (!selErr && cur) { currentStep = Number(cur.step||0)||0; currentAnswers = cur.answers || {}; }
+    } catch(_) {}
+    const nextStep = Math.max(currentStep, Number(step||0)||0);
+    const mergedAnswers = Object.assign({}, currentAnswers, answers||{});
+    const payload = { user_id, client_id: getClientId(), step: nextStep, answers: mergedAnswers, quiz_version: getQuizVersion() };
     const { error } = await sb.from('quiz_sessions').upsert(payload, { onConflict: 'user_id' });
     if (error) { console.error('[sb] saveProgress error', error); return false; }
-    console.info('[sb] saveProgress ok', { step: payload.step });
+    console.info('[sb] saveProgress ok', { step_submitted: step||0, step_saved: payload.step });
     return true;
   }
 
@@ -96,7 +129,7 @@
     const sb = ensure(); if (!sb) return false;
     const { data: u } = await sb.auth.getUser(); const user_id = u && u.user && u.user.id;
     if (!user_id) return false;
-    const { error } = await sb.from('plans').insert({ user_id, client_id: getClientId(), version: 1, plan: plan||{}, created_at: new Date().toISOString() });
+    const { error } = await sb.from('plans').insert({ user_id, client_id: getClientId(), version: 1, plan: plan||{}, quiz_version: getQuizVersion(), created_at: new Date().toISOString() });
     if (error) { console.error('[sb] finalizePlan error', error); return false; }
     console.info('[sb] finalizePlan ok');
     return true;
