@@ -265,7 +265,7 @@ function App() {
         React.createElement('div', { className: 'bubble' }, `${questionNumber}/${totalQuestions}`)
       ),
       React.createElement('div', { className: 'card' },
-        (q.type === 'Landing' ? null : React.createElement('h2', null, qText || (q.type === 'Results' ? t('results_title') : ''))),
+        ((q.type === 'Landing' || q.type === 'Results') ? null : React.createElement('h2', null, qText || '')),
         React.createElement(QuestionRenderer, { question: q, value: answers[q.id], onChange, lang: langCode }),
         !hideNav && React.createElement('div', { className: 'nav' },
           React.createElement('button', { className: 'btn secondary', onClick: () => goTo(Math.max(0, current - 1)) }, '←'),
