@@ -185,7 +185,8 @@ function App() {
     landingStep,
     ...withExplainer,
     { id: '__email', type: 'Email', text: { placeholder: (langCode==='fr' ? 'ton@email.com' : 'your@email.com'), cta: (langCode==='fr' ? 'Voir mon plan' : 'See my plan') } },
-    { id: '__results', type: 'Results', results: results || { top: '', scores: {} }, title: (langCode==='fr' ? 'Ton plan personnalisé' : 'Your personalized plan') }
+    { id: '__results', type: 'Results', results: results || { top: '', scores: {} }, title: (langCode==='fr' ? 'Ton plan personnalisé' : 'Your personalized plan') },
+    { id: '__sale', type: 'ResultsSale' }
   ];
 
   const totalQuestions = (test.questions || []).filter(function(it){
@@ -194,7 +195,9 @@ function App() {
   const total = flow.length;
   // Allow alternate routing: ?view=plan to jump directly to plan screen (for GTM events)
   const viewParam = getParam('view', '');
-  const current = viewParam === 'plan' ? (total - 1) : Math.max(0, Math.min(step, total - 1));
+  const saleView = (viewParam === 'sale' || viewParam === 'sale_violent');
+  const current = saleView ? (flow.findIndex(i=>i.type==='ResultsSale') !== -1 ? flow.findIndex(i=>i.type==='ResultsSale') : (total - 1))
+                           : (viewParam === 'plan' ? (total - 1) : Math.max(0, Math.min(step, total - 1)));
 
   const q = flow[current];
   const qText = q.text && (q.text[langCode] || q.text['en'] || '');
@@ -247,7 +250,7 @@ function App() {
   };
 
   const isChoice = q.type === 'QCM' || q.type === 'ImageChoice';
-  const hideNav = q.type === 'Email' || q.type === 'Landing' || q.type === 'Results' || q.type === 'Graphique' || q.type === 'Cycle' || q.type === 'InfoSlide' || q.type === 'PerineeDiag' || q.type === 'EightOfTen' || q.type === 'PlanProjection' || q.type === 'Benefits' || q.type === 'AnalyzeResults';
+  const hideNav = q.type === 'Email' || q.type === 'Landing' || q.type === 'Results' || q.type === 'Graphique' || q.type === 'Cycle' || q.type === 'InfoSlide' || q.type === 'PerineeDiag' || q.type === 'EightOfTen' || q.type === 'PlanProjection' || q.type === 'Benefits' || q.type === 'AnalyzeResults' || q.type === 'ResultsSale';
 
   function isQuestionType(item) { return item && (item.type === 'QCM' || item.type === 'ImageChoice' || item.type === 'Slider' || item.type === 'Text'); }
   const questionNumber = Math.min(
@@ -294,7 +297,10 @@ function loadComponent(name) {
     document.body.appendChild(s);
   });
 }
-const componentsToLoad = ['Landing','QCM','Slider','ImageChoice','Text','Email','Results','Graphique','AnalyzeResults','InfoSlide','PerineeDiag','EightOfTen','PlanProjection','Benefits'];
+const baseComponents = ['Landing','QCM','Slider','ImageChoice','Text','Email','Results','Graphique','AnalyzeResults','InfoSlide','PerineeDiag','EightOfTen','PlanProjection','Benefits'];
+const urlParams = new URL(window.location.href).searchParams;
+const saleVariant = (urlParams.get('view') === 'sale_violent') ? 'ResultsSale_violent' : 'ResultsSale';
+const componentsToLoad = baseComponents.concat([saleVariant]);
 function waitForSb(){ return new Promise(function(res){ var t=0; var id=setInterval(function(){ if (window.sbApi || t++>200){ clearInterval(id); res(); } }, 25); }); }
 Promise.all(componentsToLoad.map(loadComponent).concat([waitForSb()])).then(function(){
   const root = ReactDOM.createRoot(document.getElementById('root'));
