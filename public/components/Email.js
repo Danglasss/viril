@@ -38,24 +38,29 @@
       ? `Basé sur tes réponses, reçois ton plan sur mesure pour ${reasonText} ${statusText}`
       : `Based on your answers, we built a tailored plan to ${reasonText} with your partner — without sacrificing pleasure.`);
     const submit = () => {
-      // Navigate immediately to the plan/sale view for instant UX
-      try { if (window.__submitEmail) window.__submitEmail(); } catch(_) {}
-      // Fire-and-forget Supabase tasks in background (non-blocking)
-      try {
-        (async function(){
-          try {
-            if (window.sbApi) {
-              // Don't block UI: ensure session without awaiting long chains
-              try { await window.sbApi.ensureSession(); } catch(_) {}
-              const okEmail = /.+@.+\..+/.test(data.email || '');
-              if (okEmail && data.firstName) {
-                try { await window.sbApi.upsertProfile({ email: data.email, first_name: data.firstName, is_anonymous: true }); } catch(_) {}
-                try { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'sign_up', method: 'email' }); } catch(_) {}
+      function proceed(){
+        try { if (window.__submitEmail) window.__submitEmail(); } catch(_) {}
+        // Fire-and-forget Supabase tasks in background (non-blocking)
+        try {
+          (async function(){
+            try {
+              if (window.sbApi) {
+                try { await window.sbApi.ensureSession(); } catch(_) {}
+                const okEmail = /.+@.+\..+/.test(data.email || '');
+                if (okEmail && data.firstName) {
+                  try { await window.sbApi.upsertProfile({ email: data.email, first_name: data.firstName, is_anonymous: true }); } catch(_) {}
+                }
               }
-            }
-          } catch (e) { console.warn('supabase upsert profile failed', e); }
-        })();
-      } catch(_) {}
+            } catch (e) { console.warn('supabase upsert profile failed', e); }
+          })();
+        } catch(_) {}
+      }
+      // Push sign_up BEFORE navigating to ensure GTM fires; never block >150ms
+      try {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: 'sign_up', method: 'email', eventCallback: proceed, event_callback: proceed, event_timeout: 150 });
+        setTimeout(proceed, 150);
+      } catch(_) { proceed(); }
     };
     return React.createElement('div', null,
       // Dynamic copy
