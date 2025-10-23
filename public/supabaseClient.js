@@ -53,6 +53,19 @@
     return fromEnv || fromWin || fromUrl || 'A';
   }
 
+  // LP variant from URL (?lp=emotion|science|var) or pathname (/lp/emotion)
+  function getLpVariant(){
+    try {
+      var url = new URL(window.location.href);
+      var fromParam = url.searchParams.get('lp');
+      if (fromParam) return String(fromParam);
+      var path = url.pathname || '';
+      var m = path.match(/\/lp\/([^/?#]+)/);
+      if (m && m[1]) return String(m[1]);
+    } catch(_) {}
+    return undefined;
+  }
+
   async function ensureSession(){
     await waitForClient();
     const sb = ensure(); if (!sb) return null;
@@ -75,11 +88,17 @@
       if (error) console.error('[sb] profiles upsert shell error', error); else console.info('[sb] profiles upsert shell ok');
       // Ensure a quiz_session row exists at step 0 for this user (but do NOT override higher steps)
       try {
-        const { data: existing, error: selErr } = await sb.from('quiz_sessions').select('user_id').eq('user_id', u.user.id).maybeSingle();
+        const { data: existing, error: selErr } = await sb.from('quiz_sessions').select('user_id, variant_lp').eq('user_id', u.user.id).maybeSingle();
         if (!selErr && !existing) {
-          const init = { user_id: u.user.id, client_id: getClientId(), step: 0, answers: {}, quiz_version: getQuizVersion() };
+          const init = { user_id: u.user.id, client_id: getClientId(), step: 0, answers: {}, quiz_version: getQuizVersion(), variant_lp: getLpVariant() };
           const { error: insErr } = await sb.from('quiz_sessions').insert(init);
           if (insErr) console.warn('[sb] init quiz_session insert failed', insErr); else console.info('[sb] init quiz_session created');
+        } else if (!selErr && existing && !existing.variant_lp) {
+          const v = getLpVariant();
+          if (v) {
+            const { error: updErr } = await sb.from('quiz_sessions').update({ variant_lp: v }).eq('user_id', u.user.id);
+            if (updErr) console.warn('[sb] variant_lp update failed', updErr); else console.info('[sb] variant_lp set');
+          }
         }
       } catch(e2) { console.warn('[sb] init quiz_session check failed', e2 && e2.message); }
     } } catch(e) { console.warn('[sb] profiles upsert shell skipped', e && e.message); }
@@ -110,14 +129,14 @@
     const { data: u } = await sb.auth.getUser(); const user_id = u && u.user && u.user.id;
     if (!user_id) return false;
     // Read current to avoid decreasing the stored step; merge answers
-    let currentStep = 0; let currentAnswers = {};
+    let currentStep = 0; let currentAnswers = {}; let currentVariant = undefined;
     try {
-      const { data: cur, error: selErr } = await sb.from('quiz_sessions').select('step, answers').eq('user_id', user_id).maybeSingle();
-      if (!selErr && cur) { currentStep = Number(cur.step||0)||0; currentAnswers = cur.answers || {}; }
+      const { data: cur, error: selErr } = await sb.from('quiz_sessions').select('step, answers, variant_lp').eq('user_id', user_id).maybeSingle();
+      if (!selErr && cur) { currentStep = Number(cur.step||0)||0; currentAnswers = cur.answers || {}; currentVariant = cur.variant_lp; }
     } catch(_) {}
     const nextStep = Math.max(currentStep, Number(step||0)||0);
     const mergedAnswers = Object.assign({}, currentAnswers, answers||{});
-    const payload = { user_id, client_id: getClientId(), step: nextStep, answers: mergedAnswers, quiz_version: getQuizVersion() };
+    const payload = { user_id, client_id: getClientId(), step: nextStep, answers: mergedAnswers, quiz_version: getQuizVersion(), variant_lp: (currentVariant || getLpVariant()) };
     const { error } = await sb.from('quiz_sessions').upsert(payload, { onConflict: 'user_id' });
     if (error) { console.error('[sb] saveProgress error', error); return false; }
     console.info('[sb] saveProgress ok', { step_submitted: step||0, step_saved: payload.step });

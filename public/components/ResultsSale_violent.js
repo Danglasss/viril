@@ -33,7 +33,25 @@
     // selection du plan
     const [plan, setPlan] = React.useState('4w');
 
-    const Title = 'Retrouve ta fierté masculine et sauve ton couple en reprenant le contrôle total';
+    function formatMinutesLabel(min){
+      try {
+        const n = Number(min);
+        if (!Number.isFinite(n)) return 'quelques minutes';
+        return n === 1 ? '1 minute' : `${n} minutes`;
+      } catch(_) { return 'quelques minutes'; }
+    }
+    const TitleEl = (function(){
+      const label = formatMinutesLabel(beforeMin);
+      return React.createElement(React.Fragment, null,
+        React.createElement('span', null, 'Plus jamais de'),
+        React.createElement('span', { style:{ fontStyle:'italic' } }, '"désolé"'),
+        React.createElement('span', null, ' après '),
+        React.createElement('span', null, label),
+        React.createElement('span', null, '...'),
+        React.createElement('br'),
+        React.createElement('span', { style:{ opacity:.95, fontSize:26, fontWeight:550 } }, 'Ton plan personnalisé pour la faire jouir (enfin) avant toi.')
+      );
+    })();
     const firstName = (answers && answers['__email'] && answers['__email'].firstName) || '';
 
     const Block = (title, children) => React.createElement('div', { style:{
@@ -52,19 +70,89 @@
 
     const eta = (function(){ const d=new Date(); d.setDate(d.getDate()+84); return d.toLocaleDateString(lang==='fr'?'fr-FR':'en-US', { day:'2-digit', month:'short', year:'numeric' }); })();
 
+    // Scroll to plans section
+    const scrollToPlans = function() {
+      const planSection = document.getElementById('plan-section');
+      if (planSection) {
+        planSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+
     return React.createElement('div', null,
-      // Header with timer
-      React.createElement('div', { style:{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 12px', background:'rgba(255,255,255,.06)', borderRadius:12, marginBottom:20 } },
-        React.createElement('div', { style:{ fontSize:12, opacity:.85 } }, 'Offre limitée - Places disponibles'),
-        React.createElement('div', { style:{ fontFamily:'ui-monospace, SFMono-Regular, Menlo, monospace', fontWeight:900, color:'#FF5F5F' } }, mmss(remain))
+      // Fixed header with timer
+      React.createElement('div', { style:{ 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        background: 'rgba(14, 14, 15, 0.98)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid rgba(255,255,255,.1)',
+        padding: '12px 20px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 16
+      } },
+        React.createElement('div', { style:{ display:'flex', alignItems:'center', gap:12 } },
+          React.createElement('div', { style:{ 
+            background:'rgba(255,0,0,.15)', 
+            border:'1px solid rgba(255,0,0,.3)', 
+            padding:'6px 12px', 
+            borderRadius:6,
+            display:'flex',
+            alignItems:'center',
+            gap:8
+          } },
+            React.createElement('div', { style:{ fontSize:13, opacity:.9 } }, 'Expire dans :'),
+            React.createElement('div', { style:{ 
+              fontFamily:'ui-monospace, SFMono-Regular, Menlo, monospace', 
+              fontWeight:900, 
+              color:'#FF5F5F',
+              fontSize:16
+            } }, mmss(remain))
+          )
+        ),
+        React.createElement('button', { 
+          onClick: scrollToPlans,
+          style:{ 
+            background:'linear-gradient(135deg, #FF4D00, #FF7A00)',
+            border:'none',
+            color:'#FFFFFF',
+            padding:'10px 20px',
+            borderRadius:6,
+            fontWeight:800,
+            fontSize:14,
+            cursor:'pointer',
+            boxShadow:'0 2px 10px rgba(255,77,0,.3)',
+            transition:'transform 0.2s, box-shadow 0.2s'
+          },
+          onMouseEnter: function(e) {
+            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.boxShadow = '0 4px 15px rgba(255,77,0,.4)';
+          },
+          onMouseLeave: function(e) {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 2px 10px rgba(255,77,0,.3)';
+          }
+        }, 'Mon Plan →')
       ),
 
-      React.createElement('h2', { style:{ margin:'12px 0 20px', lineHeight: 1.3 } }, Title),
+      // Add padding top to account for fixed header
+      React.createElement('div', { style:{ paddingTop: 26 } }),
+
+      // Logo just above main headline
+      React.createElement('div', { style:{ margin:'0 0 0px 0px' } },
+        React.createElement('img', { src:'/viril-logo.svg', alt:'Viril', style:{ height:28, opacity:.95 } })
+      ),
+
+      React.createElement('h2', { style:{ margin:'8px 0 18px', lineHeight: 1.25, fontWeight:900, letterSpacing:.2 } }, TitleEl),
 
       // PHASE 1: AGITATION - Section d'empathie émotionnelle (NOUVEAU)
       React.createElement('div', { style:{ background:'rgba(255,0,0,.08)', border:'1px solid rgba(255,0,0,.2)', padding:'16px', margin:'20px 0', borderRadius:8 } },
         React.createElement('div', { style:{ fontSize:20, fontWeight:700, marginBottom:12, color:'#FF6B6B' } }, 
-          'Je sais ce que tu ressens en ce moment...'
+          'Si tu reconnais ces signes...'
         ),
         React.createElement('div', { style:{ fontSize:16, lineHeight:1.8, opacity:.9 } },
           React.createElement('div', { style:{ marginBottom:8 } }, '• Cette angoisse qui monte avant chaque rapport'),
@@ -73,7 +161,7 @@
           React.createElement('div', { style:{ marginBottom:8 } }, '• Les excuses que tu inventes pour éviter l\'intimité')
         ),
         React.createElement('div', { style:{ marginTop:16, fontSize:18, fontWeight:800, textAlign:'center' } },
-          '73% des hommes vivent ce cauchemar en silence.'
+          '27% des hommes vivent ce cauchemar en silence.'
         ),
         React.createElement('div', { style:{ marginTop:8, fontSize:16, textAlign:'center', opacity:.8 } },
           'Tu n\'es pas seul. Et surtout : ce n\'est pas ta faute.'
@@ -83,7 +171,7 @@
       // Témoignage douleur précoce (déplacé ici)
       React.createElement('div', { style:{ background:'rgba(0,0,0,.3)', padding:'14px', margin:'20px 0', borderLeft:'4px solid #FF4D00' } },
         React.createElement('div', { style:{ fontSize:16, lineHeight:1.6, fontStyle:'italic', marginBottom:8 } },
-          '"J\'évitais les relations par peur de décevoir. À 32 ans, j\'étais encore vierge à cause de cette honte..."'
+          '"J\'évitais les relations par peur de décevoir. À 32 ans, j\'étais encore célibataire à cause de cette honte..."'
         ),
         React.createElement('div', { style:{ fontSize:14, fontWeight:700 } }, '- Marc B., avant le programme')
       ),
@@ -140,7 +228,7 @@
           'La transformation est possible. La preuve :'
         ),
         React.createElement('div', { style:{ fontSize:28, fontWeight:900, color:'#00D67A', marginBottom:8 } },
-          'De 2 min → 20 min en 8 semaines'
+          'De 2 min → 11 min en 8 semaines'
         ),
         React.createElement('div', { style:{ fontSize:16, fontStyle:'italic', opacity:.9, lineHeight:1.6 } },
           '"J\'ai pleuré de joie la première fois que j\'ai tenu 15 minutes. Ma femme m\'a regardé différemment. Comme si elle retrouvait l\'homme qu\'elle avait épousé."'
@@ -163,8 +251,12 @@
           ),
           // Bande visuelle haut: deux photos côte à côte
           React.createElement('div', { style:{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:0, marginBottom:8 } },
-            React.createElement('div', { style:{ height:120, background:'rgba(0,0,0,.35)', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,.6)' } }, '[Photo: homme stressé]'),
-            React.createElement('div', { style:{ height:120, background:'rgba(255,255,255,.08)', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,.6)' } }, '[Photo: homme confiant]')
+            React.createElement('div', { style:{ height:160, overflow:'hidden', background:'transparent' } },
+              React.createElement('img', { src:'/triste.png', alt:'homme stressé', style:{ width:'100%', height:'100%', objectFit:'contain', objectPosition:'center bottom', display:'block', backgroundColor:'transparent' } })
+            ),
+            React.createElement('div', { style:{ height:160, overflow:'hidden', background:'transparent' } },
+              React.createElement('img', { src:'/confiant.png', alt:'homme confiant', style:{ width:'100%', height:'100%', objectFit:'contain', objectPosition:'center bottom', display:'block', backgroundColor:'transparent' } })
+            )
           ),
           // Légendes et métriques
           React.createElement('div', { style:{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:0 } },
@@ -252,11 +344,9 @@
         }
         return Block('', React.createElement('div', { style:{ textAlign:'center' } },
           React.createElement('div', { style:{ fontWeight:900, fontSize:22, lineHeight:1.25, margin:'6px 0 10px' } }, 
-            `Dans exactement 12 semaines, tu seras un autre homme.`
+            `Dans 12 semaines, tu seras un autre homme.`
           ),
-          React.createElement('div', { style:{ fontSize:18, marginBottom:4, opacity:.9 } }, 
-            `Elle ne te reconnaîtra plus au lit.`
-          ),
+      
           React.createElement('div', { style:{ fontWeight:900, fontSize:18, marginBottom:12 } },
             React.createElement('span', { style:{ borderBottom:'4px solid #FF4D00', padding:'0 8px 4px 8px' } }, 
               `Objectif atteint le ${eta} 🎯`
@@ -284,7 +374,7 @@
       })(),
 
       // Bénéfices concrets sur ta vie
-      Block('Ce que tu vas gagner dans ta vie', (function(){
+      Block('Ce que tu vas enfin vivre dans ton couple', (function(){
         function CheckIcon(){
           return React.createElement('svg', { width:22, height:22, viewBox:'0 0 24 24', fill:'none', xmlns:'http://www.w3.org/2000/svg' },
             React.createElement('circle', { cx:12, cy:12, r:9.5, stroke:'#00D67A', strokeWidth:3, fill:'none' }),
@@ -301,11 +391,11 @@
           );
         }
         return React.createElement('div', null,
-          Item('Fini l\'angoisse avant chaque rapport', 'Tu seras excité, pas stressé'),
-          Item('Elle te regardera avec désir, pas avec pitié', 'Retrouve ta place d\'homme'),
-          Item('Tu te sentiras enfin un vrai homme', 'Confiance naturelle au quotidien'),
-          Item('Érections de fer qui durent', 'Plaisir décuplé pour vous deux'),
-          Item('Ta relation sera sauvée', 'Ou tu trouveras enfin quelqu\'un')
+          Item('Plus d\'angoisse avant le sexe', 'Tu seras excité, pas stressé'),
+          Item('Plus jamais "désolé" après 30 secondes', 'Retrouve le respect de ta femme'),
+          Item('Finis les excuses bidons pour éviter le sexe', 'Deviens confiant dans ta relation'),
+          Item('Elle initiera à nouveau les rapports', 'Redeviens désiré par ta femme'),
+          Item('Retrouve ta fierté masculine ', 'Renforce ta relation')
         );
       })()),
 
@@ -392,29 +482,37 @@
         }
         function Row({ id, title, totalEUR, perDayEUR, popular, savings }){
           const active = plan === id;
+          const originalTotal = totalEUR * 1.2; // 20% more expensive original price
+          const originalPerDay = perDayEUR * 1.2;
           return React.createElement('div', { onClick: function(){ setPlan(id); }, style:{ cursor:'pointer', margin:'12px 0', padding:'16px 14px', background:'rgba(255,255,255,.03)', border:(active? '2px solid #00D67A' : '1px solid rgba(255,255,255,.18)'), borderRadius:0, boxSizing:'border-box', overflow:'hidden', position:'relative' } },
             savings && React.createElement('div', { style:{ position:'absolute', top:0, right:20, background:'#FF4D00', color:'#FFFFFF', padding:'4px 12px', fontSize:12, fontWeight:900, borderRadius:'0 0 6px 6px' } }, savings),
             React.createElement('div', { style:{ display:'grid', gridTemplateColumns:'auto 1fr auto', alignItems:'center', gap:12, minWidth:0 } },
               React.createElement(Radio, { active }),
               React.createElement('div', { style:{ minWidth:0 } },
                 React.createElement('div', { style:{ fontWeight:900, letterSpacing:.1, fontSize:16, lineHeight:1.1, textTransform:'uppercase' } }, title),
-                React.createElement('div', { style:{ opacity:.75, marginTop:8, fontSize:16 } }, `${totalEUR.toFixed(2)} EUR total`)
+                React.createElement('div', { style:{ marginTop:8, display:'flex', alignItems:'baseline', gap:8 } },
+                  React.createElement('span', { style:{ fontSize:16, fontWeight:700, color:'#00D67A' } }, `${totalEUR.toFixed(2)} EUR`),
+                  React.createElement('span', { style:{ fontSize:14, textDecoration:'line-through', opacity:.5 } }, `${originalTotal.toFixed(2)} EUR`)
+                )
               ),
               React.createElement('div', { style:{ textAlign:'right', minWidth:0, whiteSpace:'nowrap' } },
                 React.createElement('div', { style:{ display:'flex', alignItems:'baseline', justifyContent:'flex-end', gap:6 } },
-                  React.createElement('span', { style:{ fontWeight:900, fontSize:26 } }, perDayEUR.toFixed(2)),
+                  React.createElement('span', { style:{ fontWeight:900, fontSize:26, color:'#00D67A' } }, perDayEUR.toFixed(2)),
                   React.createElement('span', { style:{ opacity:.75, fontSize:12, textTransform:'uppercase', letterSpacing:.5 } }, 'EUR')
                 ),
-                React.createElement('div', { style:{ opacity:.75, marginTop:4, fontSize:14 } }, 'par jour')
+                React.createElement('div', { style:{ display:'flex', alignItems:'baseline', gap:6, justifyContent:'flex-end' } },
+                  React.createElement('span', { style:{ opacity:.75, fontSize:14 } }, 'par jour'),
+                  React.createElement('span', { style:{ fontSize:12, textDecoration:'line-through', opacity:.4 } }, `(${originalPerDay.toFixed(2)}€)`)
+                )
               )
             ),
             popular && React.createElement('div', { style:{ marginTop:14, marginLeft:-16, marginRight:-16, marginBottom:-16, background:'#00D67A', color:'#000000', textAlign:'center', fontWeight:900, padding:'6px 0', letterSpacing:.6, pointerEvents:'none', fontSize:11 } }, '🔥 MEILLEUR RÉSULTAT')
           );
         }
-        return Block('Dernière étape : Choisis ton engagement', React.createElement('div', null,
-          Row({ id:'trial', title:`Essai 7 jours`, totalEUR:4.99, perDayEUR:0.71 }),
-          Row({ id:'4w', title:'Transformation 4 semaines', totalEUR:49.99, perDayEUR:1.78 }),
-          Row({ id:'12w', title:'Maîtrise totale 12 semaines', totalEUR:79.99, perDayEUR:0.95, popular:true, savings:'-43%' }),
+        return Block('Dernière étape : Choisis ton engagement', React.createElement('div', { id: 'plan-section', style:{ scrollMarginTop: 80 } },
+          Row({ id:'trial', title:`Essai 7 jours`, totalEUR:6.99, perDayEUR:0.99 }),
+          Row({ id:'4w', title:'Transformation 4 semaines', totalEUR:15.19, perDayEUR:0.49 }),
+          Row({ id:'12w', title:'Maîtrise totale 12 semaines', totalEUR:25.99, perDayEUR:0.29, popular:true, savings:'-43%' }),
           React.createElement('div', { style:{ display:'grid', gridTemplateColumns:'auto 1fr', gap:12, marginTop:16, padding:'12px', background:'rgba(255,150,0,.1)', border:'1px solid rgba(255,150,0,.3)', borderRadius:6 } },
             React.createElement('div', { style:{ color:'#FF7A1A', fontSize:22 } }, '⚠️'),
             React.createElement('div', null,
@@ -442,8 +540,18 @@
                 cursor: 'pointer'
               }, 
               onClick:function(){ 
-                try { if (window && window.dataLayer) { window.dataLayer.push({ event:'select_plan', plan }); } } catch(_){}; 
-                if (window && window.__goNext) window.__goNext(); 
+                var targetUrl = '/construction';
+                try {
+                  var u = new URL(window.location.origin + '/construction');
+                  try { var langParam = new URL(window.location.href).searchParams.get('lang'); if (langParam) u.searchParams.set('lang', langParam); } catch(_){ }
+                  if (plan) u.searchParams.set('plan', String(plan));
+                  targetUrl = u.toString();
+                } catch(_) {}
+                var navigated = false; var go = function(){ if (navigated) return; navigated = true; try { window.location.replace(targetUrl); } catch(_){ window.location.href = targetUrl; } };
+                // Attempt to send GTM events but do not block navigation >150ms
+                try { if (window && window.dataLayer) { window.dataLayer.push({ event:'select_plan', plan }); } } catch(_){};
+                try { if (window && window.dataLayer) { window.dataLayer.push({ event:'fake_purchase', plan, eventCallback: go, event_callback: go, event_timeout: 150 }); } } catch(_){}
+                setTimeout(go, 150);
               } 
             }, 'OUI, je veux durer plus longtemps →'),
             React.createElement('div', { style:{ textAlign:'center', fontSize:12, opacity:.6 } }, 
@@ -482,19 +590,9 @@
             React.createElement('div', null, RefundBadge())
           )
         );
-      })(),
-
-      // Rappel urgence finale
-      React.createElement('div', { style:{ textAlign:'center', margin:'30px 0', padding:'20px', background:'rgba(255,0,0,.1)', border:'1px solid rgba(255,0,0,.3)', borderRadius:8 } },
-        React.createElement('div', { style:{ fontSize:20, fontWeight:900, marginBottom:8 } }, 
-          `⏰ Plus que ${mmss(remain)} pour profiter de l'offre`
-        ),
-        React.createElement('div', { style:{ fontSize:16, opacity:.9 } }, 
-          'Après, tu devras payer le prix normal (97€)'
-        )
-      )
+      })()
     );
   }
-  window.__registerQuestionComponent('ResultsSale', ResultsSale);
+window.__registerQuestionComponent('lp_emotion', ResultsSale);
 })();
 

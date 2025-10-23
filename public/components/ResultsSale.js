@@ -3,21 +3,7 @@
     const lang = new URL(location.href).searchParams.get('lang') || 'fr';
     const answers = (typeof window !== 'undefined' && window.__getAnswers && window.__getAnswers()) || {};
 
-    // Timer 10:00 active only when tab visible
-    const initial = 600; // seconds
-    const [remain, setRemain] = React.useState(initial);
-    React.useEffect(()=>{
-      let id = 0;
-      function tick(){
-        if (document.visibilityState === 'visible') {
-          setRemain(v => Math.max(0, v-1));
-        }
-      }
-      id = setInterval(tick, 1000);
-      return ()=> clearInterval(id);
-    }, []);
-
-    function mmss(s){ const m = Math.floor(s/60).toString().padStart(2,'0'); const sec = (s%60).toString().padStart(2,'0'); return `${m}:${sec}`; }
+    // Counter removed
     function mapMinutes(val){
       const v = String(val||'');
       if (v==='<1') return 1;
@@ -53,55 +39,61 @@
     const eta = (function(){ const d=new Date(); d.setDate(d.getDate()+28); return d.toLocaleDateString(lang==='fr'?'fr-FR':'en-US', { day:'2-digit', month:'short', year:'numeric' }); })();
 
     return React.createElement('div', null,
-      // Header with timer
-      React.createElement('div', { style:{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 12px', background:'rgba(255,255,255,.06)', borderRadius:12, marginBottom:20 } },
-        React.createElement('div', { style:{ fontSize:12, opacity:.85 } }, 'Offre réservée'),
-        React.createElement('div', { style:{ fontFamily:'ui-monospace, SFMono-Regular, Menlo, monospace', fontWeight:900, color:'#FF5F5F' } }, mmss(remain))
-      ),
-
+      
       React.createElement('h2', { style:{ margin:'12px 0 20px' } }, Title),
 
-      // Block 1: Avant / Après – sans card, sans radius, photos au-dessus, séparateurs fins
-      (function(){
-        function SegBar({ percent, color }){
-          const n = 4; const active = Math.round((percent/100)*n);
-          const items = [];
-          for (let i=0;i<n;i++) items.push(React.createElement('span', { key:i, style:{ display:'inline-block', width:26, height:6, marginRight:6, borderRadius:4, background: i<active? color : 'rgba(255,255,255,.18)' } }));
-          return React.createElement('div', null, items);
-        }
-        const sat = (m)=> Math.max(0, Math.min(100, Math.round((m/15)*100)));
-        return React.createElement('div', { style:{ margin:'34px 0' } },
-          // Bande visuelle haut: deux photos côte à côte
-          React.createElement('div', { style:{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:0, marginBottom:8 } },
-            React.createElement('div', { style:{ height:120, background:'rgba(0,0,0,.35)', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,.6)' } }, 'photo “avant”'),
-            React.createElement('div', { style:{ height:120, background:'rgba(255,255,255,.08)', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,.6)' } }, 'photo “après”')
-          ),
-          // Légendes et métriques
-          React.createElement('div', { style:{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:0 } },
-            React.createElement('div', { style:{ padding:'10px 12px', background:'rgba(255,255,255,.06)', borderTop:'1px solid rgba(255,255,255,.12)', borderRight:'1px solid rgba(255,255,255,.12)', borderBottom:'1px solid rgba(255,255,255,.12)' } },
-              React.createElement('div', { style:{ fontWeight:900 } }, 'Maintenant')
-            ),
-            React.createElement('div', { style:{ padding:'10px 12px', background:'rgba(255,255,255,.06)', borderTop:'1px solid rgba(255,255,255,.12)', borderBottom:'1px solid rgba(255,255,255,.12)' } },
-              React.createElement('div', { style:{ fontWeight:900 } }, 'Dans 3 mois')
-            )
-          ),
-          React.createElement('div', { style:{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:0 } },
-            React.createElement('div', { style:{ padding:'12px', borderRight:'1px solid rgba(255,255,255,.12)' } },
-              React.createElement('div', { style:{ opacity:.9, marginBottom:4 } }, 'Durée'),
-              React.createElement('div', { style:{ color:'#FF7A3C', fontWeight:900, marginBottom:8 } }, `${beforeMin} min`),
-              React.createElement('div', { style:{ opacity:.9, marginBottom:4 } }, 'Satisfaction partenaire'),
-              SegBar({ percent: sat(beforeMin), color:'#FF3B30' })
-            ),
-            React.createElement('div', { style:{ padding:'12px' } },
-              React.createElement('div', { style:{ opacity:.9, marginBottom:4 } }, 'Durée'),
-              React.createElement('div', { style:{ color:'#FFA93C', fontWeight:900, marginBottom:8 } }, `${targetMin} min`),
-              React.createElement('div', { style:{ opacity:.9, marginBottom:4 } }, 'Satisfaction partenaire'),
-              SegBar({ percent: sat(targetMin), color:'#00B67A' })
-            )
-          )
-        );
-      })(),
-
+           // Avant / Après amélioré
+           (function(){
+            function SegBar({ percent, color }){
+              const n = 4; const active = Math.round((percent/100)*n);
+              const items = [];
+              for (let i=0;i<n;i++) items.push(React.createElement('span', { key:i, style:{ display:'inline-block', width:26, height:6, marginRight:6, borderRadius:4, background: i<active? color : 'rgba(255,255,255,.18)' } }));
+              return React.createElement('div', null, items);
+            }
+            const sat = (m)=> Math.max(0, Math.min(100, Math.round((m/15)*100)));
+            return React.createElement('div', { style:{ margin:'34px 0' } },
+        
+              // Bande visuelle haut: deux photos côte à côte
+              React.createElement('div', { style:{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:0, marginBottom:8 } },
+                React.createElement('div', { style:{ height:200, overflow:'hidden', background:'transparent' } },
+                  React.createElement('img', { src:'/triste.png', alt:'homme stressé', style:{ width:'100%', height:'100%', objectFit:'contain', objectPosition:'center bottom', display:'block', backgroundColor:'transparent' } })
+                ),
+                React.createElement('div', { style:{ height:200, overflow:'hidden', background:'transparent' } },
+                  React.createElement('img', { src:'/confiant.png', alt:'homme confiant', style:{ width:'100%', height:'100%', objectFit:'contain', objectPosition:'center bottom', display:'block', backgroundColor:'transparent' } })
+                )
+              ),
+              // Légendes et métriques
+              React.createElement('div', { style:{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:0 } },
+                React.createElement('div', { style:{ padding:'10px 12px', background:'rgba(255,0,0,.06)', borderTop:'1px solid rgba(255,255,255,.12)', borderRight:'1px solid rgba(255,255,255,.12)', borderBottom:'1px solid rgba(255,255,255,.12)' } },
+                  React.createElement('div', { style:{ fontWeight:900, color:'#FF6B6B' } }, 'Ta frustration actuelle')
+                ),
+                React.createElement('div', { style:{ padding:'10px 12px', background:'rgba(0,255,100,.06)', borderTop:'1px solid rgba(255,255,255,.12)', borderBottom:'1px solid rgba(255,255,255,.12)' } },
+                  React.createElement('div', { style:{ fontWeight:900, color:'#00D67A' } }, 'L\'homme que tu vas devenir')
+                )
+              ),
+              React.createElement('div', { style:{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:0 } },
+                React.createElement('div', { style:{ padding:'12px', borderRight:'1px solid rgba(255,255,255,.12)' } },
+                  React.createElement('div', { style:{ opacity:.9, marginBottom:4 } }, 'Performance'),
+                  React.createElement('div', { style:{ color:'#FF7A3C', fontWeight:900, marginBottom:8 } }, `${beforeMin} min 😔`),
+                  React.createElement('div', { style:{ opacity:.9, marginBottom:4 } }, 'Satisfaction partenaire'),
+                  SegBar({ percent: sat(beforeMin), color:'#FF3B30' }),
+                  React.createElement('div', { style:{ fontSize:12, opacity:.7, marginTop:4 } }, 'Elle fait semblant'),
+                  React.createElement('div', { style:{ opacity:.9, marginTop:12, marginBottom:4 } }, 'État mental'),
+                  React.createElement('div', { style:{ fontSize:14, color:'#FF5F5F' } }, 'Anxieux, honteux')
+                ),
+                React.createElement('div', { style:{ padding:'12px' } },
+                  React.createElement('div', { style:{ opacity:.9, marginBottom:4 } }, 'Performance'),
+                  React.createElement('div', { style:{ color:'#00D67A', fontWeight:900, marginBottom:8 } }, `${targetMin}+ min 💪`),
+                  React.createElement('div', { style:{ opacity:.9, marginBottom:4 } }, 'Satisfaction partenaire'),
+                  SegBar({ percent: sat(targetMin), color:'#00B67A' }),
+                  React.createElement('div', { style:{ fontSize:12, color:'#00D67A', marginTop:4 } }, 'Elle te désire vraiment'),
+                  React.createElement('div', { style:{ opacity:.9, marginTop:12, marginBottom:4 } }, 'État mental'),
+                  React.createElement('div', { style:{ fontSize:14, color:'#00D67A' } }, 'Confiant, viril')
+                )
+              )
+            );
+          })(),
+          
       // Block 2: Résumé personnel basé sur tes réponses (design "IMC")
       (function(){
         function computeProfile(a){
@@ -171,7 +163,7 @@
         return React.createElement('div', null,
           Row('⏳', "Durée de l'entraînement", '5 minutes/jour'),
           Row('💪', 'Type de périnné', profile),
-          Row('👟', "Endroit pour s'entraîner", 'Partout'),
+          Row('📍', "Endroit pour s'entraîner", 'Partout (discret)'),
           Row('📅', "Fréquence d'entraînement", '5 fois par semaine')
         );
       })()),
@@ -192,7 +184,7 @@
           return React.createElement('div', { style:{ position:'absolute', left, top, transform:'translate(-50%, -100%)', background:'rgba(255,255,255,.12)', border:'1px solid rgba(255,255,255,.16)', borderRadius:8, padding:'6px 8px', fontWeight:800 } }, text);
         }
         return Block('', React.createElement('div', { style:{ textAlign:'center' } },
-          React.createElement('div', { style:{ fontWeight:900, fontSize:22, lineHeight:1.25, margin:'6px 0 10px' } }, `D’après ton plan, tu atteindras ton objectif de tenir ${targetMin} min 🎉 d’ici`),
+          React.createElement('div', { style:{ fontWeight:900, fontSize:22, lineHeight:1.25, margin:'6px 0 10px' } }, `D’après ton profil, tu atteindras ton objectif de tenir ${targetMin} min 🎉 d’ici`),
           React.createElement('div', { style:{ fontWeight:900, fontSize:18, marginBottom:12 } },
             React.createElement('span', { style:{ borderBottom:'4px solid #FF4D00', padding:'0 8px 4px 8px' } }, eta)
           ),
@@ -217,27 +209,83 @@
         ));
       })(),
 
-      // Block 5: Bénéfices — design checklist comme le screenshot
-      Block('Les bénéfices sur ta vie', (function(){
-        function CheckIcon(){
-          return React.createElement('svg', { width:22, height:22, viewBox:'0 0 24 24', fill:'none', xmlns:'http://www.w3.org/2000/svg' },
-            React.createElement('circle', { cx:12, cy:12, r:9.5, stroke:'#FF7A1A', strokeWidth:3, fill:'none' }),
-            React.createElement('path', { d:'M7 12.5l3.2 3.2L17 9.8', stroke:'#FF7A1A', strokeWidth:3, fill:'none', strokeLinecap:'round', strokeLinejoin:'round' })
-          );
-        }
-        function Item(text){
-          return React.createElement('div', { style:{ display:'flex', alignItems:'center', gap:12, padding:'6px 0' } },
-            CheckIcon(),
-            React.createElement('div', { style:{ fontSize:18, lineHeight:1.3, fontWeight:500, opacity:.95 } }, text)
+      // Bloc protocole de rééducation
+      Block('🔬 Ce que contient ton protocole de rééducation', (function(){
+        function CheckItem(text){
+          return React.createElement('div', { style:{ display:'flex', alignItems:'flex-start', gap:12, padding:'10px 0' } },
+            React.createElement('span', { style:{ color:'#00D67A', fontSize:20, lineHeight:1 } }, '✅'),
+            React.createElement('div', { style:{ fontSize:16, lineHeight:1.5, opacity:.95 } }, text)
           );
         }
         return React.createElement('div', null,
-          Item('Réduction anxiété et stress'),
-          Item('Amélioration de ta relation'),
-          Item('Confiance en toi renforcée'),
-          Item('Érection plus dure')
+          CheckItem('Accès privé à ton espace d\'entraînement (mobile & desktop)'),
+          CheckItem('Vidéos techniques : posture, respiration, contraction/relâchement'),
+          CheckItem('Programme progressif sur 12 semaines (du niveau débutant à avancé)'),
+          CheckItem('Suivi automatique de tes performances (tracking des durées)'),
+          CheckItem('Exercices de désensibilisation et techniques de contrôle mental'),
+          CheckItem('Protocole validé sur 8500+ utilisateurs'),
+          React.createElement('div', { style:{ 
+            marginTop:20, 
+            padding:'16px', 
+            background:'rgba(255,255,255,.08)', 
+            border:'1px solid rgba(255,255,255,.16)', 
+            borderRadius:8,
+            display:'flex',
+            alignItems:'center',
+            gap:12
+          } },
+            React.createElement('span', { style:{ fontSize:24 } }, '💡'),
+            React.createElement('div', { style:{ fontSize:16, lineHeight:1.5, fontWeight:700 } }, 
+              'Tout est guidé. Tu suis les vidéos, tu progresses automatiquement.'
+            )
+          )
         );
       })()),
+
+      // Bloc résultats mesurés
+      Block('📈 Les résultats réels de 8500 hommes comme toi', (function(){
+        function StatCard(value, label){
+          return React.createElement('div', { style:{
+            textAlign:'center',
+            padding:'20px 16px',
+            background:'rgba(255,255,255,.06)',
+            border:'1px solid rgba(255,255,255,.12)',
+            borderRadius:0
+          } },
+            React.createElement('div', { style:{ fontSize:32, fontWeight:900, color:'#00D67A', marginBottom:8 } }, value),
+            React.createElement('div', { style:{ fontSize:14, opacity:.85, lineHeight:1.4 } }, label)
+          );
+        }
+        return React.createElement('div', null,
+          React.createElement('div', { style:{ fontSize:16, opacity:.9, marginBottom:16 } }, 'Après 12 semaines de protocole :'),
+          React.createElement('div', { style:{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:16 } },
+            StatCard('+320%', 'de durée moyenne\n(2 min → 8,4 min)'),
+            StatCard('89%', 'des utilisateurs\natteignent 10+ min')
+          ),
+          React.createElement('div', { style:{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 } },
+            StatCard('94%', 'rapportent une amélioration\ndu contrôle volontaire'),
+            StatCard('76%', 'maintiennent les résultats\naprès 6 mois')
+          )
+        );
+      })()),
+     
+      // Bénéfices concrets sur ta vie
+      Block('Ce que ça change dans ta vie :', (function(){
+        function CheckItem(text){
+          return React.createElement('div', { style:{ display:'flex', alignItems:'flex-start', gap:12, padding:'10px 0' } },
+            React.createElement('span', { style:{ color:'#00D67A', fontSize:20, lineHeight:1 } }, '✅'),
+            React.createElement('div', { style:{ fontSize:16, lineHeight:1.5, opacity:.95 } }, text)
+          );
+        }
+        return React.createElement('div', null,
+          CheckItem('Fin des éjaculations involontaires en moins de 2 min'),
+          CheckItem('Capacité à ralentir ou accélérer à volonté'),
+          CheckItem('Disparition de l\'anxiété pré-rapport'),
+          CheckItem('Relations sexuelles complètes et satisfaisantes'),
+          CheckItem('Confiance retrouvée dans ta performance')
+        );
+      })()),
+
 
       // Bloc Avis — slider 6 avis, modulable (scroll-snap, user-controlled)
       (function(){
@@ -312,6 +360,79 @@
           )
         ));
       })(),
+      
+      // Section urgence - Pourquoi agir maintenant
+      Block('⏰ Pourquoi agir maintenant :', (function(){
+        const [pulse, setPulse] = React.useState(true);
+        React.useEffect(() => {
+          const interval = setInterval(() => setPulse(p => !p), 2000);
+          return () => clearInterval(interval);
+        }, []);
+        
+        function WarningCard({ icon, title, highlight, desc }){
+          return React.createElement('div', { style:{
+            display:'flex',
+            alignItems:'flex-start',
+            gap:16,
+            padding:'16px',
+            margin:'12px 0',
+            background:'rgba(255,255,255,.04)',
+            border:'1px solid rgba(255,255,255,.12)',
+            borderRadius:8,
+            transition:'transform 0.2s, box-shadow 0.2s',
+            cursor:'default'
+          }, 
+          onMouseEnter: function(e) { 
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 8px 20px rgba(255,77,0,0.15)';
+          },
+          onMouseLeave: function(e) { 
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }
+          },
+            React.createElement('div', { style:{ 
+              fontSize:28, 
+              lineHeight:1,
+              opacity: pulse ? 1 : 0.7,
+              transition: 'opacity 1s ease-in-out'
+            } }, icon),
+            React.createElement('div', { style:{ flex:1 } },
+              React.createElement('div', { style:{ 
+                fontSize:18, 
+                fontWeight:800, 
+                marginBottom:4,
+                lineHeight:1.3
+              } }, 
+                title,
+                highlight && React.createElement('span', { style:{ color:'#FF4D00', marginLeft:8 } }, highlight)
+              ),
+              desc && React.createElement('div', { style:{ 
+                fontSize:14, 
+                opacity:.8, 
+                lineHeight:1.4 
+              } }, desc)
+            )
+          );
+        }
+        
+        return React.createElement('div', null,
+          WarningCard({ 
+            icon:'📈', 
+            title:'Sans traitement :', 
+            highlight:'le problème s\'aggrave dans 73% des cas',
+            desc:'Plus tu attends, plus les mauvais réflexes s\'ancrent profondément'
+          }),
+          WarningCard({ 
+            icon:'⏳', 
+            title:'Chaque semaine perdue', 
+            highlight:'= réflexes plus ancrés',
+            desc:'Le cerveau renforce les circuits neurologiques de l\'éjaculation rapide'
+          }),
+        
+        );
+      })()),
+      
       // Block 7: Choisir ton plan — design cartes radio comme screenshot (sans radius)
       (function(){
         function Radio({ active }){
@@ -347,9 +468,9 @@
           );
         }
         return Block('Choisit le meilleur plan pour toi', React.createElement('div', null,
-          Row({ id:'trial', title:`1 semaine d’essai`, totalEUR:4.99, perDayEUR:0.71 }),
-          Row({ id:'4w', title:'Plan de 4 semaines', totalEUR:49.99, perDayEUR:1.67, popular:true }),
-          Row({ id:'12w', title:'Plan de 12 semaines', totalEUR:79.99, perDayEUR:0.87 }),
+          Row({ id:'trial', title:`1 semaine d’essai`, totalEUR:6.99, perDayEUR:0.99 }),
+          Row({ id:'4w', title:'Plan de 4 semaines', totalEUR:15.19, perDayEUR:0.49, popular:true }),
+          Row({ id:'12w', title:'Plan de 12 semaines', totalEUR:25.99, perDayEUR:0.29 }),
           React.createElement('div', { style:{ display:'grid', gridTemplateColumns:'auto 1fr', gap:12, marginTop:12 } },
             React.createElement('div', { style:{ color:'#FF7A1A', fontSize:22 } }, '💪'),
             React.createElement('div', null,
@@ -358,7 +479,19 @@
             )
           ),
           React.createElement('div', { style:{ marginTop:16, display:'flex', justifyContent:'flex-end' } },
-            React.createElement('button', { className:'btn primary', style:{ width:'auto', borderRadius:0, padding:'12px 18px', color:'#FFFFFF', fontWeight:800 }, onClick:function(){ try { if (window && window.dataLayer) { window.dataLayer.push({ event:'select_plan', plan }); } } catch(_){}; if (window && window.__goNext) window.__goNext(); } }, 'Continuer →')
+            React.createElement('button', { className:'btn primary', style:{ width:'auto', borderRadius:0, padding:'12px 18px', color:'#FFFFFF', fontWeight:800 }, onClick:function(){
+              var targetUrl = '/construction';
+              try {
+                var u = new URL(window.location.origin + '/construction');
+                try { var langParam = new URL(window.location.href).searchParams.get('lang'); if (langParam) u.searchParams.set('lang', langParam); } catch(_){ }
+                if (plan) u.searchParams.set('plan', String(plan));
+                targetUrl = u.toString();
+              } catch(_) {}
+              var navigated = false; var go = function(){ if (navigated) return; navigated = true; try { window.location.replace(targetUrl); } catch(_){ window.location.href = targetUrl; } };
+              try { if (window && window.dataLayer) { window.dataLayer.push({ event:'select_plan', plan }); } } catch(_){};
+              try { if (window && window.dataLayer) { window.dataLayer.push({ event:'fake_purchase', plan, eventCallback: go, event_callback: go, event_timeout: 150 }); } } catch(_){};
+              setTimeout(go, 150);
+            } }, 'Continuer →')
           )
         ));
       })(),
@@ -391,7 +524,7 @@
       })()
     );
   }
-  window.__registerQuestionComponent('ResultsSale', ResultsSale);
+window.__registerQuestionComponent('lp_science', ResultsSale);
 })();
 
 

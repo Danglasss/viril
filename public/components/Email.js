@@ -37,21 +37,25 @@
     const sub = (lang==='fr'
       ? `Basé sur tes réponses, reçois ton plan sur mesure pour ${reasonText} ${statusText}`
       : `Based on your answers, we built a tailored plan to ${reasonText} with your partner — without sacrificing pleasure.`);
-    const submit = async () => {
+    const submit = () => {
+      // Navigate immediately to the plan/sale view for instant UX
+      try { if (window.__submitEmail) window.__submitEmail(); } catch(_) {}
+      // Fire-and-forget Supabase tasks in background (non-blocking)
       try {
-        if (window.sbApi) {
-          await window.sbApi.ensureSession();
-          const okEmail = /.+@.+\..+/.test(data.email || '');
-          if (okEmail && data.firstName) {
-            await window.sbApi.upsertProfile({ email: data.email, first_name: data.firstName, is_anonymous: true });
-            try {
-              window.dataLayer = window.dataLayer || [];
-              window.dataLayer.push({ event: 'sign_up', method: 'email' });
-            } catch(_) {}
-          }
-        }
-      } catch (e) { console.warn('supabase upsert profile failed', e); }
-      if (window.__submitEmail) window.__submitEmail();
+        (async function(){
+          try {
+            if (window.sbApi) {
+              // Don't block UI: ensure session without awaiting long chains
+              try { await window.sbApi.ensureSession(); } catch(_) {}
+              const okEmail = /.+@.+\..+/.test(data.email || '');
+              if (okEmail && data.firstName) {
+                try { await window.sbApi.upsertProfile({ email: data.email, first_name: data.firstName, is_anonymous: true }); } catch(_) {}
+                try { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'sign_up', method: 'email' }); } catch(_) {}
+              }
+            }
+          } catch (e) { console.warn('supabase upsert profile failed', e); }
+        })();
+      } catch(_) {}
     };
     return React.createElement('div', null,
       // Dynamic copy

@@ -181,12 +181,22 @@ function App() {
       withExplainer.splice(insertPos, 0, eng);
     }
   })();
+  // Decide which landing page variant (LP) to use for the sale screen
+  const lpParam = getParam('lp', 'science'); // default to science
+  let saleType = (lpParam === 'emotion') ? 'lp_emotion' : 'lp_science';
+  // Allow explicit override via view param before building the flow
+  const normalizeViewEarly = (v) => (v === 'p_science' ? 'lp_science' : (v === 'p_emotion' ? 'lp_emotion' : v));
+  const viewParam = normalizeViewEarly(getParam('view', ''));
+  if (viewParam === 'lp_emotion' || viewParam === 'lp_science') {
+    saleType = viewParam;
+  }
+
   const flow = [
     landingStep,
     ...withExplainer,
     { id: '__email', type: 'Email', text: { placeholder: (langCode==='fr' ? 'ton@email.com' : 'your@email.com'), cta: (langCode==='fr' ? 'Voir mon plan' : 'See my plan') } },
     { id: '__results', type: 'Results', results: results || { top: '', scores: {} }, title: (langCode==='fr' ? 'Ton plan personnalisé' : 'Your personalized plan') },
-    { id: '__sale', type: 'ResultsSale' }
+    { id: '__sale', type: saleType }
   ];
 
   const totalQuestions = (test.questions || []).filter(function(it){
@@ -194,9 +204,8 @@ function App() {
   }).length;
   const total = flow.length;
   // Allow alternate routing: ?view=plan to jump directly to plan screen (for GTM events)
-  const viewParam = getParam('view', '');
-  const saleView = (viewParam === 'sale' || viewParam === 'sale_violent');
-  const current = saleView ? (flow.findIndex(i=>i.type==='ResultsSale') !== -1 ? flow.findIndex(i=>i.type==='ResultsSale') : (total - 1))
+  const saleView = (viewParam === 'sale' || viewParam === 'sale_violent' || viewParam === 'lp_emotion' || viewParam === 'lp_science');
+  const current = saleView ? (flow.findIndex(i=>i.type===saleType) !== -1 ? flow.findIndex(i=>i.type===saleType) : (total - 1))
                            : (viewParam === 'plan' ? (total - 1) : Math.max(0, Math.min(step, total - 1)));
 
   const q = flow[current];
@@ -250,7 +259,7 @@ function App() {
   };
 
   const isChoice = q.type === 'QCM' || q.type === 'ImageChoice';
-  const hideNav = q.type === 'Email' || q.type === 'Landing' || q.type === 'Results' || q.type === 'Graphique' || q.type === 'Cycle' || q.type === 'InfoSlide' || q.type === 'PerineeDiag' || q.type === 'EightOfTen' || q.type === 'PlanProjection' || q.type === 'Benefits' || q.type === 'AnalyzeResults' || q.type === 'ResultsSale';
+  const hideNav = q.type === 'Email' || q.type === 'Landing' || q.type === 'Results' || q.type === 'Graphique' || q.type === 'Cycle' || q.type === 'InfoSlide' || q.type === 'PerineeDiag' || q.type === 'EightOfTen' || q.type === 'PlanProjection' || q.type === 'Benefits' || q.type === 'AnalyzeResults' || q.type === 'lp_emotion' || q.type === 'lp_science';
 
   function isQuestionType(item) { return item && (item.type === 'QCM' || item.type === 'ImageChoice' || item.type === 'Slider' || item.type === 'Text'); }
   const questionNumber = Math.min(
@@ -260,7 +269,7 @@ function App() {
 
   return React.createElement(ThemeContext.Provider, { value: theme },
     React.createElement('div', { className: 'container' },
-      q.type !== 'Landing' && q.type !== 'Results' && React.createElement('div', { className: 'topline', style: { alignItems: 'center', gap: 12 } },
+      q.type !== 'Landing' && q.type !== 'Results' && q.type !== 'lp_emotion' && q.type !== 'lp_science' && React.createElement('div', { className: 'topline', style: { alignItems: 'center', gap: 12 } },
         React.createElement('img', { src: theme.logoUrl, alt: 'logo', style: { height: 24 } }),
         React.createElement('div', { style: { flex: 1, height: 6, background: 'var(--slider-track)', borderRadius: 999, overflow: 'hidden' } },
           React.createElement('div', { style: { width: `${(questionNumber / totalQuestions) * 100}%`, height: '100%', background: 'var(--slider-fill)' } })
@@ -299,8 +308,14 @@ function loadComponent(name) {
 }
 const baseComponents = ['Landing','QCM','Slider','ImageChoice','Text','Email','Results','Graphique','AnalyzeResults','InfoSlide','PerineeDiag','EightOfTen','PlanProjection','Benefits'];
 const urlParams = new URL(window.location.href).searchParams;
-const saleVariant = (urlParams.get('view') === 'sale_violent') ? 'ResultsSale_violent' : 'ResultsSale';
-const componentsToLoad = baseComponents.concat([saleVariant]);
+const viewRaw = urlParams.get('view') || '';
+const view = (viewRaw === 'p_science' ? 'lp_science' : (viewRaw === 'p_emotion' ? 'lp_emotion' : viewRaw));
+const lp = urlParams.get('lp') || (window.location.pathname.indexOf('/emotion') !== -1 ? 'emotion' : (window.location.pathname.indexOf('/science') !== -1 ? 'science' : 'science'));
+// Keep file names as original for now, but components register as lp_emotion/lp_science
+let saleScript = (lp === 'emotion') ? 'ResultsSale_violent' : 'ResultsSale';
+if (view === 'lp_emotion') saleScript = 'ResultsSale_violent';
+if (view === 'lp_science') saleScript = 'ResultsSale';
+const componentsToLoad = baseComponents.concat([saleScript]);
 function waitForSb(){ return new Promise(function(res){ var t=0; var id=setInterval(function(){ if (window.sbApi || t++>200){ clearInterval(id); res(); } }, 25); }); }
 Promise.all(componentsToLoad.map(loadComponent).concat([waitForSb()])).then(function(){
   const root = ReactDOM.createRoot(document.getElementById('root'));
