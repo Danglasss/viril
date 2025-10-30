@@ -1,198 +1,296 @@
 import Head from 'next/head';
-import Script from 'next/script';
+import { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
-import { useEffect, useMemo, useState } from 'react';
 
 type LangDict = Record<string, Record<string, string>>;
-type Theme = {
-  colors: Record<string, string> & { background?: string };
-  radius: number;
-  border: number;
-  logoUrl?: string;
-};
-type Question = any;
 
-function getParamFromQuery(query: Record<string, any>, name: string, defaultValue: string) {
-  const raw = query[name];
-  if (Array.isArray(raw)) return (raw[0] as string) ?? defaultValue;
-  return (raw as string) ?? defaultValue;
-}
-
-export const getServerSideProps: GetServerSideProps = async ({ query, req }) => {
-  const proto = (req.headers['x-forwarded-proto'] as string) || 'https';
-  const host = (req.headers['x-forwarded-host'] as string) || req.headers.host || '';
-  const origin = host ? `${proto}://${host}` : '';
-  async function readJson<T>(pathname: string): Promise<T> {
-    const res = await fetch(`${origin}${pathname}`);
-    if (!res.ok) throw new Error(`Failed to load ${pathname}: ${res.status}`);
-    return (await res.json()) as T;
-  }
-  const theme: Theme = await readJson('/data/theme.json');
-  const lang: LangDict = await readJson('/data/lang.json');
-  const test: { questions: Question[] } = await readJson('/data/test.json');
-  const langCode = getParamFromQuery(query as any, 'lang', 'en');
-  const step = parseInt(getParamFromQuery(query as any, 'step', '0'), 10) || 0;
-  return { props: { theme, lang, test, langCode, step } };
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const langCode = (Array.isArray(query.lang) ? query.lang[0] : query.lang) || 'fr';
+  return { props: { langCode } };
 };
 
-export default function Home({ theme, lang, test, langCode, step }: { theme: Theme; lang: LangDict; test: { questions: Question[] }; langCode: string; step: number; }) {
-  const [answers, setAnswers] = useState<Record<string, any>>({});
-  const [results, setResults] = useState<any>(null);
-  const totalQuestions = test.questions.length;
-
-  const t = (k: string) => (lang[langCode] && lang[langCode][k]) || k;
-  const siteName = 'Viril';
-  const origin = typeof window === 'undefined' ? '' : window.location.origin;
-  const path = typeof window === 'undefined' ? '' : window.location.pathname + window.location.search;
-  const url = `${origin || ''}${path || ''}`;
-  const title = 'Viril — Solution contre l\u2019éjaculation pr\u00e9coce';
-  const description = 'Programme et exercices pour retarder l\u2019\u00e9jaculation, am\u00e9liorer le contr\u00f4le et la confiance au lit.';
+export default function Home({ langCode }: { langCode: string }) {
+  const [lang, setLang] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    const r = document.documentElement as HTMLElement;
-    const c = theme.colors || {} as any;
-    const set = (k: string, v?: string) => v && r.style.setProperty(k, v);
-    set('--color-primary', c.primary);
-    set('--color-secondary', c.secondary);
-    set('--color-bg', c.background);
-    set('--color-text', c.text);
-    set('--color-card', c.card);
-    set('--color-option-bg', c.optionBackground);
-    set('--color-option-selected', c.optionSelected);
-    set('--color-button', c.button);
-    set('--color-button-text', c.buttonText);
-    set('--color-email-button', c.emailButton);
-    set('--color-email-button-text', c.emailButtonText);
-    set('--slider-track', c.optionBackground || '#E6E3DC');
-    set('--slider-fill', c.emailButton || c.primary || '#80C9AC');
-    set('--slider-thumb', '#FFFFFF');
-    r.style.setProperty('--radius', String(theme.radius)+'px');
-    r.style.setProperty('--border', String(theme.border)+'px');
-  }, [theme]);
+    (async () => {
+      try {
+        const res = await fetch('/data/lang.json');
+        if (res.ok) {
+          const data: LangDict = await res.json();
+          setLang(data[langCode] || data['fr'] || {});
+        }
+      } catch {}
+    })();
+  }, [langCode]);
 
-  // Keep SSR block identical across server and first client render to avoid hydration mismatch
-
-  const landingStep = useMemo(() => ({
-    id: '__landing',
-    type: 'Landing',
-    headline: { fr: 'Solution pour éjaculation précoce', en: 'Premature ejaculation solution' },
-    subtitle: { fr: 'Passe ce test et recois un plan personnalisé pour ne plus jamais venir trop tôt', en: 'Take this test and receive a personalized plan to never be early again' },
-    first: test.questions[0]
-  }), [lang, test]);
-
-  const flow = useMemo(() => ([
-    landingStep,
-    ...test.questions.slice(1),
-    { id: '__email', type: 'Email', text: { [langCode]: t('enter_email') }, placeholder: t('email_placeholder'), cta: t('see_results') },
-    { id: '__results', type: 'Results', results: results || { top: '', scores: {} }, title: t('results_title') }
-  ]), [landingStep, test, langCode, results]);
-
-  const total = flow.length;
-  const current = Math.max(0, Math.min(step, total - 1));
-  const q = flow[current];
-  const qText = q.text && (q.text[langCode] || q.text['en'] || '');
-
-  function computeScores() {
-    const counts: Record<string, number> = {};
-    for (const qq of test.questions) {
-      const ans = (answers as any)[qq.id];
-      if (!ans || !qq.options) continue;
-      const handleVal = (val: any) => {
-        const opt = (qq.options || []).find((o: any) => o.value === val);
-        const key = opt && (opt.language || opt.lang);
-        if (key) counts[key] = (counts[key] || 0) + 1;
-      };
-      if (Array.isArray(ans)) ans.forEach(handleVal); else handleVal(ans);
-    }
-    let top = '';
-    let max = -1;
-    Object.entries(counts).forEach(([k,v]) => { if (v > max) { max = v; top = k; } });
-    return { top, scores: counts };
-  }
-
-  const goTo = (n: number) => {
-    const url = new URL(window.location.href);
-    url.searchParams.set('step', String(n));
-    window.location.assign(url.toString());
-  };
-
-  const isChoice = q.type === 'QCM' || q.type === 'ImageChoice';
-  const hideNav = q.type === 'Email' || q.type === 'Landing' || q.type === 'Results';
+  const t = (key: string) => lang[key] || key;
 
   return (
     <>
       <Head>
-        <title>{title}</title>
-        <meta name="description" content={description} />
-        <link rel="canonical" href={url || 'https://example.com/'} />
-        {/* OG */}
-        <meta property="og:type" content="website" />
-        <meta property="og:site_name" content={siteName} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        <meta property="og:url" content={url || 'https://example.com/'} />
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={description} />
-        {/* Single-locale FR; no hreflang alternates */}
-        {/* JSON-LD */}
-        <script type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Organization',
-            name: siteName,
-            url: origin || 'https://example.com',
-            logo: theme.logoUrl || undefined
-          }) }} />
-        <script type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'WebSite',
-            name: siteName,
-            url: origin || 'https://example.com',
-            potentialAction: {
-              '@type': 'SearchAction',
-              target: `${origin || 'https://example.com'}/?q={search_term_string}`,
-              'query-input': 'required name=search_term_string'
-            }
-          }) }} />
+        <title>Viril — Reprends le contrôle au lit en 12 semaines</title>
+        <meta name="description" content="Programme d'exercices périnéaux guidés. 5 min/jour, résultats mesurés dès la 2ᵉ semaine. 8 500+ utilisateurs. Test gratuit." />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <div id="ssr-landing" className="container" suppressHydrationWarning>
-        {theme.logoUrl && (
-          <div style={{ marginTop: 0, marginBottom: 16, display: 'flex', justifyContent: 'center' }}>
-            <img src={theme.logoUrl} alt="logo" style={{ height: 48 }} />
+
+      <div style={{ background: '#0E0E0F', color: '#F2F2F3', minHeight: '100vh', fontFamily: 'Manrope, ui-sans-serif, system-ui, -apple-system' }}>
+        
+        {/* Header */}
+        <header style={{ borderBottom: '1px solid rgba(255,255,255,.08)', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <img src="/viril-logo.svg" alt="Viril" style={{ height: 32 }} />
+          <a href="/test?lp=science" style={{ color: '#FF7A1A', textDecoration: 'none', fontWeight: 700, fontSize: 14 }}>
+            {t('lp_cta_quiz')}
+          </a>
+        </header>
+
+        {/* Hero */}
+        <section style={{ maxWidth: 1100, margin: '0 auto', padding: '60px 20px 80px', textAlign: 'center' }}>
+          <h1 style={{ fontSize: 48, fontWeight: 900, lineHeight: 1.1, margin: '0 0 16px', letterSpacing: '-.02em' }}>
+            {t('lp_hero_title')}
+          </h1>
+          <p style={{ fontSize: 18, opacity: .85, margin: '0 0 24px', maxWidth: 700, marginLeft: 'auto', marginRight: 'auto' }}>
+            {t('lp_hero_subtitle')}
+          </p>
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 20, fontSize: 14, opacity: .7 }}>
+            <span>⭐ 8 500+ utilisateurs</span>
+            <span>•</span>
+            <span>Note 4,8/5</span>
+            <span>•</span>
+            <span>Méthode validée</span>
           </div>
-        )}
-        <div style={{ minHeight: 'calc(100vh - 520px)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'stretch' }}>
-          <div style={{ marginBottom: 12, textAlign: 'center' }}>
-            <h1 style={{ fontFamily: 'Manrope, ui-sans-serif', fontSize: 34, fontWeight: 800, lineHeight: 1.15, margin: 0 }}>{landingStep.headline['fr']}</h1>
-            <h2 style={{ opacity: .85, marginTop: 10, fontSize: 18, fontWeight: 600, fontFamily: 'Manrope, ui-sans-serif' }}>{landingStep.subtitle['fr']}</h2>
-            {/* No-JS view: omit CTA link; show real options below */}
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <a 
+              href="/construction" 
+              style={{ 
+                background: 'linear-gradient(135deg, #FF4D00, #FF7A1A)', 
+                color: '#FFF', 
+                padding: '16px 32px', 
+                borderRadius: 8, 
+                textDecoration: 'none', 
+                fontWeight: 800, 
+                fontSize: 16,
+                boxShadow: '0 4px 20px rgba(255,77,0,.3)',
+                display: 'inline-block'
+              }}
+            >
+              {t('lp_cta_download')}
+            </a>
+            <a 
+              href="/test?lp=science" 
+              style={{ 
+                background: 'rgba(255,255,255,.06)', 
+                color: '#F2F2F3', 
+                padding: '16px 32px', 
+                borderRadius: 8, 
+                textDecoration: 'none', 
+                fontWeight: 800, 
+                fontSize: 16,
+                border: '1px solid rgba(255,255,255,.12)',
+                display: 'inline-block'
+              }}
+            >
+              {t('lp_cta_quiz')}
+            </a>
           </div>
-          {/* Server-rendered preview of first question options (non-clickable, for SEO/no-JS) */}
-          <div className="options" style={{ marginTop: 16 }}>
-            {(landingStep.first?.options || []).map((o: any) => (
-              <div key={String(o.value)} className="option">
-                {(o.label && (o.label[langCode] || o.label.en)) || String(o.value)}
+          <p style={{ marginTop: 12, fontSize: 12, opacity: .6 }}>
+            Gratuit • Confidentiel • Sans équipement
+          </p>
+        </section>
+
+        {/* Comment ça fonctionne */}
+        <section style={{ maxWidth: 1100, margin: '0 auto', padding: '60px 20px', borderTop: '1px solid rgba(255,255,255,.08)' }}>
+          <h2 style={{ fontSize: 32, fontWeight: 900, textAlign: 'center', marginBottom: 40, letterSpacing: '-.01em' }}>
+            {t('lp_how_title')}
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32 }}>
+            {[
+              { num: '1', title: t('lp_step1_title'), desc: t('lp_step1_desc') },
+              { num: '2', title: t('lp_step2_title'), desc: t('lp_step2_desc') },
+              { num: '3', title: t('lp_step3_title'), desc: t('lp_step3_desc') }
+            ].map(step => (
+              <div key={step.num} style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 12, padding: 24 }}>
+                <div style={{ 
+                  width: 48, 
+                  height: 48, 
+                  borderRadius: 8, 
+                  background: 'linear-gradient(135deg, #FF4D00, #FF7A1A)', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  fontSize: 24, 
+                  fontWeight: 900,
+                  marginBottom: 16
+                }}>
+                  {step.num}
+                </div>
+                <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>{step.title}</h3>
+                <p style={{ fontSize: 15, opacity: .8, lineHeight: 1.6, margin: 0 }}>{step.desc}</p>
               </div>
             ))}
           </div>
-        </div>
+          <div style={{ textAlign: 'center', marginTop: 40 }}>
+            <a 
+              href="/test?lp=science" 
+              style={{ 
+                background: 'linear-gradient(135deg, #FF4D00, #FF7A1A)', 
+                color: '#FFF', 
+                padding: '14px 28px', 
+                borderRadius: 8, 
+                textDecoration: 'none', 
+                fontWeight: 800, 
+                fontSize: 15,
+                display: 'inline-block'
+              }}
+            >
+              {t('lp_cta_quiz')}
+            </a>
+          </div>
+        </section>
+
+        {/* Features */}
+        <section style={{ maxWidth: 1100, margin: '0 auto', padding: '60px 20px', borderTop: '1px solid rgba(255,255,255,.08)' }}>
+          <h2 style={{ fontSize: 32, fontWeight: 900, textAlign: 'center', marginBottom: 40 }}>
+            {t('lp_features_title')}
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
+            {[
+              'Accès privé à ton espace d\'entraînement (mobile & desktop)',
+              'Vidéos techniques : posture, respiration, contraction/relâchement',
+              'Programme progressif sur 12 semaines (débutant → avancé)',
+              'Suivi automatique de tes performances (tracking des durées)',
+              'Exercices de désensibilisation et techniques de contrôle mental',
+              'Protocole validé sur 8 500+ utilisateurs'
+            ].map((feature, i) => (
+              <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                <span style={{ color: '#FF7A1A', fontSize: 20, lineHeight: 1 }}>✓</span>
+                <span style={{ fontSize: 15, opacity: .9, lineHeight: 1.6 }}>{feature}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Preuves sociales */}
+        <section style={{ maxWidth: 1100, margin: '0 auto', padding: '60px 20px', borderTop: '1px solid rgba(255,255,255,.08)' }}>
+          <h2 style={{ fontSize: 32, fontWeight: 900, textAlign: 'center', marginBottom: 16 }}>
+            {t('lp_social_title')}
+          </h2>
+        
+          <div style={{ display: 'flex', gap: 32, justifyContent: 'center', marginBottom: 40, flexWrap: 'wrap', fontSize: 15, opacity: .85 }}>
+            <span>✓ 89% atteignent 10+ min</span>
+            <span>✓ +320% de durée moyenne</span>
+            <span>✓ 97% voient des résultats dès la 2ᵉ semaine</span>
+          </div>
+        
+        </section>
+
+        {/* Pourquoi ça marche */}
+        <section style={{ maxWidth: 1100, margin: '0 auto', padding: '60px 20px', borderTop: '1px solid rgba(255,255,255,.08)' }}>
+          <h2 style={{ fontSize: 32, fontWeight: 900, textAlign: 'center', marginBottom: 40 }}>
+            {t('lp_why_title')}
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
+            <div style={{ background: 'rgba(255,77,0,.08)', border: '1px solid rgba(255,77,0,.2)', borderRadius: 12, padding: 24 }}>
+              <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 12, color: '#FF7A1A' }}>Hypertonique</h3>
+              <p style={{ fontSize: 15, lineHeight: 1.6, margin: 0, opacity: .9 }}>
+                Excès de tension → hypersensibilité. <br />
+                Méthode : désensibilisation progressive + respiration.
+              </p>
+            </div>
+            <div style={{ background: 'rgba(255,77,0,.08)', border: '1px solid rgba(255,77,0,.2)', borderRadius: 12, padding: 24 }}>
+              <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 12, color: '#FF7A1A' }}>Hypotonique</h3>
+              <p style={{ fontSize: 15, lineHeight: 1.6, margin: 0, opacity: .9 }}>
+                Manque de tonus → contrôle limité. <br />
+                Méthode : renforcement musculaire + coordination.
+              </p>
+            </div>
+          </div>
+          <p style={{ textAlign: 'center', marginTop: 32, fontSize: 16, opacity: .9 }}>
+            Le test gratuit identifie ton profil en 2 minutes.
+          </p>
+        </section>
+
+        {/* FAQ */}
+        <section style={{ maxWidth: 900, margin: '0 auto', padding: '60px 20px', borderTop: '1px solid rgba(255,255,255,.08)' }}>
+          <h2 style={{ fontSize: 32, fontWeight: 900, textAlign: 'center', marginBottom: 40 }}>
+            {t('lp_faq_title')}
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            {[
+              { q: "Le programme est-il adapté à tous ?", a: "Oui, sauf contre-indications médicales spécifiques. Consulte un médecin si doute." },
+              { q: "C'est anonyme ?", a: "Oui, aucune donnée personnelle divulguée." },
+              { q: "Dois-je m'entraîner tous les jours ?", a: "5 jours/semaine, 5 min/jour suffit." },
+              { q: "Quand vais-je voir des résultats ?", a: "97% des utilisateurs constatent des améliorations dès la 2ᵉ semaine." },
+              { q: "Ça remplace un traitement médical ?", a: "Non. Si tu as des troubles persistants, consulte un professionnel de santé." },
+              { q: "Je suis célibataire, c'est utile ?", a: "Oui, tu seras prêt et confiant quand l'occasion se présentera." }
+            ].map((faq, i) => (
+              <details key={i} style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 12, padding: 20 }}>
+                <summary style={{ fontSize: 16, fontWeight: 700, cursor: 'pointer', marginBottom: 12 }}>
+                  {faq.q}
+                </summary>
+                <p style={{ fontSize: 15, opacity: .85, lineHeight: 1.6, margin: 0 }}>
+                  {faq.a}
+                </p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        {/* Final CTA */}
+        <section style={{ maxWidth: 1100, margin: '0 auto', padding: '60px 20px', borderTop: '1px solid rgba(255,255,255,.08)', textAlign: 'center' }}>
+          <h2 style={{ fontSize: 36, fontWeight: 900, marginBottom: 16 }}>
+            Tu ne risques rien. Tu as tout à gagner.
+          </h2>
+          <p style={{ fontSize: 18, opacity: .85, marginBottom: 32 }}>
+            Commence dès maintenant ton programme personnalisé.
+          </p>
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <a 
+              href="/construction" 
+              style={{ 
+                background: 'linear-gradient(135deg, #FF4D00, #FF7A1A)', 
+                color: '#FFF', 
+                padding: '16px 32px', 
+                borderRadius: 8, 
+                textDecoration: 'none', 
+                fontWeight: 800, 
+                fontSize: 16,
+                display: 'inline-block'
+              }}
+            >
+              {t('lp_cta_download')}
+            </a>
+            <a 
+              href="/test?lp=science" 
+              style={{ 
+                background: 'rgba(255,255,255,.06)', 
+                color: '#F2F2F3', 
+                padding: '16px 32px', 
+                borderRadius: 8, 
+                textDecoration: 'none', 
+                fontWeight: 800, 
+                fontSize: 16,
+                border: '1px solid rgba(255,255,255,.12)',
+                display: 'inline-block'
+              }}
+            >
+              {t('lp_cta_quiz')}
+            </a>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer style={{ borderTop: '1px solid rgba(255,255,255,.08)', padding: '40px 20px', textAlign: 'center', opacity: .7, fontSize: 13 }}>
+          <div style={{ marginBottom: 16 }}>
+            <a href="/terms" style={{ color: 'inherit', textDecoration: 'none', marginRight: 16 }}>CGU</a>
+            <a href="/privacy" style={{ color: 'inherit', textDecoration: 'none', marginRight: 16 }}>Politique de confidentialité</a>
+            <a href="/cookies" style={{ color: 'inherit', textDecoration: 'none', marginRight: 16 }}>Cookies</a>
+            <a href="mailto:contact@viril.app" style={{ color: 'inherit', textDecoration: 'none' }}>Contact</a>
+          </div>
+          <p style={{ margin: 0 }}>© {new Date().getFullYear()} Viril. Tous droits réservés.</p>
+        </footer>
+
       </div>
-      {/* Client bundle for current UMD app to preserve behavior */}
-      <div id="root" />
-      <Script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" strategy="beforeInteractive" />
-      <Script src="/supabaseClient.js" strategy="beforeInteractive" />
-      <Script src="/app.js" strategy="afterInteractive" />
-      <Script id="remove-ssr-landing" strategy="afterInteractive">{`
-        (function(){
-          var el = document.getElementById('ssr-landing');
-          if (el && el.parentNode) { el.parentNode.removeChild(el); }
-        })();
-      `}</Script>
     </>
   );
 }
-
-

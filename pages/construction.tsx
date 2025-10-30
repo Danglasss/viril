@@ -8,10 +8,20 @@ export default function Construction() {
   const [logoUrl, setLogoUrl] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    try {
-      // Ensure anonymous session so we can upsert on profiles
-      (window as any).sbApi && (window as any).sbApi.ensureSession();
-    } catch(_) {}
+    // Ensure quiz version is set from test.json BEFORE any sbApi call
+    (async function(){
+      try {
+        const r = await fetch('/data/test.json');
+        if (r && r.ok) {
+          const test = await r.json();
+          try { (window as any).__QUIZ_VERSION = (test && test.version) || (window as any).__QUIZ_VERSION || 'C'; } catch(_) {}
+        }
+      } catch(_) {}
+      try {
+        // Ensure anonymous session so we can upsert on profiles
+        (window as any).sbApi && (await (window as any).sbApi.ensureSession());
+      } catch(_) {}
+    })();
     // Apply app theme (dark) like the main app
     (async function(){
       try {

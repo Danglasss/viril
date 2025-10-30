@@ -5,8 +5,8 @@ const nextConfig = {
       { source: '/robots.txt', destination: '/api/robots.txt' },
       { source: '/sitemap.xml', destination: '/api/sitemap.xml' },
       // Pretty URLs to choose LP variant
-      { source: '/lp/emotion', destination: '/?lp=emotion' },
-      { source: '/lp/science', destination: '/?lp=science' }
+      { source: '/lp/emotion', destination: '/test?lp=emotion' },
+      { source: '/lp/science', destination: '/test?lp=science' }
     ];
   }
 };

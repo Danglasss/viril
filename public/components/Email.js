@@ -8,6 +8,8 @@
     function mapDesired(val){
       if (!val) return null;
       const v = String(val);
+      // If user chose an open-ended label, default to 15 min for copy
+      if (v === 'as_long_as_wanted') return '15 min';
       if (/^\d+$/.test(v)) return v + ' min';
       return v;
     }
@@ -38,6 +40,17 @@
       ? `Basé sur tes réponses, reçois ton plan sur mesure pour ${reasonText} ${statusText}`
       : `Based on your answers, we built a tailored plan to ${reasonText} with your partner — without sacrificing pleasure.`);
     const submit = () => {
+      // 1) Validate form first
+      const okEmail = /.+@.+\..+/.test(data.email || '');
+      const hasFirst = !!(data.firstName && String(data.firstName).trim().length > 0);
+      if (!okEmail || !hasFirst) {
+        try { alert(lang==='fr' ? 'Entre un prénom et un email valides' : 'Enter a valid first name and email'); } catch(_) {}
+        return;
+      }
+      // 2) Guard against double clicks
+      try { if ((window && (window).hasOwnProperty('__SIGN_UP_FIRED') && (window).__SIGN_UP_FIRED)) { return; } } catch(_) {}
+      try { if (typeof window !== 'undefined') { (window).__SIGN_UP_FIRED = true; } } catch(_) {}
+
       function proceed(){
         try { if (window.__submitEmail) window.__submitEmail(); } catch(_) {}
         // Fire-and-forget Supabase tasks in background (non-blocking)
@@ -46,10 +59,7 @@
             try {
               if (window.sbApi) {
                 try { await window.sbApi.ensureSession(); } catch(_) {}
-                const okEmail = /.+@.+\..+/.test(data.email || '');
-                if (okEmail && data.firstName) {
-                  try { await window.sbApi.upsertProfile({ email: data.email, first_name: data.firstName, is_anonymous: true }); } catch(_) {}
-                }
+                try { await window.sbApi.upsertProfile({ email: data.email, first_name: data.firstName, is_anonymous: true }); } catch(_) {}
               }
             } catch (e) { console.warn('supabase upsert profile failed', e); }
           })();
