@@ -101,6 +101,15 @@ function App() {
       }
     } catch(e) { console.error('[app] saveProgress thrown', e); }
   }, [step, answers]);
+
+  // Auto-sync profile fields from quiz answers (fire-and-forget, never blocks UI)
+  React.useEffect(()=>{
+    try {
+      if (window.profileSync && Object.keys(answers).length > 0) {
+        window.profileSync.syncAnswers(answers);
+      }
+    } catch(e) { console.error('[app] profileSync thrown', e); }
+  }, [answers]);
   if (!theme || !langDict || !test) return React.createElement('div', { className: 'container' }, 'Loading...');
 
   // Ensure quiz version from test.json is propagated to Supabase writes

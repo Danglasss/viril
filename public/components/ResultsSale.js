@@ -3,6 +3,15 @@
     const lang = new URL(location.href).searchParams.get('lang') || 'fr';
     const answers = (typeof window !== 'undefined' && window.__getAnswers && window.__getAnswers()) || {};
 
+    // Force sync profile at paywall load (ensure all data is up-to-date before purchase)
+    React.useEffect(() => {
+      try {
+        if (window.profileSync && Object.keys(answers).length > 0) {
+          window.profileSync.syncNow(answers);
+        }
+      } catch(e) { console.error('[paywall] profileSync error', e); }
+    }, []);
+
     // Counter removed
     function mapMinutes(val){
       const v = String(val||'');

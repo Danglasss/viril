@@ -184,6 +184,7 @@ export default function Home({ theme, lang, test, langCode, step }: { theme: The
       <div id="root" />
       <Script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" strategy="beforeInteractive" />
       <Script src="/supabaseClient.js" strategy="beforeInteractive" />
+      <Script src="/profileSync.js" strategy="beforeInteractive" />
       <Script src="/app.js" strategy="afterInteractive" />
       <Script id="remove-ssr-landing" strategy="afterInteractive">{`
         (function(){

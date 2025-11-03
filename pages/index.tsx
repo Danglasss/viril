@@ -29,7 +29,7 @@ export default function Home({ langCode }: { langCode: string }) {
   return (
     <>
       <Head>
-        <title>Viril — Reprends le contrôle au lit en 12 semaines</title>
+        <title>Viril — Retrouve ta confiance en 12 semaines</title>
         <meta name="description" content="Programme d'exercices périnéaux guidés. 5 min/jour, résultats mesurés dès la 2ᵉ semaine. 8 500+ utilisateurs. Test gratuit." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
