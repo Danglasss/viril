@@ -489,17 +489,11 @@
           ),
           React.createElement('div', { style:{ marginTop:16, display:'flex', justifyContent:'flex-end' } },
             React.createElement('button', { className:'btn primary', style:{ width:'auto', borderRadius:0, padding:'12px 18px', color:'#FFFFFF', fontWeight:800 }, onClick:function(){
+              try { if (window && window.dataLayer) { window.dataLayer.push({ event:'select_plan', plan }); } } catch(_){ }
+              try { if (window.checkout && typeof window.checkout.beginCheckoutForPlan === 'function') { window.checkout.beginCheckoutForPlan(String(plan)); return; } } catch(_){ }
               var targetUrl = '/construction';
-              try {
-                var u = new URL(window.location.origin + '/construction');
-                try { var langParam = new URL(window.location.href).searchParams.get('lang'); if (langParam) u.searchParams.set('lang', langParam); } catch(_){ }
-                if (plan) u.searchParams.set('plan', String(plan));
-                targetUrl = u.toString();
-              } catch(_) {}
-              var navigated = false; var go = function(){ if (navigated) return; navigated = true; try { window.location.replace(targetUrl); } catch(_){ window.location.href = targetUrl; } };
-              try { if (window && window.dataLayer) { window.dataLayer.push({ event:'select_plan', plan }); } } catch(_){};
-              try { if (window && window.dataLayer) { window.dataLayer.push({ event:'fake_purchase', plan, eventCallback: go, event_callback: go, event_timeout: 150 }); } } catch(_){};
-              setTimeout(go, 150);
+              try { var u = new URL(window.location.origin + '/construction'); try { var langParam = new URL(window.location.href).searchParams.get('lang'); if (langParam) u.searchParams.set('lang', langParam); } catch(_){ } if (plan) u.searchParams.set('plan', String(plan)); targetUrl = u.toString(); } catch(_) {}
+              try { window.location.replace(targetUrl); } catch(_){ window.location.href = targetUrl; }
             } }, 'Continuer →')
           )
         ));

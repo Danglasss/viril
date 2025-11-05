@@ -540,6 +540,8 @@
                 cursor: 'pointer'
               }, 
               onClick:function(){ 
+                try { if (window && window.dataLayer) { window.dataLayer.push({ event:'select_plan', plan }); } } catch(_){ }
+                try { if (window.checkout && typeof window.checkout.beginCheckoutForPlan === 'function') { window.checkout.beginCheckoutForPlan(String(plan)); return; } } catch(_){ }
                 var targetUrl = '/construction';
                 try {
                   var u = new URL(window.location.origin + '/construction');
@@ -547,11 +549,7 @@
                   if (plan) u.searchParams.set('plan', String(plan));
                   targetUrl = u.toString();
                 } catch(_) {}
-                var navigated = false; var go = function(){ if (navigated) return; navigated = true; try { window.location.replace(targetUrl); } catch(_){ window.location.href = targetUrl; } };
-                // Attempt to send GTM events but do not block navigation >150ms
-                try { if (window && window.dataLayer) { window.dataLayer.push({ event:'select_plan', plan }); } } catch(_){};
-                try { if (window && window.dataLayer) { window.dataLayer.push({ event:'fake_purchase', plan, eventCallback: go, event_callback: go, event_timeout: 150 }); } } catch(_){}
-                setTimeout(go, 150);
+                try { window.location.replace(targetUrl); } catch(_){ window.location.href = targetUrl; }
               } 
             }, 'OUI, je veux durer plus longtemps →'),
             React.createElement('div', { style:{ textAlign:'center', fontSize:12, opacity:.6 } }, 
