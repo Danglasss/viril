@@ -12,8 +12,8 @@
     });
   }
   // Read from env (Next.js public env) or window injections; fallback to provided defaults for reliability
-  const DEFAULT_SUPABASE_URL = 'https://jlxmjcwckikwohndadue.supabase.co';
-  const DEFAULT_SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpseG1qY3dja2lrd29obmRhZHVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3Mjg2MTQsImV4cCI6MjA3NTMwNDYxNH0.yt9-Blx8SObkxj7ZhaCRENxNhH5fNj906dNOigZst5w';
+  const DEFAULT_SUPABASE_URL = 'https://jdglouhvmwozdbuzbngh.supabase.co';
+  const DEFAULT_SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkZ2xvdWh2bXdvemRidXpibmdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3OTM5NzUsImV4cCI6MjA3NzM2OTk3NX0.HBvyGfjkLxcK-OOl9yUA-7sUzl5o6Xdke98NlLY20LQ';
   const url = (function(){ try { return (typeof process!=='undefined' && process.env && process.env.NEXT_PUBLIC_SUPABASE_URL) || window.__SUPABASE_URL || DEFAULT_SUPABASE_URL; } catch(_) { return window.__SUPABASE_URL || DEFAULT_SUPABASE_URL; } })();
   const anonKey = (function(){ try { return (typeof process!=='undefined' && process.env && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) || window.__SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON; } catch(_) { return window.__SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON; } })();
   try { if (url) window.__SUPABASE_URL = url; if (anonKey) window.__SUPABASE_ANON_KEY = anonKey; } catch(_) {}
