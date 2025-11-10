@@ -2,6 +2,13 @@
   function ResultsSale(){
     const lang = new URL(location.href).searchParams.get('lang') || 'fr';
     const answers = (typeof window !== 'undefined' && window.__getAnswers && window.__getAnswers()) || {};
+    const personalization = (function(){
+      try {
+        if (typeof window !== 'undefined' && window.__getPersonalization) return window.__getPersonalization();
+        const raw = typeof window !== 'undefined' ? window.localStorage.getItem('viril_personalization') : null;
+        return raw ? JSON.parse(raw) : null;
+      } catch(_) { return null; }
+    })();
 
     // Timer 10:00 active only when tab visible
     const initial = 600; // seconds
@@ -27,8 +34,8 @@
       if (/^\d+$/.test(v)) return Number(v);
       return 2;
     }
-    const beforeMin = mapMinutes(answers['diag_duration']);
-    const targetMin = mapMinutes(answers['proj_target_duration']);
+    const beforeMin = mapMinutes(answers['diag_duration'] || (personalization && personalization.diag_duration));
+    const targetMin = mapMinutes(answers['proj_target_duration'] || (personalization && personalization.proj_target_duration));
 
     // selection du plan
     const [plan, setPlan] = React.useState('4w');

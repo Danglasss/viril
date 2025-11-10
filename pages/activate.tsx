@@ -119,6 +119,8 @@ export default function Activate() {
     setLoading(true);
 
     try {
+      // Ensure session again before calling edge function
+      try { if ((window as any).sbApi) { await (window as any).sbApi.ensureSession(); } } catch(_){}
       // Call the Supabase Edge Function
       const supabaseUrl = 'https://jdglouhvmwozdbuzbngh.supabase.co';
       const anon = (typeof window !== 'undefined' && (window as any).__SUPABASE_ANON_KEY) ? (window as any).__SUPABASE_ANON_KEY : (process as any)?.env?.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -141,7 +143,7 @@ export default function Activate() {
       try { data = await response.json(); } catch(_) { data = {}; }
       console.info('[activate] function response', { status: response.status, ok: response.ok, data });
 
-      if (response.ok && data.success) {
+      if (response.ok && (data.success || data.ok === true)) {
         // Success - redirect to download page
         router.push('/download');
       } else {
@@ -408,7 +410,7 @@ export default function Activate() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading || !supabaseReady || error === 'session'}
+              disabled={loading}
               style={{
                 width: '100%',
                 padding: '16px',
@@ -421,10 +423,10 @@ export default function Activate() {
                 cursor: loading ? 'not-allowed' : 'pointer',
                 boxShadow: '0 4px 24px rgba(255, 77, 0, 0.3)',
                 transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                opacity: (loading || error === 'session') ? 0.6 : 1
+                opacity: loading ? 0.6 : 1
               }}
               onMouseEnter={(e) => {
-                if (!loading && error !== 'session') {
+                if (!loading) {
                   e.currentTarget.style.transform = 'translateY(-2px)';
                   e.currentTarget.style.boxShadow = '0 6px 32px rgba(255, 77, 0, 0.4)';
                 }
@@ -433,7 +435,7 @@ export default function Activate() {
                 if (!loading) {
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.boxShadow = '0 4px 24px rgba(255, 77, 0, 0.3)';
-                }
+            }
               }}
             >
           {loading ? 'Activation en cours...' : 'Activer →'}

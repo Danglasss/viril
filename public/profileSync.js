@@ -126,15 +126,23 @@
       const data = syncQueue[syncQueue.length - 1];
       syncQueue = []; // Vider la queue
 
-      // Vérifier qu'on a un client Supabase et un utilisateur
+      // S'assurer que la session est prête (tentative anonyme si besoin)
+      try { if (window.sbApi && typeof window.sbApi.ensureSession === 'function') { await window.sbApi.ensureSession(); } } catch(e) { console.warn('[profileSync] ensureSession failed', e); }
+      // Vérifier qu'on a un client Supabase
       if (!window._sb) {
-        console.warn('[profileSync] Supabase client not ready');
+        console.warn('[profileSync] Supabase client not ready, retrying soon');
+        // re-queue and retry later
+        syncQueue.push(data);
+        setTimeout(processQueue, 500);
         return;
       }
 
       const { data: user } = await window._sb.auth.getUser();
       if (!user || !user.user || !user.user.id) {
-        console.warn('[profileSync] No user logged in (session not ready yet)');
+        console.warn('[profileSync] No user logged in (session not ready yet) — retrying soon');
+        // re-queue and retry later
+        syncQueue.push(data);
+        setTimeout(processQueue, 500);
         return;
       }
 

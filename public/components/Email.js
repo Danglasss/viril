@@ -6,6 +6,13 @@
     const firedRef = React.useRef(false);
     // Build dynamic copy from previous answers
     const answers = (typeof window !== 'undefined' && window.__getAnswers && window.__getAnswers()) || {};
+    const personalization = (function(){
+      try {
+        if (typeof window !== 'undefined' && window.__getPersonalization) return window.__getPersonalization();
+        const raw = typeof window !== 'undefined' ? window.localStorage.getItem('viril_personalization') : null;
+        return raw ? JSON.parse(raw) : null;
+      } catch(_) { return null; }
+    })();
     function mapDesired(val){
       if (!val) return null;
       const v = String(val);
@@ -31,9 +38,9 @@
         default: return 'ta partenaire';
       }
     }
-    const desired = mapDesired(answers['proj_target_duration']);
-    const reasonText = mapReason(answers['proj_main_reason']);
-    const statusText = mapStatus(answers['demo_status']);
+    const desired = mapDesired(answers['proj_target_duration'] || (personalization && personalization.proj_target_duration));
+    const reasonText = mapReason(answers['proj_main_reason'] || (personalization && personalization.proj_main_reason));
+    const statusText = mapStatus(answers['demo_status'] || (personalization && personalization.demo_status));
     const headline = (lang==='fr'
       ? `Ton plan personnalisé pour tenir ${desired ? '+ de ' + desired : 'minutes'}`
       : `Your personalized plan to last ${desired ? 'over ' + desired : 'minutes'}`);
