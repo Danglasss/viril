@@ -2,6 +2,6 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/success": "pages/success.js",
-  "/activate": "pages/activate.js"
+  "/activate": "pages/activate.js",
+  "/success": "pages/success.js"
 }

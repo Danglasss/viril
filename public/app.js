@@ -154,9 +154,19 @@ function App() {
   try {
     if (typeof window !== 'undefined') {
       window.__QUIZ_VERSION = quizVersion;
+      // Expose current language to consumers that need localized labels
+      window.__LANG_CODE = langCode;
       window.dataLayer = window.dataLayer || [];
       // push once per load
       if (!(window.__QV_Pushed)) { window.dataLayer.push({ event: 'quiz_version', quiz_version: quizVersion }); window.__QV_Pushed = true; }
+      // Expose specific question options for localized mapping (e.g., proj_main_reason → profiles.goal)
+      try {
+        window.__QUIZ_OPTIONS = window.__QUIZ_OPTIONS || {};
+        const reasonQ = (test && Array.isArray(test.questions)) ? test.questions.find(function(q){ return q && q.id === 'proj_main_reason'; }) : null;
+        if (reasonQ && Array.isArray(reasonQ.options)) {
+          window.__QUIZ_OPTIONS['proj_main_reason'] = reasonQ.options;
+        }
+      } catch(_) {}
     }
   } catch(_) {}
 

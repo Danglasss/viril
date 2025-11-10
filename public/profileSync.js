@@ -31,12 +31,45 @@
       updated_at: new Date().toISOString()
     };
 
+    // Resolve language for label mappings
+    const resolveLang = (function(){
+      try {
+        return (answers && (answers.lang || answers.locale)) || (typeof window !== 'undefined' && window.__LANG_CODE) || 'fr';
+      } catch(_) { return 'fr'; }
+    })();
+    const lang = (resolveLang === 'fr' || resolveLang === 'en') ? resolveLang : 'fr';
+
+    function mapReasonToGoalString(val){
+      if (!val) return null;
+      const v = String(val);
+      try {
+        if (typeof window !== 'undefined' && window.__QUIZ_OPTIONS && window.__QUIZ_OPTIONS['proj_main_reason']) {
+          const opts = window.__QUIZ_OPTIONS['proj_main_reason'] || [];
+          const found = opts.find(function(o){ return o && o.value === v; });
+          if (found && found.label) {
+            const lbl = found.label[lang] || found.label.en || null;
+            if (lbl) return lbl;
+          }
+        }
+      } catch(_) {}
+      // Fallback map aligned with test.json
+      const fallback = {
+        'partner_pleasure': { fr: 'Pour donner plus de plaisir à ma partenaire', en: 'Give more pleasure to my partner' },
+        'confidence': { fr: 'Pour me sentir plus confiant et puissant', en: 'Feel more confident and powerful' },
+        'avoid_frustration': { fr: 'Pour éviter la frustration', en: 'Avoid frustration' },
+        'enjoy_more': { fr: 'Pour profiter pleinement de mes rapports', en: 'Enjoy my sex life more' },
+        'other': { fr: 'Autre', en: 'Other' }
+      };
+      const f = fallback[v];
+      return f ? (f[lang] || f.en) : v;
+    }
+
     // Age range
     const ageRange = answers['demo_age'] || answers['age'] || answers['age_range'];
     if (ageRange) profile.age_range = ageRange;
 
     // Relationship status
-    const relationshipStatus = answers['demo_relationship'] || answers['relationship_status'] || answers['couple_status'];
+    const relationshipStatus = answers['demo_status'] || answers['demo_relationship'] || answers['relationship_status'] || answers['couple_status'];
     if (relationshipStatus) profile.relationship_status = relationshipStatus;
 
     // Baseline minutes (durée actuelle)
@@ -49,8 +82,9 @@
     const targetMinutes = mapMinutes(targetDuration);
     if (targetMinutes !== null) profile.target_minutes = targetMinutes;
 
-    // Goal
-    const goal = answers['proj_goal'] || answers['goal'] || answers['main_goal'];
+    // Goal (localized human-readable label from proj_main_reason)
+    const rawReason = answers['proj_main_reason'] || answers['proj_goal'] || answers['goal'] || answers['main_goal'];
+    const goal = mapReasonToGoalString(rawReason);
     if (goal) profile.goal = goal;
 
     // Locale
@@ -106,9 +140,10 @@
 
       const userId = user.user.id;
 
-      // Mettre à jour le profil
+      // Écrire le profil (upsert pour créer si la ligne n'existe pas encore)
+      const payload = Object.assign({ id: userId }, data);
       const { error } = await Promise.race([
-        window._sb.from('profiles').update(data).eq('id', userId),
+        window._sb.from('profiles').upsert(payload, { onConflict: 'id' }),
         new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000))
       ]);
 

@@ -24,6 +24,8 @@ export default function Activate() {
       // Wait for Supabase to be ready
       if (typeof window !== 'undefined' && (window as any).sbApi) {
         setSupabaseReady(true);
+        // Ensure we have a session (anonymous if needed) before reading user
+        try { await (window as any).sbApi.ensureSession(); } catch (e) { console.warn('[activate] ensureSession failed', e); }
         
         // Check URL params first (priority)
         const urlAuthUserId = router.query.auth_user_id as string;
@@ -119,10 +121,14 @@ export default function Activate() {
     try {
       // Call the Supabase Edge Function
       const supabaseUrl = 'https://jdglouhvmwozdbuzbngh.supabase.co';
+      const anon = (typeof window !== 'undefined' && (window as any).__SUPABASE_ANON_KEY) ? (window as any).__SUPABASE_ANON_KEY : (process as any)?.env?.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
       const response = await fetch(`${supabaseUrl}/functions/v1/activate-account`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          // Required by Supabase Edge Functions
+          'Authorization': `Bearer ${anon}`,
+          'apikey': anon
         },
         body: JSON.stringify({
           auth_user_id: authUserId,
@@ -131,7 +137,9 @@ export default function Activate() {
         })
       });
 
-      const data = await response.json();
+      let data: any = {};
+      try { data = await response.json(); } catch(_) { data = {}; }
+      console.info('[activate] function response', { status: response.status, ok: response.ok, data });
 
       if (response.ok && data.success) {
         // Success - redirect to download page
@@ -428,7 +436,7 @@ export default function Activate() {
                 }
               }}
             >
-              {loading ? 'Activation en cours...' : 'Activer →'}
+          {loading ? 'Activation en cours...' : 'Activer →'}
             </button>
           </form>
 
