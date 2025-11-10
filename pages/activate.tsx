@@ -26,6 +26,52 @@ export default function Activate() {
         setSupabaseReady(true);
         // Ensure we have a session (anonymous if needed) before reading user
         try { await (window as any).sbApi.ensureSession(); } catch (e) { console.warn('[activate] ensureSession failed', e); }
+        // Helper: resolve auth user id with retries (in case session takes a moment)
+        const resolveAuthUserId = async (): Promise<string | null> => {
+          const deadline = Date.now() + 3000;
+          while (Date.now() < deadline) {
+            try {
+              const sb = (window as any)._sb;
+              if (sb && sb.auth) {
+                const { data: { user } } = await sb.auth.getUser();
+                if (user && user.id) return user.id;
+              }
+            } catch (_) {}
+            await new Promise(res => setTimeout(res, 150));
+          }
+          // DB fallback: find last quiz_session by client_id cookie/localStorage
+          try {
+            const sb = (window as any)._sb;
+            if (!sb) return null;
+            const getClientId = (): string | null => {
+              try {
+                // cookie first
+                const m = document.cookie.match(/(?:^|;\s*)client_id=([^;]+)/);
+                if (m && m[1]) return decodeURIComponent(m[1]);
+              } catch(_) {}
+              try {
+                const v = window.localStorage.getItem('client_id');
+                if (v) return v;
+              } catch(_) {}
+              return null;
+            };
+            const cid = getClientId();
+            if (!cid) return null;
+            const { data, error } = await sb
+              .from('quiz_sessions')
+              .select('user_id, step')
+              .eq('client_id', cid)
+              .order('step', { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            if (!error && data && data.user_id) {
+              return data.user_id as string;
+            }
+          } catch(e) {
+            console.warn('[activate] DB fallback (quiz_sessions by client_id) failed', e);
+          }
+          return null;
+        };
         
         // Check URL params first (priority)
         const urlAuthUserId = router.query.auth_user_id as string;
@@ -41,23 +87,15 @@ export default function Activate() {
           console.info('[activate] Using partial UTM (auth_user_id only)');
           setAuthUserId(urlAuthUserId);
         } else {
-          // CAS A: Try to get from current session
+          // CAS A: Try to get from current session (best-effort, no blocking error)
           try {
-            const sb = (window as any)._sb;
-            if (sb) {
-              const { data: { user } } = await sb.auth.getUser();
-              if (user && user.id) {
-                console.info('[activate] Using session user_id:', user.id);
-                setAuthUserId(user.id);
-              } else {
-                setError('session');
-              }
-            } else {
-              setError('session');
+            const uid = await resolveAuthUserId();
+            if (uid) {
+              console.info('[activate] Using resolved user_id:', uid);
+              setAuthUserId(uid);
             }
           } catch (e) {
-            console.error('[activate] Failed to get session:', e);
-            setError('session');
+            console.warn('[activate] session lookup failed (non-blocking)', e);
           }
         }
       }
@@ -111,6 +149,50 @@ export default function Activate() {
       return;
     }
 
+    // Try to resolve missing auth_user_id one more time before submission
+    if (!authUserId) {
+      try {
+        if ((window as any).sbApi) { await (window as any).sbApi.ensureSession(); }
+        const sb = (window as any)._sb;
+        if (sb) {
+          const { data: { user } } = await sb.auth.getUser();
+          if (user && user.id) {
+            setAuthUserId(user.id);
+          }
+          if (!user || !user.id) {
+            // DB fallback by client_id
+            const getClientId = (): string | null => {
+              try {
+                const m = document.cookie.match(/(?:^|;\s*)client_id=([^;]+)/);
+                if (m && m[1]) return decodeURIComponent(m[1]);
+              } catch(_) {}
+              try {
+                const v = window.localStorage.getItem('client_id');
+                if (v) return v;
+              } catch(_) {}
+              return null;
+            };
+            const cid = getClientId();
+            if (cid) {
+              try {
+                const { data, error } = await sb
+                  .from('quiz_sessions')
+                  .select('user_id, step')
+                  .eq('client_id', cid)
+                  .order('step', { ascending: false })
+                  .limit(1)
+                  .maybeSingle();
+                if (!error && data && data.user_id) {
+                  setAuthUserId(data.user_id as string);
+                }
+              } catch(e2) {
+                console.warn('[activate] submit DB fallback failed', e2);
+              }
+            }
+          }
+        }
+      } catch(_) {}
+    }
     if (!authUserId) {
       setError('session');
       return;
