@@ -510,7 +510,7 @@
           );
         }
         return Block('Dernière étape : Choisis ton engagement', React.createElement('div', { id: 'plan-section', style:{ scrollMarginTop: 80 } },
-          Row({ id:'trial', title:`Essai 7 jours`, totalEUR:6.99, perDayEUR:0.99 }),
+          Row({ id:'trial', title:`Accès 7 jours`, totalEUR:6.99, perDayEUR:0.99 }),
           Row({ id:'4w', title:'Transformation 4 semaines', totalEUR:15.19, perDayEUR:0.49 }),
           Row({ id:'12w', title:'Maîtrise totale 12 semaines', totalEUR:25.99, perDayEUR:0.29, popular:true, savings:'-43%' }),
           React.createElement('div', { style:{ display:'grid', gridTemplateColumns:'auto 1fr', gap:12, marginTop:16, padding:'12px', background:'rgba(255,150,0,.1)', border:'1px solid rgba(255,150,0,.3)', borderRadius:6 } },

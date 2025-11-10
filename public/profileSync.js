@@ -100,7 +100,7 @@
 
       const { data: user } = await window._sb.auth.getUser();
       if (!user || !user.user || !user.user.id) {
-        console.warn('[profileSync] No user logged in');
+        console.warn('[profileSync] No user logged in (session not ready yet)');
         return;
       }
 
@@ -177,7 +177,7 @@
 
       const { data: user } = await window._sb.auth.getUser();
       if (!user || !user.user || !user.user.id) {
-        console.warn('[profileSync] No user logged in');
+        console.warn('[profileSync] No user logged in (session not ready yet)');
         return false;
       }
 

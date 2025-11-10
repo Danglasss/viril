@@ -42,6 +42,18 @@
     return window._sb;
   }
 
+  // Debug helper to inspect current auth/client state on demand
+  async function __sbDebug(){
+    try {
+      await waitForClient();
+      const sb = ensure();
+      const env = { url, anonLen: String(anonKey||'').length };
+      const sess = sb ? await sb.auth.getSession() : null;
+      const usr = sb ? await sb.auth.getUser() : null;
+      console.info('[sb][debug]', { env, hasClient: !!sb, session: (sess && sess.data && !!sess.data.session), userId: (usr && usr.data && usr.data.user && usr.data.user.id) });
+    } catch(e) { console.warn('[sb][debug] failed', e && e.message); }
+  }
+
   // quiz version: env -> window flag -> url ?qv=
   function getQuizVersion(){
     try {
@@ -68,21 +80,49 @@
 
   async function ensureSession(){
     await waitForClient();
-    const sb = ensure(); if (!sb) return null;
+    const sb = ensure(); 
+    if (!sb) {
+      console.error('[sb] ensureSession: client not ready');
+      return null;
+    }
+    console.info('[sb] ensureSession: checking session...');
     let { data: { session } } = await sb.auth.getSession();
+    console.info('[sb] existing session:', session ? 'YES' : 'NO');
     if (!session) {
       try {
         const lockKey = 'sb_signing_lock';
         if (!localStorage.getItem(lockKey)) {
+          console.info('[sb] attempting anonymous signin...');
           localStorage.setItem(lockKey, '1');
-          await sb.auth.signInAnonymously();
+          const result = await sb.auth.signInAnonymously();
+          console.info('[sb] anon signin result:', { 
+            hasData: !!result.data, 
+            hasSession: !!(result.data && result.data.session),
+            hasError: !!result.error,
+            errorMsg: result.error ? result.error.message : null,
+            errorStatus: result.error ? result.error.status : null,
+            errorCode: result.error ? result.error.code : null
+          });
+          if (result.error) throw result.error;
           console.info('[sb] anon signin ok');
+        } else {
+          console.warn('[sb] signup already in progress (lock exists)');
         }
-      } catch(e) { console.error('[sb] anon signin failed', e); }
+      } catch(e) {
+        console.error('[sb] anon signin FAILED - full error:', e);
+        console.error('[sb] error details:', {
+          message: e && e.message,
+          status: e && e.status,
+          code: e && e.code,
+          name: e && e.name,
+          __isAuthError: e && e.__isAuthError
+        });
+      }
       finally { try { localStorage.removeItem('sb_signing_lock'); } catch(_) {} }
       ({ data: { session } } = await sb.auth.getSession());
     }
-    // upsert profile shell (one row per user_id)
+    // upsert profile shell (one row per user_id) - TEMPORAIREMENT COMMENTÉ POUR DEBUG
+    /*
     try { const { data: u } = await sb.auth.getUser(); if (u && u.user) {
       const { error } = await sb.from('profiles').upsert({ id: u.user.id }, { onConflict: 'id' });
       if (error) console.error('[sb] profiles upsert shell error', error); else console.info('[sb] profiles upsert shell ok');
@@ -102,6 +142,8 @@
         }
       } catch(e2) { console.warn('[sb] init quiz_session check failed', e2 && e2.message); }
     } } catch(e) { console.warn('[sb] profiles upsert shell skipped', e && e.message); }
+    */
+    console.info('[sb] DB upserts disabled for debugging');
     return session;
   }
 
@@ -160,7 +202,7 @@
     if (error) throw error; return true;
   }
 
-  window.sbApi = { ensureSession, upsertProfile, saveProgress, finalizePlan, signUpEmail, signInWithGoogle };
+  window.sbApi = { ensureSession, upsertProfile, saveProgress, finalizePlan, signUpEmail, signInWithGoogle, __sbDebug };
   console.info('[sb] wrapper loaded');
 })();
 

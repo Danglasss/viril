@@ -67,7 +67,12 @@ function App() {
 
   React.useEffect(() => {
     try {
-      if (window.sbApi) { console.info('[app] ensureSession call'); window.sbApi.ensureSession(); }
+      if (window.sbApi) {
+        console.info('[app] ensureSession call');
+        Promise.resolve(window.sbApi.ensureSession())
+          .then(function(){ console.info('[app] session ready'); })
+          .catch(function(e){ console.error('[app] ensureSession error', e); });
+      }
     } catch(e) { console.error('[app] ensureSession error', e); }
     if (!theme) return;
     const r = document.documentElement;
@@ -110,6 +115,38 @@ function App() {
       }
     } catch(e) { console.error('[app] profileSync thrown', e); }
   }, [answers]);
+  // Persist answers locally for client-side personalization and resilience on back/refresh
+  React.useEffect(() => {
+    try {
+      localStorage.setItem('viril_answers', JSON.stringify(answers || {}));
+      const a = answers || {};
+      const emailData = (a['__email'] && typeof a['__email'] === 'object') ? a['__email'] : {};
+      const personalization = {
+        firstName: emailData.firstName || '',
+        email: emailData.email || '',
+        diag_duration: a['diag_duration'] || null,
+        proj_target_duration: a['proj_target_duration'] || null,
+        proj_main_reason: a['proj_main_reason'] || null,
+        demo_status: a['demo_status'] || null,
+        lang: langCode || 'fr',
+        updatedAt: Date.now()
+      };
+      localStorage.setItem('viril_personalization', JSON.stringify(personalization));
+      try { if (typeof window !== 'undefined') { window.__getPersonalization = function(){ return personalization; }; } } catch(_) {}
+    } catch(_) {}
+  }, [answers, langCode]);
+  // Restore answers from localStorage on first mount (if any)
+  React.useEffect(() => {
+    try {
+      const raw = localStorage.getItem('viril_answers');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') {
+          setAnswers(parsed);
+        }
+      }
+    } catch(_) {}
+  }, []);
   if (!theme || !langDict || !test) return React.createElement('div', { className: 'container' }, 'Loading...');
 
   // Ensure quiz version from test.json is propagated to Supabase writes
@@ -223,7 +260,17 @@ function App() {
   const onChange = (v) => setAnswers(a => ({ ...a, [q.id]: v }));
   // expose answers getter for components needing dynamic copy
   try { if (typeof window !== 'undefined') { window.__getAnswers = function(){ return answers; }; } } catch(_) {}
-  const goTo = (n) => { setParam('step', n); setStep(n); };
+  const goTo = (n) => {
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('view');
+      url.searchParams.set('step', String(n));
+      window.history.pushState({}, '', url.toString());
+    } catch(_) {
+      setParam('step', n);
+    }
+    setStep(n);
+  };
 
   // expose global next for components that auto-advance
   window.__goNext = () => {

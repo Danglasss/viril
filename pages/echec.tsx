@@ -8,7 +8,7 @@ export default function Echec() {
   const reason = String((router.query.reason as string) || 'checkout_error');
 
   const label = (function(){
-    if (plan === 'trial') return 'Essai 7 jours';
+    if (plan === 'trial') return 'Accès 7 jours';
     if (plan === '4w') return 'Plan 4 semaines';
     if (plan === '12w') return 'Plan 12 semaines';
     return plan ? `Plan: ${plan}` : 'Paiement';

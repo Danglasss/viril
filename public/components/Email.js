@@ -3,6 +3,7 @@
   function Email({ question, value, onChange, lang }) {
     const data = (value && typeof value === 'object') ? value : { firstName: '', email: '' };
     const upd = (k, v) => onChange({ ...data, [k]: v });
+    const firedRef = React.useRef(false);
     // Build dynamic copy from previous answers
     const answers = (typeof window !== 'undefined' && window.__getAnswers && window.__getAnswers()) || {};
     function mapDesired(val){
@@ -47,9 +48,10 @@
         try { alert(lang==='fr' ? 'Entre un prénom et un email valides' : 'Enter a valid first name and email'); } catch(_) {}
         return;
       }
-      // 2) Guard against double clicks
-      try { if ((window && (window).hasOwnProperty('__SIGN_UP_FIRED') && (window).__SIGN_UP_FIRED)) { return; } } catch(_) {}
-      try { if (typeof window !== 'undefined') { (window).__SIGN_UP_FIRED = true; } } catch(_) {}
+      // 2) Guard against double clicks (component-local)
+      if (firedRef.current) return;
+      firedRef.current = true;
+      setTimeout(function(){ firedRef.current = false; }, 1500);
 
       function proceed(){
         try { if (window.__submitEmail) window.__submitEmail(); } catch(_) {}
