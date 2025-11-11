@@ -17,6 +17,7 @@ export default function Activate() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<ErrorType>(null);
   const [supabaseReady, setSupabaseReady] = useState(false);
+  const [initializing, setInitializing] = useState(true);
 
   // Initialize Supabase and get auth_user_id
   useEffect(() => {
@@ -93,11 +94,30 @@ export default function Activate() {
             if (uid) {
               console.info('[activate] Using resolved user_id:', uid);
               setAuthUserId(uid);
+              
+              // Try to pre-fill email from profiles
+              try {
+                const sb = (window as any)._sb;
+                if (sb) {
+                  const { data: profile } = await sb
+                    .from('profiles')
+                    .select('email')
+                    .eq('id', uid)
+                    .maybeSingle();
+                  if (profile && profile.email) {
+                    setEmail(profile.email);
+                    console.info('[activate] Pre-filled email from profile');
+                  }
+                }
+              } catch (profileErr) {
+                console.warn('[activate] Could not fetch profile email:', profileErr);
+              }
             }
           } catch (e) {
             console.warn('[activate] session lookup failed (non-blocking)', e);
           }
         }
+        setInitializing(false);
       }
     };
 
@@ -333,7 +353,7 @@ export default function Activate() {
           </p>
 
           {/* Error Message */}
-          {error && (
+          {error && error !== 'session' && (
             <div 
               style={{ 
                 background: 'rgba(239, 68, 68, 0.1)',
@@ -347,6 +367,25 @@ export default function Activate() {
               }}
             >
               {getErrorMessage(error)}
+            </div>
+          )}
+
+          {/* Loading state during initialization */}
+          {initializing && (
+            <div 
+              style={{ 
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: 8,
+                padding: 16,
+                marginBottom: 24,
+                fontSize: 15,
+                lineHeight: 1.5,
+                textAlign: 'center',
+                opacity: 0.8
+              }}
+            >
+              Initialisation...
             </div>
           )}
 

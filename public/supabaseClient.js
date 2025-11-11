@@ -121,29 +121,31 @@
       finally { try { localStorage.removeItem('sb_signing_lock'); } catch(_) {} }
       ({ data: { session } } = await sb.auth.getSession());
     }
-    // upsert profile shell (one row per user_id) - TEMPORAIREMENT COMMENTÉ POUR DEBUG
-    /*
-    try { const { data: u } = await sb.auth.getUser(); if (u && u.user) {
-      const { error } = await sb.from('profiles').upsert({ id: u.user.id }, { onConflict: 'id' });
-      if (error) console.error('[sb] profiles upsert shell error', error); else console.info('[sb] profiles upsert shell ok');
-      // Ensure a quiz_session row exists at step 0 for this user (but do NOT override higher steps)
-      try {
-        const { data: existing, error: selErr } = await sb.from('quiz_sessions').select('user_id, variant_lp').eq('user_id', u.user.id).maybeSingle();
-        if (!selErr && !existing) {
-          const init = { user_id: u.user.id, client_id: getClientId(), step: 0, answers: {}, quiz_version: getQuizVersion(), variant_lp: getLpVariant() };
-          const { error: insErr } = await sb.from('quiz_sessions').insert(init);
-          if (insErr) console.warn('[sb] init quiz_session insert failed', insErr); else console.info('[sb] init quiz_session created');
-        } else if (!selErr && existing && !existing.variant_lp) {
-          const v = getLpVariant();
-          if (v) {
-            const { error: updErr } = await sb.from('quiz_sessions').update({ variant_lp: v }).eq('user_id', u.user.id);
-            if (updErr) console.warn('[sb] variant_lp update failed', updErr); else console.info('[sb] variant_lp set');
+    // upsert profile shell (one row per user_id) and quiz_session
+    try { 
+      const { data: u } = await sb.auth.getUser(); 
+      if (u && u.user) {
+        const { error } = await sb.from('profiles').upsert({ id: u.user.id }, { onConflict: 'id' });
+        if (error) console.error('[sb] profiles upsert shell error', error); else console.info('[sb] profiles upsert shell ok');
+        // Ensure a quiz_session row exists at step 0 for this user (but do NOT override higher steps)
+        try {
+          const { data: existing, error: selErr } = await sb.from('quiz_sessions').select('user_id, variant_lp').eq('user_id', u.user.id).maybeSingle();
+          if (!selErr && !existing) {
+            const init = { user_id: u.user.id, client_id: getClientId(), step: 0, answers: {}, quiz_version: getQuizVersion(), variant_lp: getLpVariant() };
+            const { error: insErr } = await sb.from('quiz_sessions').insert(init);
+            if (insErr) console.warn('[sb] init quiz_session insert failed', insErr); else console.info('[sb] init quiz_session created');
+          } else if (!selErr && existing && !existing.variant_lp) {
+            const v = getLpVariant();
+            if (v) {
+              const { error: updErr } = await sb.from('quiz_sessions').update({ variant_lp: v }).eq('user_id', u.user.id);
+              if (updErr) console.warn('[sb] variant_lp update failed', updErr); else console.info('[sb] variant_lp set');
+            }
           }
-        }
-      } catch(e2) { console.warn('[sb] init quiz_session check failed', e2 && e2.message); }
-    } } catch(e) { console.warn('[sb] profiles upsert shell skipped', e && e.message); }
-    */
-    console.info('[sb] DB upserts disabled for debugging');
+        } catch(e2) { console.warn('[sb] init quiz_session check failed', e2 && e2.message); }
+      } 
+    } catch(e) { 
+      console.warn('[sb] profiles upsert shell skipped', e && e.message); 
+    }
     return session;
   }
 

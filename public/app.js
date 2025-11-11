@@ -50,7 +50,13 @@ function App() {
   const { data: langDict } = useFetch('/data/lang.json');
   const { data: test } = useFetch('/data/test.json');
 
-  const [answers, setAnswers] = React.useState({});
+  // Restore answers from localStorage on load
+  const [answers, setAnswers] = React.useState(() => {
+    try {
+      const stored = localStorage.getItem('viril_answers');
+      return stored ? JSON.parse(stored) : {};
+    } catch(_) { return {}; }
+  });
   const [results, setResults] = React.useState(null);
   // Keep step in state so UI updates when navigating
   const [step, setStep] = React.useState(Number.isFinite(stepParam) ? stepParam : 0);
