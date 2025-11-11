@@ -52,7 +52,7 @@ export default function Success() {
           ecommerce: {
             transaction_id: sessionId,
             value: amount,
-            currency,
+            currency: currency || 'EUR',
             items: [
               {
                 item_id: itemId,

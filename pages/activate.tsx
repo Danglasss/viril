@@ -32,6 +32,12 @@ export default function Activate() {
           const deadline = Date.now() + 3000;
           while (Date.now() < deadline) {
             try {
+              // 1) Prefer localStorage (persisted by supabaseClient)
+              try {
+                const fromLocal = localStorage.getItem('viril_user_id');
+                if (fromLocal) return fromLocal;
+              } catch(_) {}
+              // 2) Fallback: Supabase auth
               const sb = (window as any)._sb;
               if (sb && sb.auth) {
                 const { data: { user } } = await sb.auth.getUser();
@@ -39,37 +45,6 @@ export default function Activate() {
               }
             } catch (_) {}
             await new Promise(res => setTimeout(res, 150));
-          }
-          // DB fallback: find last quiz_session by client_id cookie/localStorage
-          try {
-            const sb = (window as any)._sb;
-            if (!sb) return null;
-            const getClientId = (): string | null => {
-              try {
-                // cookie first
-                const m = document.cookie.match(/(?:^|;\s*)client_id=([^;]+)/);
-                if (m && m[1]) return decodeURIComponent(m[1]);
-              } catch(_) {}
-              try {
-                const v = window.localStorage.getItem('client_id');
-                if (v) return v;
-              } catch(_) {}
-              return null;
-            };
-            const cid = getClientId();
-            if (!cid) return null;
-            const { data, error } = await sb
-              .from('quiz_sessions')
-              .select('user_id, step')
-              .eq('client_id', cid)
-              .order('step', { ascending: false })
-              .limit(1)
-              .maybeSingle();
-            if (!error && data && data.user_id) {
-              return data.user_id as string;
-            }
-          } catch(e) {
-            console.warn('[activate] DB fallback (quiz_sessions by client_id) failed', e);
           }
           return null;
         };
@@ -173,41 +148,18 @@ export default function Activate() {
     if (!authUserId) {
       try {
         if ((window as any).sbApi) { await (window as any).sbApi.ensureSession(); }
-        const sb = (window as any)._sb;
-        if (sb) {
-          const { data: { user } } = await sb.auth.getUser();
-          if (user && user.id) {
-            setAuthUserId(user.id);
-          }
-          if (!user || !user.id) {
-            // DB fallback by client_id
-            const getClientId = (): string | null => {
-              try {
-                const m = document.cookie.match(/(?:^|;\s*)client_id=([^;]+)/);
-                if (m && m[1]) return decodeURIComponent(m[1]);
-              } catch(_) {}
-              try {
-                const v = window.localStorage.getItem('client_id');
-                if (v) return v;
-              } catch(_) {}
-              return null;
-            };
-            const cid = getClientId();
-            if (cid) {
-              try {
-                const { data, error } = await sb
-                  .from('quiz_sessions')
-                  .select('user_id, step')
-                  .eq('client_id', cid)
-                  .order('step', { ascending: false })
-                  .limit(1)
-                  .maybeSingle();
-                if (!error && data && data.user_id) {
-                  setAuthUserId(data.user_id as string);
-                }
-              } catch(e2) {
-                console.warn('[activate] submit DB fallback failed', e2);
-              }
+        // Prefer localStorage
+        try {
+          const fromLocal = localStorage.getItem('viril_user_id');
+          if (fromLocal) { setAuthUserId(fromLocal); }
+        } catch(_) {}
+        // Fallback: Supabase auth user
+        if (!authUserId) {
+          const sb = (window as any)._sb;
+          if (sb) {
+            const { data: { user } } = await sb.auth.getUser();
+            if (user && user.id) {
+              setAuthUserId(user.id);
             }
           }
         }

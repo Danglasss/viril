@@ -25,12 +25,12 @@
     });
   }
 
-  function getClientId(){
-    try {
-      let id = localStorage.getItem('client_id');
-      if (!id) { id = uuidv4(); localStorage.setItem('client_id', id); document.cookie = 'client_id='+id+'; path=/; max-age='+(3600*24*400); }
-      return id;
-    } catch(_) { return undefined; }
+  // User ID persistence helpers
+  function getStoredUserId(){
+    try { return localStorage.getItem('viril_user_id') || null; } catch(_) { return null; }
+  }
+  function setStoredUserId(id){
+    try { if (id) localStorage.setItem('viril_user_id', id); } catch(_) {}
   }
 
   function ensure(){
@@ -125,13 +125,15 @@
     try { 
       const { data: u } = await sb.auth.getUser(); 
       if (u && u.user) {
+        // persist user id locally for quick retrievals
+        try { setStoredUserId(u.user.id); } catch(_) {}
         const { error } = await sb.from('profiles').upsert({ id: u.user.id }, { onConflict: 'id' });
         if (error) console.error('[sb] profiles upsert shell error', error); else console.info('[sb] profiles upsert shell ok');
         // Ensure a quiz_session row exists at step 0 for this user (but do NOT override higher steps)
         try {
           const { data: existing, error: selErr } = await sb.from('quiz_sessions').select('user_id, variant_lp').eq('user_id', u.user.id).maybeSingle();
           if (!selErr && !existing) {
-            const init = { user_id: u.user.id, client_id: getClientId(), step: 0, answers: {}, quiz_version: getQuizVersion(), variant_lp: getLpVariant() };
+            const init = { user_id: u.user.id, step: 0, answers: {}, quiz_version: getQuizVersion(), variant_lp: getLpVariant() };
             const { error: insErr } = await sb.from('quiz_sessions').insert(init);
             if (insErr) console.warn('[sb] init quiz_session insert failed', insErr); else console.info('[sb] init quiz_session created');
           } else if (!selErr && existing && !existing.variant_lp) {
@@ -172,6 +174,8 @@
     const sb = ensure(); if (!sb) return false;
     const { data: u } = await sb.auth.getUser(); const user_id = u && u.user && u.user.id;
     if (!user_id) return false;
+    // persist user id locally
+    try { setStoredUserId(user_id); } catch(_) {}
     // Read current to avoid decreasing the stored step; merge answers
     let currentStep = 0; let currentAnswers = {}; let currentVariant = undefined;
     try {
@@ -180,7 +184,7 @@
     } catch(_) {}
     const nextStep = Math.max(currentStep, Number(step||0)||0);
     const mergedAnswers = Object.assign({}, currentAnswers, answers||{});
-    const payload = { user_id, client_id: getClientId(), step: nextStep, answers: mergedAnswers, quiz_version: getQuizVersion(), variant_lp: (currentVariant || getLpVariant()) };
+    const payload = { user_id, step: nextStep, answers: mergedAnswers, quiz_version: getQuizVersion(), variant_lp: (currentVariant || getLpVariant()) };
     const { error } = await sb.from('quiz_sessions').upsert(payload, { onConflict: 'user_id' });
     if (error) { console.error('[sb] saveProgress error', error); return false; }
     console.info('[sb] saveProgress ok', { step_submitted: step||0, step_saved: payload.step });
@@ -192,7 +196,8 @@
     const sb = ensure(); if (!sb) return false;
     const { data: u } = await sb.auth.getUser(); const user_id = u && u.user && u.user.id;
     if (!user_id) return false;
-    const { error } = await sb.from('plans').insert({ user_id, client_id: getClientId(), version: 1, plan: plan||{}, quiz_version: getQuizVersion(), created_at: new Date().toISOString() });
+    try { setStoredUserId(user_id); } catch(_) {}
+    const { error } = await sb.from('plans').insert({ user_id, version: 1, plan: plan||{}, quiz_version: getQuizVersion(), created_at: new Date().toISOString() });
     if (error) { console.error('[sb] finalizePlan error', error); return false; }
     console.info('[sb] finalizePlan ok');
     return true;
