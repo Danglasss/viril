@@ -29,14 +29,15 @@ export default function Success() {
           }
         } catch(_) {}
 
-        // Read plan metadata saved before redirect
+        // Read plan metadata saved before redirect (sessionStorage primary, localStorage fallback)
         let planMeta: any = null;
         try {
-          const raw = (typeof window !== 'undefined') ? window.sessionStorage.getItem('viril_checkout_plan') : null;
+          const raw = (typeof window !== 'undefined') ? 
+            (window.sessionStorage.getItem('viril_checkout_plan') || window.localStorage.getItem('viril_checkout_plan')) : null;
           if (raw) { planMeta = JSON.parse(raw); }
         } catch(_) {}
         if (!planMeta || !planMeta.value || !planMeta.currency) {
-          console.warn('[success] missing plan metadata in sessionStorage');
+          console.warn('[success] missing plan metadata in storage');
           return;
         }
 
@@ -44,6 +45,8 @@ export default function Success() {
         const currency = String(planMeta.currency || 'EUR').toUpperCase();
         const itemId = String(planMeta.item_id || planMeta.plan_id || 'viril_subscription');
         const itemName = String(planMeta.item_name || 'Viril Premium');
+        
+        console.info('[success] Plan metadata found', { amount, currency, itemId, itemName });
 
         // Push GA4 purchase event via GTM dataLayer (transaction_id MUST be session_id)
         (window as any).dataLayer = (window as any).dataLayer || [];

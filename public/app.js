@@ -276,6 +276,8 @@ function App() {
   const onChange = (v) => setAnswers(a => ({ ...a, [q.id]: v }));
   // expose answers getter for components needing dynamic copy
   try { if (typeof window !== 'undefined') { window.__getAnswers = function(){ return answers; }; } } catch(_) {}
+  // expose setter for Landing to save under real question ID (demo_age) not __landing
+  try { if (typeof window !== 'undefined') { window.__setAnswer = function(id, val){ setAnswers(a => ({ ...a, [id]: val })); }; } } catch(_) {}
   const goTo = (n) => {
     try {
       const url = new URL(window.location.href);

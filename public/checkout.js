@@ -62,7 +62,7 @@
   async function beginCheckoutForPlan(planId){
     try { if (window.dataLayer) { window.dataLayer.push({ event:'begin_checkout', plan: planId }); } } catch(_) {}
 
-    // Persist plan metadata for GA4 purchase event on /success (sessionStorage)
+    // Persist plan metadata for GA4 purchase event on /success (both sessionStorage and localStorage for reliability)
     try {
       var planMetaMap = {
         'trial': { item_id: 'trial', item_name: 'Accès 7 jours', value: 6.99, currency: 'EUR' },
@@ -72,7 +72,11 @@
       var meta = planMetaMap[planId] || null;
       if (meta) {
         var payload = { plan_id: planId, item_id: meta.item_id, item_name: meta.item_name, value: meta.value, currency: meta.currency, saved_at: Date.now() };
-        try { sessionStorage.setItem('viril_checkout_plan', JSON.stringify(payload)); } catch(_) {}
+        try { 
+          sessionStorage.setItem('viril_checkout_plan', JSON.stringify(payload)); 
+          localStorage.setItem('viril_checkout_plan', JSON.stringify(payload)); 
+          console.info('[checkout] plan metadata saved', payload);
+        } catch(_) {}
       }
     } catch(_) {}
 

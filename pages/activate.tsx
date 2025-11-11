@@ -19,80 +19,77 @@ export default function Activate() {
   const [supabaseReady, setSupabaseReady] = useState(false);
   const [initializing, setInitializing] = useState(true);
 
-  // Initialize Supabase and get auth_user_id
+  // Initialize Supabase and get auth_user_id (instant via localStorage)
   useEffect(() => {
     const init = async () => {
-      // Wait for Supabase to be ready
-      if (typeof window !== 'undefined' && (window as any).sbApi) {
-        setSupabaseReady(true);
-        // Ensure we have a session (anonymous if needed) before reading user
-        try { await (window as any).sbApi.ensureSession(); } catch (e) { console.warn('[activate] ensureSession failed', e); }
-        // Helper: resolve auth user id with retries (in case session takes a moment)
-        const resolveAuthUserId = async (): Promise<string | null> => {
-          const deadline = Date.now() + 3000;
-          while (Date.now() < deadline) {
-            try {
-              // 1) Prefer localStorage (persisted by supabaseClient)
-              try {
-                const fromLocal = localStorage.getItem('viril_user_id');
-                if (fromLocal) return fromLocal;
-              } catch(_) {}
-              // 2) Fallback: Supabase auth
-              const sb = (window as any)._sb;
-              if (sb && sb.auth) {
-                const { data: { user } } = await sb.auth.getUser();
-                if (user && user.id) return user.id;
-              }
-            } catch (_) {}
-            await new Promise(res => setTimeout(res, 150));
-          }
-          return null;
-        };
-        
-        // Check URL params first (priority)
-        const urlAuthUserId = router.query.auth_user_id as string;
-        const urlEmail = router.query.email as string;
+      if (typeof window === 'undefined') return;
+      
+      setSupabaseReady(true);
+      
+      // Check URL params first (priority - magic link)
+      const urlAuthUserId = router.query.auth_user_id as string;
+      const urlEmail = router.query.email as string;
 
-        if (urlAuthUserId && urlEmail) {
-          // CAS B: Magic link with UTM params
-          console.info('[activate] Using UTM params:', { urlAuthUserId, urlEmail });
-          setAuthUserId(urlAuthUserId);
-          setEmail(urlEmail);
-        } else if (urlAuthUserId) {
-          // Partial params
-          console.info('[activate] Using partial UTM (auth_user_id only)');
-          setAuthUserId(urlAuthUserId);
-        } else {
-          // CAS A: Try to get from current session (best-effort, no blocking error)
+      if (urlAuthUserId && urlEmail) {
+        console.info('[activate] Using UTM params:', { urlAuthUserId, urlEmail });
+        setAuthUserId(urlAuthUserId);
+        setEmail(urlEmail);
+        setInitializing(false);
+        return;
+      } else if (urlAuthUserId) {
+        console.info('[activate] Using partial UTM (auth_user_id only)');
+        setAuthUserId(urlAuthUserId);
+        setInitializing(false);
+        return;
+      }
+      
+      // Fast path: direct localStorage read (no async needed)
+      let uid: string | null = null;
+      try {
+        uid = localStorage.getItem('viril_user_id');
+        if (uid) {
+          console.info('[activate] Using user_id from localStorage:', uid);
+          setAuthUserId(uid);
+        }
+      } catch(_) {}
+      
+      // Try to pre-fill email from localStorage personalization (instant)
+      if (uid) {
+        try {
+          const personalizationRaw = localStorage.getItem('viril_personalization');
+          if (personalizationRaw) {
+            const personalization = JSON.parse(personalizationRaw);
+            if (personalization.email) {
+              setEmail(personalization.email);
+              console.info('[activate] Pre-filled email from localStorage');
+            }
+          }
+        } catch(_) {}
+      }
+      
+      setInitializing(false);
+      
+      // Background: fetch from DB if needed (non-blocking)
+      if (uid && !email) {
+        (async () => {
           try {
-            const uid = await resolveAuthUserId();
-            if (uid) {
-              console.info('[activate] Using resolved user_id:', uid);
-              setAuthUserId(uid);
-              
-              // Try to pre-fill email from profiles
-              try {
-                const sb = (window as any)._sb;
-                if (sb) {
-                  const { data: profile } = await sb
-                    .from('profiles')
-                    .select('email')
-                    .eq('id', uid)
-                    .maybeSingle();
-                  if (profile && profile.email) {
-                    setEmail(profile.email);
-                    console.info('[activate] Pre-filled email from profile');
-                  }
-                }
-              } catch (profileErr) {
-                console.warn('[activate] Could not fetch profile email:', profileErr);
+            await (window as any).sbApi?.ensureSession?.();
+            const sb = (window as any)._sb;
+            if (sb) {
+              const { data: profile } = await sb
+                .from('profiles')
+                .select('email')
+                .eq('id', uid)
+                .maybeSingle();
+              if (profile?.email && !email) {
+                setEmail(profile.email);
+                console.info('[activate] Pre-filled email from DB (background)');
               }
             }
           } catch (e) {
-            console.warn('[activate] session lookup failed (non-blocking)', e);
+            console.warn('[activate] Background email fetch failed:', e);
           }
-        }
-        setInitializing(false);
+        })();
       }
     };
 

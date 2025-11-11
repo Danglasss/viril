@@ -4,6 +4,18 @@
     const theme = React.useContext(ThemeContext) || {};
     const headline = (question.headline && question.headline[lang]) || '';
     const subtitle = (question.subtitle && question.subtitle[lang]) || '';
+    
+    // Create a wrapper onChange that saves to the actual question ID (e.g., demo_age), not __landing
+    const wrappedOnChange = React.useCallback((val) => {
+      // Save under the first question's real ID
+      const realId = question.first && question.first.id;
+      if (realId && window.__setAnswer) {
+        window.__setAnswer(realId, val);
+      }
+      // Also call original onChange for __landing (in case needed for state tracking)
+      onChange(val);
+    }, [question, onChange]);
+    
     return React.createElement('div', null,
       theme.logoUrl && React.createElement('div', { style: { marginTop: 0, marginBottom: 16, display: 'flex', justifyContent: 'center' } },
         React.createElement('img', { src: theme.logoUrl, alt: 'logo', style: { height: 48 } })
@@ -13,7 +25,7 @@
           React.createElement('div', { style: { fontFamily: 'Fraunces, serif', fontSize: 26, fontWeight: 700, lineHeight: 1.2 } }, headline),
           React.createElement('div', { style: { opacity: .8, marginTop: 6 } }, subtitle)
         ),
-        (window.__renderQuestionElement && window.__renderQuestionElement(question.first, value, onChange, lang))
+        (window.__renderQuestionElement && window.__renderQuestionElement(question.first, value, wrappedOnChange, lang))
       )
     );
   }
