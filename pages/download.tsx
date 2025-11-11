@@ -8,8 +8,7 @@ export default function Download() {
     setMounted(true);
   }, []);
 
-  // Store link - replace with actual link when available
-  const GOOGLE_PLAY_URL = 'https://play.google.com/store/apps/details?id=app.viril'; // TODO: Replace with real link
+  const GOOGLE_PLAY_URL = 'https://play.google.com/store/apps/details?id=com.viril.app'; 
 
   return (
     <>
