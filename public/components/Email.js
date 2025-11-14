@@ -117,10 +117,9 @@
                 goal: goalRaw || null
               };
               Object.keys(body).forEach(function(k){ if (body[k] === undefined) delete body[k]; });
-              await fetch('https://app.loops.so/api/v1/events/send', {
+              await fetch('/api/loops-event', {
                 method: 'POST',
                 headers: {
-                  'Authorization': 'Bearer 27b03534bfbbb8f1347064d98a5dd417',
                   'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(body)
