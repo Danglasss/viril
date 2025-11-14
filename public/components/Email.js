@@ -13,6 +13,38 @@
         return raw ? JSON.parse(raw) : null;
       } catch(_) { return null; }
     })();
+    // Helpers for analytics / Loops properties
+    function computePerineeProfile(a){
+      if (!a || typeof a !== 'object') return null;
+      let hyper = 0, hypo = 0;
+      if (a.hx_sport_core === 'often') hyper++; else if (a.hx_sport_core === 'never') hypo++;
+      if (a.hx_ejac_precoce_always === 'yes') hyper++;
+      if (a.hx_erection_difficulty === 'yes' || a.hx_erection_difficulty === 'sometimes') hypo++;
+      if (a.hx_urine_leak === 'yes') hypo++;
+      if (a.hx_post_act_feel === 'fatigue') hyper++; else if (a.hx_post_act_feel === 'relaxed') hypo++;
+      if (a.hx_tension_pattern === 'tense') hyper++; else if (a.hx_tension_pattern === 'relaxed') hypo++;
+      if (a.hx_penetration_sensation === 'yes') hypo++;
+      return hyper >= hypo ? 'hyper' : 'hypo';
+    }
+    function parseBaselineMinutes(val){
+      const v = String(val || '').trim();
+      if (!v) return null;
+      switch (v) {
+        case '<1': return 1;
+        case '1-2': return 2;
+        case '3-5': return 4;
+        case '5+': return 6;
+        default: return null;
+      }
+    }
+    function parseTargetMinutes(val){
+      if (val == null) return null;
+      const v = String(val).trim();
+      const n = Number(v);
+      if (!isNaN(n)) return n;
+      if (v === 'as_long_as_wanted') return 15;
+      return null;
+    }
     function mapDesired(val){
       if (!val) return null;
       const v = String(val);
@@ -62,6 +94,40 @@
 
       function proceed(){
         try { if (window.__submitEmail) window.__submitEmail(); } catch(_) {}
+        // Fire-and-forget Loops event (non-blocking)
+        try {
+          (async function(){
+            try {
+              // Enrich Loops contact with quiz data
+              const relStatus = answers['demo_status'] || (personalization && personalization.demo_status);
+              const baselineRaw = answers['diag_duration'] || (personalization && personalization.diag_duration);
+              const targetRaw = answers['proj_target_duration'] || (personalization && personalization.proj_target_duration);
+              const goalRaw = answers['proj_main_reason'] || (personalization && personalization.proj_main_reason);
+              const perineeType = computePerineeProfile(answers || (personalization && personalization.answers) || {});
+              const body = {
+                email: data.email,
+                eventName: 'quiz_completed',
+                firstName: data.firstName,
+                perineeType: perineeType || null,
+                relationshipStatus: relStatus || null,
+                baselineMinutes: parseBaselineMinutes(baselineRaw),
+                baselineBucket: baselineRaw || null,
+                targetMinutes: parseTargetMinutes(targetRaw),
+                targetBucket: targetRaw || null,
+                goal: goalRaw || null
+              };
+              Object.keys(body).forEach(function(k){ if (body[k] === undefined) delete body[k]; });
+              await fetch('https://app.loops.so/api/v1/events/send', {
+                method: 'POST',
+                headers: {
+                  'Authorization': 'Bearer 27b03534bfbbb8f1347064d98a5dd417',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+              });
+            } catch (e) { console.warn('loops event failed', e); }
+          })();
+        } catch(_) {}
         // Fire-and-forget Supabase tasks in background (non-blocking)
         try {
           (async function(){

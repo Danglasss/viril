@@ -2,7 +2,16 @@
 (function(){
   function Results(){
     const lang = new URL(location.href).searchParams.get('lang') || 'fr';
-    React.useEffect(()=>{ try { if (window.sbApi) window.sbApi.finalizePlan({ scores: {}, plan: { type: 'waitlist' } }); } catch(e) {} }, []);
+    // ⭐ Récupérer les réponses du quiz pour calculer le profil de périnée
+    const answers = (window.__getAnswers && window.__getAnswers()) || {};
+    React.useEffect(()=>{ 
+      try { 
+        if (window.sbApi) {
+          // Passer les réponses à finalizePlan pour le calcul du perinee_profile
+          window.sbApi.finalizePlan({ scores: {}, plan: { type: 'waitlist' }, answers }); 
+        }
+      } catch(e) {} 
+    }, []);
 
     // Simulated queue (slightly dynamic to feel live)
     const base = 247;

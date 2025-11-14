@@ -71,15 +71,24 @@ function App() {
     return () => window.removeEventListener('popstate', handler);
   }, []);
 
+  // ⭐ PROTECTION: S'assurer que ensureSession n'est appelé qu'UNE SEULE FOIS au montage
+  const sessionInitRef = React.useRef(false);
   React.useEffect(() => {
+    // Guard: si déjà initialisé, ne rien faire
+    if (sessionInitRef.current) return;
+    sessionInitRef.current = true;
+    
     try {
       if (window.sbApi) {
-        console.info('[app] ensureSession call');
+        console.info('[app] ensureSession call (once)');
         Promise.resolve(window.sbApi.ensureSession())
           .then(function(){ console.info('[app] session ready'); })
           .catch(function(e){ console.error('[app] ensureSession error', e); });
       }
     } catch(e) { console.error('[app] ensureSession error', e); }
+  }, []); // ⭐ Dépendances vides = exécution UNE SEULE fois au montage
+  
+  React.useEffect(() => {
     if (!theme) return;
     const r = document.documentElement;
     r.style.setProperty('--color-primary', theme.colors.primary);

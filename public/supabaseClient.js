@@ -78,7 +78,16 @@
     return undefined;
   }
 
+  // ⭐ PROTECTION ANTI-RACE CONDITION: Promise partagée entre tous les appels simultanés
+  let _sessionInitPromise = null;
+  
   async function ensureSession(){
+    // Si une initialisation est déjà en cours, attendre sa résolution au lieu d'en lancer une nouvelle
+    if (_sessionInitPromise) {
+      console.info('[sb] ensureSession: waiting for existing initialization...');
+      return _sessionInitPromise;
+    }
+
     await waitForClient();
     const sb = ensure(); 
     if (!sb) {
@@ -88,12 +97,46 @@
     console.info('[sb] ensureSession: checking session...');
     let { data: { session } } = await sb.auth.getSession();
     console.info('[sb] existing session:', session ? 'YES' : 'NO');
+    
     if (!session) {
-      try {
-        const lockKey = 'sb_signing_lock';
-        if (!localStorage.getItem(lockKey)) {
+      // Créer une promise partagée que tous les autres appels attendront
+      _sessionInitPromise = (async () => {
+        try {
+          const lockKey = 'sb_signing_lock';
+          const lockValue = Date.now().toString();
+          const lockTimeout = 5000; // 5 secondes max
+          
+          // Vérifier si un lock existe déjà (protection multi-onglets)
+          const existingLock = localStorage.getItem(lockKey);
+          if (existingLock) {
+            const lockAge = Date.now() - parseInt(existingLock, 10);
+            // Si le lock est récent (< 5s), attendre un peu et réessayer
+            if (lockAge < lockTimeout) {
+              console.warn('[sb] signup already in progress (recent lock), waiting...');
+              await new Promise(r => setTimeout(r, 1000));
+              // Re-vérifier si une session existe maintenant
+              const { data: { session: retrySession } } = await sb.auth.getSession();
+              if (retrySession) {
+                console.info('[sb] session now exists after waiting');
+                return retrySession;
+              }
+            } else {
+              console.warn('[sb] stale lock detected, overriding');
+            }
+          }
+          
+          // Acquérir le lock avec timestamp
+          localStorage.setItem(lockKey, lockValue);
+          
+          // ⭐ VÉRIFICATION CRITIQUE: Double-check qu'on possède toujours le lock
+          // (un autre onglet aurait pu l'écraser entre-temps)
+          await new Promise(r => setTimeout(r, 50));
+          if (localStorage.getItem(lockKey) !== lockValue) {
+            console.warn('[sb] lost lock race to another tab, aborting signin');
+            return null;
+          }
+          
           console.info('[sb] attempting anonymous signin...');
-          localStorage.setItem(lockKey, '1');
           const result = await sb.auth.signInAnonymously();
           console.info('[sb] anon signin result:', { 
             hasData: !!result.data, 
@@ -103,23 +146,32 @@
             errorStatus: result.error ? result.error.status : null,
             errorCode: result.error ? result.error.code : null
           });
+          
           if (result.error) throw result.error;
           console.info('[sb] anon signin ok');
-        } else {
-          console.warn('[sb] signup already in progress (lock exists)');
+          
+          // Récupérer la session créée
+          const { data: { session: newSession } } = await sb.auth.getSession();
+          return newSession;
+          
+        } catch(e) {
+          console.error('[sb] anon signin FAILED - full error:', e);
+          console.error('[sb] error details:', {
+            message: e && e.message,
+            status: e && e.status,
+            code: e && e.code,
+            name: e && e.name,
+            __isAuthError: e && e.__isAuthError
+          });
+          return null;
+        } finally { 
+          try { localStorage.removeItem('sb_signing_lock'); } catch(_) {}
+          _sessionInitPromise = null; // Libérer la promise
         }
-      } catch(e) {
-        console.error('[sb] anon signin FAILED - full error:', e);
-        console.error('[sb] error details:', {
-          message: e && e.message,
-          status: e && e.status,
-          code: e && e.code,
-          name: e && e.name,
-          __isAuthError: e && e.__isAuthError
-        });
-      }
-      finally { try { localStorage.removeItem('sb_signing_lock'); } catch(_) {} }
-      ({ data: { session } } = await sb.auth.getSession());
+      })();
+      
+      // Attendre la promise partagée
+      session = await _sessionInitPromise;
     }
     // upsert profile shell (one row per user_id) and quiz_session
     try { 
@@ -191,15 +243,97 @@
     return true;
   }
 
-  async function finalizePlan({ scores, plan }){
+  // ⭐ Calcul du profil de périnée basé sur les réponses du quiz
+  function computePerineeProfile(answers){
+    if (!answers || typeof answers !== 'object') return null;
+    let hyper = 0, hypo = 0;
+    // hx_sport_core: often -> hyper, never -> hypo
+    if (answers.hx_sport_core === 'often') hyper++; 
+    else if (answers.hx_sport_core === 'never') hypo++;
+    // hx_ejac_precoce_always: yes -> hyper
+    if (answers.hx_ejac_precoce_always === 'yes') hyper++;
+    // hx_erection_difficulty: yes/sometimes -> hypo
+    if (answers.hx_erection_difficulty === 'yes' || answers.hx_erection_difficulty === 'sometimes') hypo++;
+    // hx_urine_leak: yes -> hypo
+    if (answers.hx_urine_leak === 'yes') hypo++;
+    // hx_post_act_feel: fatigue -> hyper, relaxed -> hypo
+    if (answers.hx_post_act_feel === 'fatigue') hyper++; 
+    else if (answers.hx_post_act_feel === 'relaxed') hypo++;
+    // hx_tension_pattern: tense -> hyper, relaxed -> hypo
+    if (answers.hx_tension_pattern === 'tense') hyper++; 
+    else if (answers.hx_tension_pattern === 'relaxed') hypo++;
+    // hx_penetration_sensation: yes -> hypo
+    if (answers.hx_penetration_sensation === 'yes') hypo++;
+    
+    return hyper >= hypo ? 'hyper' : 'hypo';
+  }
+
+  async function finalizePlan({ scores, plan, answers }){
     await waitForClient();
     const sb = ensure(); if (!sb) return false;
     const { data: u } = await sb.auth.getUser(); const user_id = u && u.user && u.user.id;
     if (!user_id) return false;
     try { setStoredUserId(user_id); } catch(_) {}
-    const { error } = await sb.from('plans').insert({ user_id, version: 1, plan: plan||{}, quiz_version: getQuizVersion(), created_at: new Date().toISOString() });
-    if (error) { console.error('[sb] finalizePlan error', error); return false; }
-    console.info('[sb] finalizePlan ok');
+    
+    // ⭐ Calculer le profil de périnée depuis les réponses
+    const perineeProfile = computePerineeProfile(answers || {});
+    console.info('[sb] finalizePlan: perinee_profile =', perineeProfile);
+    
+    // 1️⃣ Insérer le plan
+    const { error: planError } = await sb.from('plans').insert({ 
+      user_id, 
+      version: 1, 
+      plan: plan||{}, 
+      quiz_version: getQuizVersion(), 
+      created_at: new Date().toISOString() 
+    });
+    if (planError) { 
+      console.error('[sb] finalizePlan error', planError); 
+      return false; 
+    }
+    console.info('[sb] finalizePlan: plan inserted');
+    
+    // 2️⃣ Mettre à jour quiz_sessions.scores avec perinee_profile
+    if (perineeProfile) {
+      const scoresData = { perinee_profile: perineeProfile, ...(scores || {}) };
+      const { error: scoresError } = await sb.from('quiz_sessions')
+        .update({ scores: scoresData })
+        .eq('user_id', user_id);
+      if (scoresError) {
+        console.error('[sb] finalizePlan: quiz_sessions.scores update error', scoresError);
+      } else {
+        console.info('[sb] finalizePlan: quiz_sessions.scores updated');
+      }
+    }
+    
+    // 3️⃣ Créer/mettre à jour user_progress avec parcours_type et niveau
+    if (perineeProfile) {
+      const { error: progressError } = await sb.from('user_progress').upsert({ 
+        user_id,
+        parcours_type: perineeProfile,
+        niveau: 'débutant',
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+      if (progressError) {
+        console.error('[sb] finalizePlan: user_progress upsert error', progressError);
+      } else {
+        console.info('[sb] finalizePlan: user_progress upserted');
+      }
+    }
+    
+    // 4️⃣ Mettre à jour profiles.diagnostic avec perinee_profile
+    if (perineeProfile) {
+      const { error: diagError } = await sb.from('profiles')
+        .update({ diagnostic: perineeProfile })
+        .eq('id', user_id);
+      if (diagError) {
+        console.error('[sb] finalizePlan: profiles.diagnostic update error', diagError);
+      } else {
+        console.info('[sb] finalizePlan: profiles.diagnostic updated');
+      }
+    }
+    
+    console.info('[sb] finalizePlan ok (all writes completed)');
     return true;
   }
 
@@ -209,7 +343,7 @@
     if (error) throw error; return true;
   }
 
-  window.sbApi = { ensureSession, upsertProfile, saveProgress, finalizePlan, signUpEmail, signInWithGoogle, __sbDebug };
+  window.sbApi = { ensureSession, upsertProfile, saveProgress, finalizePlan, signUpEmail, signInWithGoogle, computePerineeProfile, __sbDebug, getQuizVersion };
   console.info('[sb] wrapper loaded');
 })();
 

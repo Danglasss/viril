@@ -98,6 +98,13 @@
       if (emailData.email) profile.email = emailData.email;
     }
 
+    // Quiz version (si disponible via sbApi)
+    try {
+      if (window.sbApi && typeof window.sbApi.getQuizVersion === 'function') {
+        profile.quiz_version = window.sbApi.getQuizVersion();
+      }
+    } catch(_) {}
+
     return profile;
   }
 
