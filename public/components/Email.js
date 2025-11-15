@@ -99,6 +99,7 @@
           (async function(){
             try {
               // Enrich Loops contact with quiz data
+              const age = answers['demo_age'] || (personalization && personalization.demo_age);
               const relStatus = answers['demo_status'] || (personalization && personalization.demo_status);
               const baselineRaw = answers['diag_duration'] || (personalization && personalization.diag_duration);
               const targetRaw = answers['proj_target_duration'] || (personalization && personalization.proj_target_duration);
@@ -108,6 +109,7 @@
                 email: data.email,
                 eventName: 'quiz_completed',
                 firstName: data.firstName,
+                age: age || null,
                 perineeType: perineeType || null,
                 relationshipStatus: relStatus || null,
                 baselineMinutes: parseBaselineMinutes(baselineRaw),
