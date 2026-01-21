@@ -10,13 +10,14 @@ class MyDocument extends Document {
     return (
       <Html lang="fr">
         <Head>
-          <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&display=swap" rel="stylesheet" />
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;700;800&display=swap" rel="stylesheet" />
           <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
           {/* React UMD for legacy SPA bundle in /public/app.js */}
           <script crossOrigin="anonymous" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
           <script crossOrigin="anonymous" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
           {/* Hotjar */}
-          <script dangerouslySetInnerHTML={{ __html: `
+          <script dangerouslySetInnerHTML={{
+            __html: `
             (function(h,o,t,j,a,r){
               h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
               h._hjSettings={hjid:6538850,hjsv:6};
@@ -27,7 +28,8 @@ class MyDocument extends Document {
             })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
           `}} />
           {/* Google Tag Manager */}
-          <script dangerouslySetInnerHTML={{ __html: `
+          <script dangerouslySetInnerHTML={{
+            __html: `
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -37,7 +39,7 @@ class MyDocument extends Document {
         </Head>
         <body>
           {/* Google Tag Manager (noscript) */}
-          <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T89MWKFV" height="0" width="0" style={{display:'none',visibility:'hidden'}}></iframe></noscript>
+          <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T89MWKFV" height="0" width="0" style={{ display: 'none', visibility: 'hidden' }}></iframe></noscript>
           <Main />
           <NextScript />
         </body>

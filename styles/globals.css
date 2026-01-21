@@ -1,59 +1,669 @@
+/* ====================================
+   IPEAK DESIGN SYSTEM - Sharp & Bold
+   ==================================== */
+
 :root {
-  --color-primary: #1F2432;
-  --color-secondary: #1F2432;
-  --color-bg: #EFECE6;
-  --color-text: #1F2432;
-  --color-card: #FFFFFF;
-  --color-option-bg: #F8F7F2;
-  --color-option-selected: #DCD9D5;
-  --color-button: #F8F7F2;
-  --color-button-text: #1F2432;
-  --color-email-button: #80C9AC;
-  --color-email-button-text: #FFFFFF;
-  --radius: 8px;
-  --border: 0px;
-  --slider-track: #E6E3DC;
-  --slider-fill: #80C9AC;
-  --slider-thumb: #FFFFFF;
+  /* Colors */
+  --color-primary: #FDB913;
+  --color-bg: #000000;
+  --color-bg-card: #111111;
+  --color-text: #FFFFFF;
+  --color-text-dim: #9CA3AF;
+  --border-subtle: rgba(255, 255, 255, 0.1);
+
+  /* Spacing */
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
 }
 
-html, body {
+/* ====================================
+   BASE
+   ==================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
   height: 100%;
 }
 
 body {
-  margin: 0;
-  font-family: Manrope, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
   background: var(--color-bg);
-  background-color: var(--color-bg) !important;
   color: var(--color-text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
-.container { max-width: 420px; margin-left: auto; margin-right: auto; padding-left: 16px; padding-right: 16px; padding-top: 24px; padding-bottom: 24px; box-sizing: border-box; }
-.card { background: transparent; border-radius: var(--radius); padding: 8px; }
-h2 { font-family: Manrope, ui-sans-serif; font-size: 30px; line-height: 1.2; margin: 12px 0 16px; font-weight: 800; letter-spacing: 0.2px; }
-.btn { cursor: pointer; background: var(--color-button); color: var(--color-button-text); border: 0; border-radius: 16px; padding: 14px 16px; font-weight: 700; width: 100%; }
-.btn.secondary { background: transparent; color: var(--color-text); }
-.btn:active { background: var(--color-option-selected); }
-.btn.primary { background: var(--color-email-button); color: var(--color-email-button-text); width: 92%; padding: 10px 14px; font-weight: 500; border-radius: 12px; }
-.row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-.options { display: flex; gap: 14px; flex-direction: column; }
-.option { background: var(--color-option-bg); padding: 16px; border-radius: 16px; cursor: pointer; box-shadow: 0 0 0 1px rgba(0,0,0,0.03) inset; }
-.option.selected { background: var(--color-option-selected); }
-.img-option { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.nav { display: flex; justify-content: space-between; margin-top: 16px; }
-input[type="range"] { width: 100%; }
-input[type="email"], input[type="text"] { width: 92%; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.06); color: var(--color-text); }
-input::placeholder { color: rgba(255,255,255,0.6); }
-textarea { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.08); background: var(--color-card); }
-.topline { display: flex; align-items: center; justify-content: space-between; opacity: .9; font-size: 13px; }
-.bubble { width: 36px; height: 36px; border-radius: 50%; background: var(--color-card); display: inline-flex; align-items: center; justify-content: center; font-weight: 700; box-shadow: 0 0 0 1px rgba(0,0,0,0.03) inset; }
+/* ====================================
+   LAYOUT
+   ==================================== */
 
-/* Modern minimal slider */
-input[type="range"] { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 999px; background: var(--slider-track); outline: none; }
-input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: transparent; }
-input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--slider-thumb); border: 3px solid var(--slider-fill); box-shadow: 0 2px 6px rgba(0,0,0,.08); margin-top: -7px; }
-input[type="range"]::-moz-range-track { height: 6px; border-radius: 999px; background: transparent; }
-input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--slider-thumb); border: 3px solid var(--slider-fill); box-shadow: 0 2px 6px rgba(0,0,0,.08); }
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
+/* ====================================
+   HEADER - Logo en haut, puis progress
+   ==================================== */
 
+.header {
+  margin-bottom: var(--space-8);
+}
+
+.logo {
+  display: block;
+  height: 32px;
+  margin-bottom: var(--space-6);
+}
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Back Button - 32x32px like iPeak */
+.back-btn {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0;
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: 300;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  padding-bottom: 2px;
+  /* optical centering for chevron */
+  line-height: 1;
+  transition: all 0.2s;
+}
+
+.back-btn:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+}
+
+/* Progress Bar - 6px height */
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--color-primary);
+  transition: width 500ms ease;
+}
+
+/* Counter - bold like iPeak */
+.progress-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+  min-width: 48px;
+  text-align: right;
+}
+
+/* ====================================
+   TYPOGRAPHY
+   ==================================== */
+
+/* H1 Question - iPeak spec: 24px → 30px, weight 800 (ExtraBold) */
+h1 {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--color-text);
+  margin: 0 0 var(--space-8);
+}
+
+@media (min-width: 640px) {
+  h1 {
+    font-size: 30px;
+  }
+}
+
+h2 {
+  font-size: clamp(20px, 4vw, 24px);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 var(--space-6);
+}
+
+p {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-dim);
+}
+
+/* ====================================
+   OPTIONS (Questions)
+   ==================================== */
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Label Réponse - iPeak spec: 16px, weight 800 */
+.option {
+  background: var(--color-bg-card);
+  padding: var(--space-4);
+  padding-right: 48px;
+  /* Space for checkmark */
+  border-radius: 0;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--color-text);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.option:hover {
+  border-color: rgba(253, 185, 19, 0.5);
+  transform: scale(1.01);
+}
+
+.option.selected {
+  border-color: var(--color-primary);
+  background: rgba(253, 185, 19, 0.1);
+}
+
+/* Checkmark carré jaune - smaller like iPeak */
+.option.selected::after {
+  content: "✓";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--color-primary);
+  color: #000000;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  border-radius: 0;
+}
+
+/* Image options avec emoji */
+.img-option {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: left;
+}
+
+.img-option img,
+.img-option span:first-child {
+  font-size: 32px;
+  line-height: 1;
+}
+
+/* ====================================
+   BUTTONS
+   ==================================== */
+
+/* Bouton - iPeak spec: 18px, weight 700, uppercase */
+.btn {
+  display: inline-block;
+  width: 100%;
+  padding: 16px var(--space-4);
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  background: var(--color-primary);
+  color: #000000;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  font-family: inherit;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn.primary {
+  background: var(--color-primary);
+  color: #000000;
+}
+
+.btn.secondary {
+  background: transparent;
+  color: var(--color-text);
+  border: 2px solid var(--color-text-dim);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Sticky Footer Button Container */
+.sticky-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 16px;
+  background: var(--color-bg);
+  z-index: 100;
+}
+
+.sticky-footer .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Button Chevron */
+.btn-chevron {
+  font-size: 20px;
+  font-weight: 400;
+}
+
+/* ====================================
+   CARD
+   ==================================== */
+
+.card {
+  background: var(--color-bg-card);
+  padding: var(--space-6);
+  border-radius: 0px;
+  margin-bottom: var(--space-8);
+}
+
+.card h2 {
+  text-align: center;
+}
+
+.card p {
+  opacity: 0.85;
+  margin-top: -6px;
+  text-align: center;
+}
+
+.card-image-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.card-image {
+  max-width: 80%;
+  height: auto;
+  border-radius: 0px;
+}
+
+.card-columns {
+  display: flex;
+  gap: 10px;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  justify-content: center;
+  max-width: 320px;
+  margin: 8px auto 0;
+}
+
+.card-column {
+  flex: 0 0 150px;
+  min-width: 150px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-column-title {
+  font-weight: 800;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.card-column-content {
+  margin-top: 6px;
+}
+
+.card-column-content p {
+  margin: 6px 0;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.card-bullets {
+  margin: 8px 0 0 18px;
+  padding: 0;
+}
+
+.card-bullets li {
+  margin: 6px 0;
+}
+
+.card-review {
+  margin-top: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0px;
+  padding: 12px;
+}
+
+.card-review-stars {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.card-review-star {
+  width: 16px;
+  height: 16px;
+  background: #00B67A;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-review-author {
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.card-review-text {
+  opacity: 0.9;
+}
+
+/* ====================================
+   INPUTS
+   ==================================== */
+
+input[type="email"],
+input[type="text"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: var(--space-4);
+  font-size: 18px;
+  font-family: inherit;
+  background: var(--color-bg-card);
+  color: var(--color-text);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0px;
+  transition: border-color 0.2s;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text-dim);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* ====================================
+   SLIDER
+   ==================================== */
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 3px solid var(--color-primary);
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 3px solid var(--color-primary);
+  cursor: pointer;
+}
+
+.slider-value {
+  display: inline-block;
+  margin-top: var(--space-3);
+  padding: 6px 12px;
+  background: var(--color-bg-card);
+  border-radius: 0px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* ====================================
+   LANDING PAGE
+   ==================================== */
+
+.landing-logo {
+  margin: 0 0 var(--space-4);
+  display: flex;
+  justify-content: center;
+}
+
+.landing-logo img {
+  height: 48px;
+}
+
+.landing-content {
+  min-height: calc(100vh - 520px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.landing-header {
+  margin-bottom: var(--space-6);
+  text-align: center;
+}
+
+.landing-headline {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: var(--space-2);
+}
+
+.landing-subtitle {
+  opacity: 0.8;
+  font-size: 16px;
+}
+
+/* ====================================
+   EMAIL CAPTURE
+   ==================================== */
+
+.email-header {
+  margin: 4px 0 6px;
+}
+
+.email-subtitle {
+  opacity: 0.9;
+  margin-top: -2px;
+  margin-bottom: 10px;
+}
+
+.email-cta-container {
+  margin-top: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.trust-badge {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 0px;
+  padding: 10px 12px;
+}
+
+.trust-badge-title {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.trust-badge-text {
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* ====================================
+   UTILITIES
+   ==================================== */
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-4);
+  gap: var(--space-3);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.footer-links {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 16px;
+  text-align: center;
+  opacity: 0.7;
+  font-size: 12px;
+}
+
+.footer-links a {
+  color: inherit;
+  text-decoration: none;
+  margin: 0 8px;
+}
+
+.footer-links a:hover {
+  opacity: 1;
+}
+
+/* ====================================
+   STEP 1 HEADER - Back button top-right
+   ==================================== */
+
+/* Bold Question Headline */
+.question-headline {
+  font-weight: 800;
+}
+
+/* ====================================
+   RESPONSIVE
+   ==================================== */
+
+@media (max-width: 640px) {
+  .container {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .option {
+    font-size: 15px;
+  }
+}
+
+/* InfoSlide Bullets Style */
+.card-bullets {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0;
+}
+
+.card-bullets li {
+  position: relative;
+  padding-left: 36px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #E5E7EB;
+}
+
+/* Variant: Muscle (Step 21) */
+.card-bullets.muscle li::before {
+  content: '💪';
+  position: absolute;
+  left: 0;
+  top: 2px;
+  font-size: 20px;
+}
+
+/* Variant: Check (Step 22) */
+.card-bullets.check li::before {
+  content: '✓';
+  color: #00B67A;
+  position: absolute;
+  left: 4px;
+  top: 0;
+  font-size: 22px;
+  font-weight: 800;
+}

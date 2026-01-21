@@ -1,18 +1,18 @@
 {
   "colors": {
-    "primary": "#FF4D00",
-    "secondary": "#FF7A1A",
-    "background": "#0E0E0F",
-    "text": "#F2F2F3",
-    "card": "#161618",
-    "optionBackground": "#17181A",
-    "optionSelected": "#222326",
-    "button": "#FF4D00",
-    "buttonText": "#FFFFFF",
-    "emailButton": "#FF7A1A",
-    "emailButtonText": "#0E0E0F"
+    "primary": "#FDB913",
+    "secondary": "#FDB913",
+    "background": "#000000",
+    "text": "#FFFFFF",
+    "card": "#111111",
+    "optionBackground": "#1A1A1A",
+    "optionSelected": "#2D2D2D",
+    "button": "#FDB913",
+    "buttonText": "#000000",
+    "emailButton": "#FDB913",
+    "emailButtonText": "#000000"
   },
-  "radius": 12,
+  "radius": 0,
   "border": 0,
   "logoUrl": "/viril-logo.svg"
 } 

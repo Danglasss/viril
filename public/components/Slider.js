@@ -8,7 +8,7 @@
         type: 'range', min, max, step, value: v,
         onChange: (e) => onChange(parseFloat(e.target.value))
       }),
-      React.createElement('div', { style: { marginTop: 10, fontWeight: 600, display: 'inline-block', background: 'var(--color-card)', padding: '6px 10px', borderRadius: 999 } }, v)
+      React.createElement('div', { className: 'slider-value' }, v)
     );
   }
   window.__registerQuestionComponent('Slider', Slider);

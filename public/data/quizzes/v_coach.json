@@ -1,0 +1,775 @@
+{
+    "title": "The Viril - Pelvic Floor Training",
+    "version": "v_coach",
+    "questions": [
+        {
+            "id": "demo_age",
+            "type": "QCM",
+            "text": {
+                "en": "How old are you?",
+                "fr": "Quel âge as-tu ?"
+            },
+            "options": [
+                {
+                    "value": "18-24",
+                    "label": {
+                        "en": "18-24",
+                        "fr": "18-24"
+                    }
+                },
+                {
+                    "value": "25-34",
+                    "label": {
+                        "en": "25-34",
+                        "fr": "25-34"
+                    }
+                },
+                {
+                    "value": "35-44",
+                    "label": {
+                        "en": "35-44",
+                        "fr": "35-44"
+                    }
+                },
+                {
+                    "value": "45-54",
+                    "label": {
+                        "en": "45-54",
+                        "fr": "45-54"
+                    }
+                },
+                {
+                    "value": "55-64",
+                    "label": {
+                        "en": "55-64",
+                        "fr": "55-64"
+                    }
+                },
+                {
+                    "value": "65+",
+                    "label": {
+                        "en": "65+",
+                        "fr": "65+"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "pelvic_training_experience",
+            "type": "QCM",
+            "text": {
+                "en": "Have you ever trained your pelvic floor muscles?",
+                "fr": "As-tu déjà entraîné tes muscles du périnée ?"
+            },
+            "options": [
+                {
+                    "value": "yes",
+                    "label": {
+                        "en": "Yes, sure",
+                        "fr": "Oui, bien sûr"
+                    }
+                },
+                {
+                    "value": "heard_only",
+                    "label": {
+                        "en": "No, I've only heard about them",
+                        "fr": "Non, j'en ai seulement entendu parler"
+                    }
+                },
+                {
+                    "value": "no",
+                    "label": {
+                        "en": "No, I didn't",
+                        "fr": "Non, jamais"
+                    }
+                },
+                {
+                    "value": "what_is_it",
+                    "label": {
+                        "en": "What are the pelvic floor muscles?",
+                        "fr": "C'est quoi les muscles du périnée ?"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_pelvic_tone",
+            "type": "InfoSlide",
+            "title": {
+                "en": "Your ability to last longer depends on the pelvic floor muscles tone",
+                "fr": "Ta capacité à durer plus longtemps dépend du tonus de tes muscles du périnée"
+            },
+            "subtitle": {
+                "en": "Strong pelvic floor muscles is the key to delaying ejaculation and to lasting in bed as long as you want.",
+                "fr": "Des muscles du périnée forts sont la clé pour retarder l'éjaculation et durer au lit aussi longtemps que tu le souhaites."
+            },
+            "imageUrl": "/images/dr_kegel/v_coach_step_2.png",
+            "cta": {
+                "en": "Got it",
+                "fr": "Compris"
+            }
+        },
+        {
+            "id": "info_healthy_erection",
+            "type": "InfoSlide",
+            "title": {
+                "en": "Strong pelvic floor muscles are key for a healthy hard-on",
+                "fr": "Des muscles du périnée forts sont essentiels pour une érection solide"
+            },
+            "subtitle": {
+                "en": "Get a full control — learn how to maintain a blood pressure in your penis and get it strong",
+                "fr": "Prends le contrôle total — apprends à maintenir la pression sanguine dans ton pénis et à le rendre plus fort"
+            },
+            "imageUrl": "/images/dr_kegel/v_coach_step_3.png",
+            "cta": {
+                "en": "Got it",
+                "fr": "Compris"
+            }
+        },
+        {
+            "id": "sexual_performance_rating",
+            "type": "QCM",
+            "text": {
+                "en": "How would you rate your sexual performance?",
+                "fr": "Comment évaluerais-tu tes performances sexuelles ?"
+            },
+            "options": [
+                {
+                    "value": "very_dissatisfied",
+                    "label": {
+                        "en": "Very dissatisfied",
+                        "fr": "Très insatisfait"
+                    }
+                },
+                {
+                    "value": "dissatisfied",
+                    "label": {
+                        "en": "Dissatisfied",
+                        "fr": "Insatisfait"
+                    }
+                },
+                {
+                    "value": "ok",
+                    "label": {
+                        "en": "OK",
+                        "fr": "OK"
+                    }
+                },
+                {
+                    "value": "satisfied",
+                    "label": {
+                        "en": "Satisfied",
+                        "fr": "Satisfait"
+                    }
+                },
+                {
+                    "value": "very_satisfied",
+                    "label": {
+                        "en": "Very much satisfied",
+                        "fr": "Très satisfait"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_intimate_life_progress",
+            "type": "InfoSlide",
+            "title": {
+                "en": "Get your intimate life to a new level with the Viril program",
+                "fr": "Fais passer ta vie intime au niveau supérieur avec le programme Viril"
+            },
+            "subtitle": {
+                "en": "See how your intimate life level can improve over 4 weeks of training.",
+                "fr": "Découvre comment ton niveau de vie intime peut s'améliorer en 4 semaines d'entraînement."
+            },
+            "useGraph": true,
+            "weeks": 4,
+            "cta": {
+                "en": "Got it",
+                "fr": "Compris"
+            }
+        },
+        {
+            "id": "intercourse_duration",
+            "type": "QCM",
+            "text": {
+                "en": "What is the average duration of your sex intercourse?",
+                "fr": "Quelle est la durée moyenne de tes rapports sexuels ?"
+            },
+            "options": [
+                {
+                    "value": "<2min",
+                    "label": {
+                        "en": "Less than 2 minutes",
+                        "fr": "Moins de 2 minutes"
+                    }
+                },
+                {
+                    "value": "2-10min",
+                    "label": {
+                        "en": "2-10 minutes",
+                        "fr": "2-10 minutes"
+                    }
+                },
+                {
+                    "value": "10-20min",
+                    "label": {
+                        "en": "10-20 minutes",
+                        "fr": "10-20 minutes"
+                    }
+                },
+                {
+                    "value": "20+min",
+                    "label": {
+                        "en": "20 minutes or more",
+                        "fr": "20 minutes ou plus"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "finish_early_frequency",
+            "type": "QCM",
+            "text": {
+                "en": "How often do you finish earlier than you wish you would?",
+                "fr": "À quelle fréquence termines-tu plus tôt que tu ne le voudrais ?"
+            },
+            "options": [
+                {
+                    "value": "never",
+                    "label": {
+                        "en": "Never",
+                        "fr": "Jamais"
+                    }
+                },
+                {
+                    "value": "sometimes",
+                    "label": {
+                        "en": "Sometimes",
+                        "fr": "Parfois"
+                    }
+                },
+                {
+                    "value": "most_time",
+                    "label": {
+                        "en": "Most of the time",
+                        "fr": "La plupart du temps"
+                    }
+                },
+                {
+                    "value": "no_answer",
+                    "label": {
+                        "en": "I don't want to answer",
+                        "fr": "Je ne veux pas répondre"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_coach_7x_improvement",
+            "type": "InfoSlide",
+            "title": {
+                "en": "The Viril program helps increase average intercourse length up to 7 times",
+                "fr": "Le programme Viril aide à multiplier par 7 la durée moyenne des rapports"
+            },
+            "subtitle": {
+                "en": "This method helps men get their intimate life to a new level even as they get older.",
+                "fr": "Cette méthode aide les hommes à améliorer leur vie intime même en vieillissant."
+            },
+            "useImprovementGraph": true,
+            "cta": {
+                "en": "Got it",
+                "fr": "Compris"
+            }
+        },
+        {
+            "id": "full_hard_on_frequency",
+            "type": "QCM",
+            "text": {
+                "en": "Do you have a full hard-on every time you have sex?",
+                "fr": "As-tu une érection complète à chaque rapport sexuel ?"
+            },
+            "options": [
+                {
+                    "value": "always",
+                    "label": {
+                        "en": "Yes, no problem",
+                        "fr": "Oui, sans problème"
+                    }
+                },
+                {
+                    "value": "want_stronger",
+                    "label": {
+                        "en": "Yes, but I want it stronger",
+                        "fr": "Oui, mais je la voudrais plus forte"
+                    }
+                },
+                {
+                    "value": "sometimes",
+                    "label": {
+                        "en": "Sometimes",
+                        "fr": "Parfois"
+                    }
+                },
+                {
+                    "value": "almost_never",
+                    "label": {
+                        "en": "Almost never",
+                        "fr": "Presque jamais"
+                    }
+                },
+                {
+                    "value": "no_answer",
+                    "label": {
+                        "en": "I don't want to answer",
+                        "fr": "Je ne veux pas répondre"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_8_of_10_men",
+            "type": "EightOfTen",
+            "title": {
+                "en": "8 out of 10 men improved their sexual performance with the Virl program",
+                "fr": "8 hommes sur 10 ont amélioré leurs performances sexuelles avec le programme Viril"
+            },
+            "cta": {
+                "en": "Got it",
+                "fr": "Compris"
+            }
+        },
+        {
+            "id": "relationship_status",
+            "type": "QCM",
+            "text": {
+                "en": "What is your relationship status?",
+                "fr": "Quelle est ta situation amoureuse ?"
+            },
+            "options": [
+                {
+                    "value": "married",
+                    "label": {
+                        "en": "Married",
+                        "fr": "Marié"
+                    }
+                },
+                {
+                    "value": "dating",
+                    "label": {
+                        "en": "Dating",
+                        "fr": "En couple"
+                    }
+                },
+                {
+                    "value": "single",
+                    "label": {
+                        "en": "Single",
+                        "fr": "Célibataire"
+                    }
+                },
+                {
+                    "value": "no_answer",
+                    "label": {
+                        "en": "I don't want to answer",
+                        "fr": "Je ne veux pas répondre"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "sexual_activity_frequency_month",
+            "type": "QCM",
+            "text": {
+                "en": "How many times do you engage in sexual activity per month on average?",
+                "fr": "Combien de fois as-tu des rapports sexuels par mois en moyenne ?"
+            },
+            "options": [
+                {
+                    "value": "<3",
+                    "label": {
+                        "en": "Less than 3 times per month",
+                        "fr": "Moins de 3 fois par mois"
+                    }
+                },
+                {
+                    "value": "3-6",
+                    "label": {
+                        "en": "3-6 times per month",
+                        "fr": "3-6 fois par mois"
+                    }
+                },
+                {
+                    "value": "7-15",
+                    "label": {
+                        "en": "7-15 times per month",
+                        "fr": "7-15 fois par mois"
+                    }
+                },
+                {
+                    "value": ">15",
+                    "label": {
+                        "en": "More than 15 times per month",
+                        "fr": "Plus de 15 fois par mois"
+                    }
+                },
+                {
+                    "value": "no_answer",
+                    "label": {
+                        "en": "I don't want to answer",
+                        "fr": "Je ne veux pas répondre"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "sex_drive_decrease",
+            "type": "QCM",
+            "text": {
+                "en": "Have you noticed a decrease in sex drive over the past year?",
+                "fr": "As-tu remarqué une baisse de libido au cours de l'année écoulée ?"
+            },
+            "options": [
+                {
+                    "value": "yes_dramatic",
+                    "label": {
+                        "en": "Yes, dramatic decrease",
+                        "fr": "Oui, baisse importante"
+                    }
+                },
+                {
+                    "value": "maybe",
+                    "label": {
+                        "en": "Maybe, I'm not sure",
+                        "fr": "Peut-être, je ne suis pas sûr"
+                    }
+                },
+                {
+                    "value": "no_but_want_more",
+                    "label": {
+                        "en": "No, but I want more",
+                        "fr": "Non, mais je voudrais plus"
+                    }
+                },
+                {
+                    "value": "no_ok",
+                    "label": {
+                        "en": "No, I feel OK",
+                        "fr": "Non, ça va"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "pills_usage",
+            "type": "QCM",
+            "text": {
+                "en": "Have you taken any pills to improve your intimate life?",
+                "fr": "As-tu déjà pris des pilules pour améliorer ta vie intime ?"
+            },
+            "options": [
+                {
+                    "value": "yes_lot",
+                    "label": {
+                        "en": "Yes, I take quite a lot of pills",
+                        "fr": "Oui, je prends pas mal de pilules"
+                    }
+                },
+                {
+                    "value": "yes_sometimes",
+                    "label": {
+                        "en": "Yes, I use pills from time to time",
+                        "fr": "Oui, j'en prends de temps en temps"
+                    }
+                },
+                {
+                    "value": "no",
+                    "label": {
+                        "en": "No, I don't",
+                        "fr": "Non, jamais"
+                    }
+                },
+                {
+                    "value": "no_answer",
+                    "label": {
+                        "en": "I don't want to answer",
+                        "fr": "Je ne veux pas répondre"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_coach_vs_pills",
+            "type": "ComparisonTable",
+            "title": {
+                "en": "The Viril program is better than pills",
+                "fr": "Le programme Viril est meilleur que les pilules"
+            },
+            "subtitle": {
+                "en": "Special pill-free approach provides tangible benefits",
+                "fr": "Une approche sans pilules qui offre des bénéfices concrets"
+            },
+            "cta": {
+                "en": "Got it",
+                "fr": "Compris"
+            }
+        },
+        {
+            "id": "alcohol_consumption",
+            "type": "QCM",
+            "text": {
+                "en": "Do you drink alcohol?",
+                "fr": "Consommes-tu de l'alcool ?"
+            },
+            "options": [
+                {
+                    "value": "<10",
+                    "label": {
+                        "en": "Less than 10 times per month",
+                        "fr": "Moins de 10 fois par mois"
+                    }
+                },
+                {
+                    "value": "10-20",
+                    "label": {
+                        "en": "10-20 times per month",
+                        "fr": "10-20 fois par mois"
+                    }
+                },
+                {
+                    "value": ">20",
+                    "label": {
+                        "en": "More than 20 times per month",
+                        "fr": "Plus de 20 fois par mois"
+                    }
+                },
+                {
+                    "value": "rarely",
+                    "label": {
+                        "en": "I drink rarely",
+                        "fr": "Je bois rarement"
+                    }
+                },
+                {
+                    "value": "never",
+                    "label": {
+                        "en": "I don't drink at all",
+                        "fr": "Je ne bois pas du tout"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "smoking_habit",
+            "type": "QCM",
+            "text": {
+                "en": "Do you smoke?",
+                "fr": "Fumes-tu ?"
+            },
+            "options": [
+                {
+                    "value": "yes",
+                    "label": {
+                        "en": "Yes, I do",
+                        "fr": "Oui, je fume"
+                    }
+                },
+                {
+                    "value": "no",
+                    "label": {
+                        "en": "No, I don't",
+                        "fr": "Non, je ne fume pas"
+                    }
+                },
+                {
+                    "value": "sometimes",
+                    "label": {
+                        "en": "Sometimes",
+                        "fr": "Parfois"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "diet_habit",
+            "type": "QCM",
+            "text": {
+                "en": "Are you following any diet?",
+                "fr": "Suis-tu un régime alimentaire particulier ?"
+            },
+            "options": [
+                {
+                    "value": "healthy",
+                    "label": {
+                        "en": "Yes, I try to eat healthy food",
+                        "fr": "Oui, j'essaie de manger sainement"
+                    }
+                },
+                {
+                    "value": "sometimes_junk",
+                    "label": {
+                        "en": "Yes, but sometimes I go for some junk food",
+                        "fr": "Oui, mais je mange parfois de la malbouffe"
+                    }
+                },
+                {
+                    "value": "no",
+                    "label": {
+                        "en": "No, I don't pay attention to the diet",
+                        "fr": "Non, je ne fais pas attention à mon alimentation"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "physical_activity_level",
+            "type": "QCM",
+            "text": {
+                "en": "What is your physical activity level?",
+                "fr": "Quel est ton niveau d'activité physique ?"
+            },
+            "options": [
+                {
+                    "value": "every_day",
+                    "label": {
+                        "en": "I exercise every day",
+                        "fr": "Je fais de l'exercice tous les jours"
+                    }
+                },
+                {
+                    "value": "time_to_time",
+                    "label": {
+                        "en": "I exercise from time to time",
+                        "fr": "Je fais de l'exercice de temps en temps"
+                    }
+                },
+                {
+                    "value": "low",
+                    "label": {
+                        "en": "I got low physical activity",
+                        "fr": "J'ai une faible activité physique"
+                    }
+                },
+                {
+                    "value": "none",
+                    "label": {
+                        "en": "I don't exercise at all",
+                        "fr": "Je ne fais pas du tout d'exercice"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "mood_rating",
+            "type": "QCM",
+            "text": {
+                "en": "How would you rate you mood recently?",
+                "fr": "Comment évaluerais-tu ton humeur récemment ?"
+            },
+            "options": [
+                {
+                    "value": "terrible",
+                    "label": {
+                        "en": "Terrible, a lot of stress",
+                        "fr": "Terrible, beaucoup de stress"
+                    }
+                },
+                {
+                    "value": "average",
+                    "label": {
+                        "en": "Average, rare stress",
+                        "fr": "Moyenne, stress rare"
+                    }
+                },
+                {
+                    "value": "no_stress",
+                    "label": {
+                        "en": "No stress at all",
+                        "fr": "Pas de stress du tout"
+                    }
+                },
+                {
+                    "value": "hard_to_say",
+                    "label": {
+                        "en": "Hard to say",
+                        "fr": "Difficile à dire"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_good_hands",
+            "type": "InfoSlide",
+            "title": {
+                "en": "You're in good hands",
+                "fr": "Tu es entre de bonnes mains"
+            },
+            "bulletType": "muscle",
+            "bullets": [
+                {
+                    "en": "The Viril program is created by world-leading experts in men's sexual health fields",
+                    "fr": "Le programme Viril est créé par des experts mondialement reconnus dans le domaine de la santé sexuelle masculine"
+                },
+                {
+                    "en": "It not only contains proven science-based techniques but also practical tips from the best sex coaches",
+                    "fr": "Il contient non seulement des techniques scientifiquement prouvées mais aussi des conseils pratiques des meilleurs coachs sexuels"
+                },
+                {
+                    "en": "It helped thousands of men all over the globe to get their sexual life to a completely new level",
+                    "fr": "Il a aidé des milliers d'hommes à travers le monde à faire passer leur vie sexuelle à un tout autre niveau"
+                },
+                {
+                    "en": "All programs are fully personalized and tailored to YOUR GOALS",
+                    "fr": "Tous les programmes sont entièrement personnalisés et adaptés à TES OBJECTIFS"
+                }
+            ],
+            "cta": {
+                "en": "I got it",
+                "fr": "J'ai compris"
+            }
+        },
+        {
+            "id": "info_program_unique",
+            "type": "InfoSlide",
+            "title": {
+                "en": "Why is our program so unique?",
+                "fr": "Pourquoi notre programme est-il si unique ?"
+            },
+            "bulletType": "check",
+            "bullets": [
+                {
+                    "en": "5 minutes a day — that's enough to start getting results",
+                    "fr": "5 minutes par jour — c'est suffisant pour commencer à avoir des résultats"
+                },
+                {
+                    "en": "Train anywhere — at home, at work, or even on a walk!",
+                    "fr": "Entraîne-toi n'importe où — à la maison, au travail, ou même en marchant !"
+                },
+                {
+                    "en": "Nobody will notice that you exercise",
+                    "fr": "Personne ne remarquera que tu t'entraînes"
+                },
+                {
+                    "en": "Your program is evolving every day according to your progress",
+                    "fr": "Ton programme évolue chaque jour en fonction de tes progrès"
+                },
+                {
+                    "en": "Theory, practices, exercises, special courses and a step-by-step Daily plan to reach your goal",
+                    "fr": "Théorie, pratiques, exercices, cours spéciaux et un plan quotidien étape par étape pour atteindre ton objectif"
+                },
+                {
+                    "en": "75% of users feel first results in under 4 weeks",
+                    "fr": "75% des utilisateurs ressentent les premiers résultats en moins de 4 semaines"
+                }
+            ],
+            "cta": {
+                "en": "Got it",
+                "fr": "Compris"
+            }
+        },
+        {
+            "id": "__analyze",
+            "type": "AnalyzeResults"
+        }
+    ]
+}

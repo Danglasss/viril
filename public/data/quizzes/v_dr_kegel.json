@@ -1,0 +1,1116 @@
+{
+    "title": "Dr. Kegel: For Men's Health",
+    "version": "v_dr_kegel",
+    "questions": [
+        {
+            "id": "dr_kegel_age",
+            "type": "QCM",
+            "text": {
+                "en": "How old are you?",
+                "fr": "Quel âge as-tu ?"
+            },
+            "options": [
+                {
+                    "value": "25-35",
+                    "label": {
+                        "en": "25-35",
+                        "fr": "25-35"
+                    }
+                },
+                {
+                    "value": "35-45",
+                    "label": {
+                        "en": "35-45",
+                        "fr": "35-45"
+                    }
+                },
+                {
+                    "value": "45-55",
+                    "label": {
+                        "en": "45-55",
+                        "fr": "45-55"
+                    }
+                },
+                {
+                    "value": "55+",
+                    "label": {
+                        "en": "55+",
+                        "fr": "55+"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "dr_kegel_main_goal",
+            "type": "QCM",
+            "text": {
+                "en": "Choose your main goal",
+                "fr": "Choisis ton objectif principal"
+            },
+            "options": [
+                {
+                    "value": "erectile_function",
+                    "label": {
+                        "en": "Improve Erectile Function",
+                        "fr": "Améliorer la fonction érectile"
+                    }
+                },
+                {
+                    "value": "ejaculation_control",
+                    "label": {
+                        "en": "Improve Ejaculation Control",
+                        "fr": "Améliorer le contrôle de l'éjaculation"
+                    }
+                },
+                {
+                    "value": "maximize_wellness",
+                    "label": {
+                        "en": "Maximize Sexual Wellness (Improve both of the above)",
+                        "fr": "Maximiser le bien-être sexuel (Améliorer les deux)"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "dr_kegel_satisfaction",
+            "type": "Rating",
+            "text": {
+                "en": "How satisfied are you with your sexual wellness (erection quality & ejaculation control)?",
+                "fr": "Quel est ton niveau de satisfaction concernant ton bien-être sexuel (qualité d'érection & contrôle de l'éjaculation) ?"
+            },
+            "subtitle": {
+                "en": "Rate from 1 to 5",
+                "fr": "Note de 1 à 5"
+            },
+            "minLabel": {
+                "en": "Not satisfied",
+                "fr": "Pas satisfait"
+            },
+            "maxLabel": {
+                "en": "Very satisfied",
+                "fr": "Très satisfait"
+            },
+            "options": [
+                {
+                    "value": "1",
+                    "label": {
+                        "en": "1",
+                        "fr": "1"
+                    }
+                },
+                {
+                    "value": "2",
+                    "label": {
+                        "en": "2",
+                        "fr": "2"
+                    }
+                },
+                {
+                    "value": "3",
+                    "label": {
+                        "en": "3",
+                        "fr": "3"
+                    }
+                },
+                {
+                    "value": "4",
+                    "label": {
+                        "en": "4",
+                        "fr": "4"
+                    }
+                },
+                {
+                    "value": "5",
+                    "label": {
+                        "en": "5",
+                        "fr": "5"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_dr_kegel_control",
+            "type": "InfoSlide",
+            "title": {
+                "en": "The ability to control ejaculation depends on the strength of the Pelvic Floor (PF) muscles",
+                "fr": "La capacité à contrôler l'éjaculation dépend de la force des muscles du Plancher Pelvien (PP)"
+            },
+            "subtitle": {
+                "en": "Stronger PF muscles allow to control the ejaculatory reflex better and last longer.",
+                "fr": "Des muscles PP plus forts permettent de mieux contrôler le réflexe éjaculatoire et de durer plus longtemps."
+            },
+            "imageUrl": "/images/dr_kegel/step3_illustration.jpg",
+            "cta": {
+                "en": "Continue",
+                "fr": "Continuer"
+            }
+        },
+        {
+            "id": "info_dr_kegel_erection",
+            "type": "InfoSlide",
+            "title": {
+                "en": "Quality of Erection also depends on the strength of the Pelvic Floor (PF) muscles",
+                "fr": "La qualité de l'érection dépend aussi de la force des muscles du Plancher Pelvien (PP)"
+            },
+            "subtitle": {
+                "en": "Stronger PF muscles help to fill & retain more blood in the male organ leading to harder and more lasting erection.",
+                "fr": "Des muscles PP plus forts aident à remplir et retenir plus de sang dans l'organe masculin, menant à une érection plus dure et durable."
+            },
+            "imageUrl": "/images/dr_kegel/step4_illustration.jpg",
+            "cta": {
+                "en": "I got it",
+                "fr": "J'ai compris"
+            }
+        },
+        {
+            "id": "dr_kegel_duration",
+            "type": "QCM",
+            "text": {
+                "en": "How long does your sex typically last?",
+                "fr": "Combien de temps durent tes rapports sexuels généralement ?"
+            },
+            "options": [
+                {
+                    "value": "<2",
+                    "label": {
+                        "en": "Less than 2 minutes",
+                        "fr": "Moins de 2 minutes"
+                    }
+                },
+                {
+                    "value": "2-7",
+                    "label": {
+                        "en": "2-7 minutes",
+                        "fr": "2-7 minutes"
+                    }
+                },
+                {
+                    "value": "7-15",
+                    "label": {
+                        "en": "7-15 minutes",
+                        "fr": "7-15 minutes"
+                    }
+                },
+                {
+                    "value": "15+",
+                    "label": {
+                        "en": "15 minutes or more",
+                        "fr": "15 minutes ou plus"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "dr_kegel_frequency_early",
+            "type": "QCM",
+            "text": {
+                "en": "How often do you ejaculate earlier than you'd like?",
+                "fr": "À quelle fréquence éjacules-tu plus tôt que tu ne le souhaiterais ?"
+            },
+            "options": [
+                {
+                    "value": "never",
+                    "label": {
+                        "en": "Never",
+                        "fr": "Jamais"
+                    }
+                },
+                {
+                    "value": "rarely",
+                    "label": {
+                        "en": "Rarely",
+                        "fr": "Rarement"
+                    }
+                },
+                {
+                    "value": "often",
+                    "label": {
+                        "en": "Often",
+                        "fr": "Souvent"
+                    }
+                },
+                {
+                    "value": "all_time",
+                    "label": {
+                        "en": "All the time",
+                        "fr": "Tout le temps"
+                    }
+                },
+                {
+                    "value": "no_answer",
+                    "label": {
+                        "en": "I don't want to answer",
+                        "fr": "Je ne veux pas répondre"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "dr_kegel_goal_duration",
+            "type": "QCM",
+            "text": {
+                "en": "How long do you want to last?",
+                "fr": "Combien de temps souhaites-tu durer ?"
+            },
+            "options": [
+                {
+                    "value": "7-15",
+                    "label": {
+                        "en": "7-15 minutes",
+                        "fr": "7-15 minutes"
+                    }
+                },
+                {
+                    "value": "15-20",
+                    "label": {
+                        "en": "15-20 minutes",
+                        "fr": "15-20 minutes"
+                    }
+                },
+                {
+                    "value": "20-25",
+                    "label": {
+                        "en": "20-25 minutes",
+                        "fr": "20-25 minutes"
+                    }
+                },
+                {
+                    "value": "25+",
+                    "label": {
+                        "en": "More than 25 minutes",
+                        "fr": "Plus de 25 minutes"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_dr_kegel_study",
+            "type": "StudyFact",
+            "title": {
+                "en": "Kegel Exercises strengthen PF muscles, which significantly increases ejaculation control",
+                "fr": "Les exercices de Kegel renforcent les muscles du périnée, ce qui augmente considérablement le contrôle de l'éjaculation"
+            }
+        },
+        {
+            "id": "info_dr_kegel_social_proof",
+            "type": "EightOfTen",
+            "title": {
+                "en": "8 out of 10 men improved their ejaculation control by following the Kegel Plan",
+                "fr": "8 hommes sur 10 ont amélioré leur contrôle de l'éjaculation en suivant le Plan Kegel"
+            },
+            "filled": 8
+        },
+        {
+            "id": "dr_kegel_erectile_desc",
+            "type": "QCM",
+            "text": {
+                "en": "How would you describe your Erectile function?",
+                "fr": "Comment décrirais-tu ta fonction érectile ?"
+            },
+            "options": [
+                {
+                    "value": "great",
+                    "label": {
+                        "en": "Everything's great",
+                        "fr": "Tout va bien"
+                    }
+                },
+                {
+                    "value": "mostly_fine",
+                    "label": {
+                        "en": "Mostly fine, but sometimes I have problems",
+                        "fr": "La plupart du temps bien, mais parfois j'ai des problèmes"
+                    }
+                },
+                {
+                    "value": "often_problems",
+                    "label": {
+                        "en": "I often have problems",
+                        "fr": "J'ai souvent des problèmes"
+                    }
+                },
+                {
+                    "value": "no_answer",
+                    "label": {
+                        "en": "I don't want to answer",
+                        "fr": "Je ne veux pas répondre"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "dr_kegel_erection_difficulty_getting",
+            "type": "QCM",
+            "text": {
+                "en": "How often do you experience difficulty getting an erection for sex?",
+                "fr": "À quelle fréquence as-tu des difficultés à obtenir une érection pour un rapport sexuel ?"
+            },
+            "options": [
+                {
+                    "value": "never",
+                    "label": {
+                        "en": "Never",
+                        "fr": "Jamais"
+                    }
+                },
+                {
+                    "value": "rarely",
+                    "label": {
+                        "en": "Rarely",
+                        "fr": "Rarement"
+                    }
+                },
+                {
+                    "value": "often",
+                    "label": {
+                        "en": "Often",
+                        "fr": "Souvent"
+                    }
+                },
+                {
+                    "value": "all_time",
+                    "label": {
+                        "en": "All the time",
+                        "fr": "Tout le temps"
+                    }
+                },
+                {
+                    "value": "no_answer",
+                    "label": {
+                        "en": "I don't want to answer",
+                        "fr": "Je ne veux pas répondre"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "dr_kegel_erection_difficulty_maintaining",
+            "type": "QCM",
+            "text": {
+                "en": "How often do you experience difficulty maintaining an erection during sex?",
+                "fr": "À quelle fréquence as-tu des difficultés à maintenir une érection pendant un rapport ?"
+            },
+            "options": [
+                {
+                    "value": "never",
+                    "label": {
+                        "en": "Never",
+                        "fr": "Jamais"
+                    }
+                },
+                {
+                    "value": "rarely",
+                    "label": {
+                        "en": "Rarely",
+                        "fr": "Rarement"
+                    }
+                },
+                {
+                    "value": "often",
+                    "label": {
+                        "en": "Often",
+                        "fr": "Souvent"
+                    }
+                },
+                {
+                    "value": "all_time",
+                    "label": {
+                        "en": "All the time",
+                        "fr": "Tout le temps"
+                    }
+                },
+                {
+                    "value": "no_answer",
+                    "label": {
+                        "en": "I don't want to answer",
+                        "fr": "Je ne veux pas répondre"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "dr_kegel_two_times",
+            "type": "QCM",
+            "text": {
+                "en": "Can you have sex 2 times in a row?",
+                "fr": "Peux-tu avoir des rapports sexuels 2 fois de suite ?"
+            },
+            "options": [
+                {
+                    "value": "yes_easy",
+                    "label": {
+                        "en": "Yes, without any problems",
+                        "fr": "Oui, sans aucun problème"
+                    }
+                },
+                {
+                    "value": "yes_hard",
+                    "label": {
+                        "en": "Yes, but I must try hard",
+                        "fr": "Oui, mais je dois faire des efforts"
+                    }
+                },
+                {
+                    "value": "no",
+                    "label": {
+                        "en": "No, I can't",
+                        "fr": "Non, je ne peux pas"
+                    }
+                },
+                {
+                    "value": "no_answer",
+                    "label": {
+                        "en": "I don't want to answer",
+                        "fr": "Je ne veux pas répondre"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_dr_kegel_social_proof_erection",
+            "type": "UserSurvey",
+            "title": {
+                "en": "84% of men significantly improved erection by following the Kegel Plan",
+                "fr": "84% des hommes ont considérablement amélioré leur érection en suivant le Plan Kegel"
+            },
+            "review": {
+                "text": {
+                    "en": "The effect is great. After 4 weeks of kegels, I have no trouble getting and maintaining erection...",
+                    "fr": "L'effet est génial. Après 4 semaines de kegels, je n'ai aucun problème à obtenir et maintenir une érection..."
+                },
+                "author": "Mark88"
+            },
+            "imageUrl": "/images/dr_kegel/social_proof_erection.png",
+            "cta": {
+                "en": "I got it",
+                "fr": "J'ai compris"
+            }
+        },
+        {
+            "id": "dr_kegel_satisfaction_3mo",
+            "type": "Rating",
+            "text": {
+                "en": "How satisfied are you with your sex life in the last 3 months?",
+                "fr": "Quel est ton niveau de satisfaction concernant ta vie sexuelle au cours des 3 derniers mois ?"
+            },
+            "subtitle": {
+                "en": "Rate from 1 to 5",
+                "fr": "Note de 1 à 5"
+            },
+            "minLabel": {
+                "en": "Not satisfied",
+                "fr": "Pas satisfait"
+            },
+            "maxLabel": {
+                "en": "Very satisfied",
+                "fr": "Très satisfait"
+            },
+            "options": [
+                {
+                    "value": "1",
+                    "label": {
+                        "en": "1",
+                        "fr": "1"
+                    }
+                },
+                {
+                    "value": "2",
+                    "label": {
+                        "en": "2",
+                        "fr": "2"
+                    }
+                },
+                {
+                    "value": "3",
+                    "label": {
+                        "en": "3",
+                        "fr": "3"
+                    }
+                },
+                {
+                    "value": "4",
+                    "label": {
+                        "en": "4",
+                        "fr": "4"
+                    }
+                },
+                {
+                    "value": "5",
+                    "label": {
+                        "en": "5",
+                        "fr": "5"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "dr_kegel_partner_regular",
+            "type": "QCM",
+            "text": {
+                "en": "Do you have a regular sexual partner?",
+                "fr": "As-tu un partenaire sexuel régulier ?"
+            },
+            "options": [
+                {
+                    "value": "yes",
+                    "label": {
+                        "en": "Yes, I do",
+                        "fr": "Oui"
+                    }
+                },
+                {
+                    "value": "irregular",
+                    "label": {
+                        "en": "I have a partner, but not regular",
+                        "fr": "J'ai un partenaire, mais pas régulier"
+                    }
+                },
+                {
+                    "value": "no",
+                    "label": {
+                        "en": "No, I don't",
+                        "fr": "Non"
+                    }
+                },
+                {
+                    "value": "no_answer",
+                    "label": {
+                        "en": "I don't want to answer",
+                        "fr": "Je ne veux pas répondre"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "dr_kegel_sex_frequency",
+            "type": "QCM",
+            "text": {
+                "en": "How often do you have sex?",
+                "fr": "À quelle fréquence as-tu des rapports sexuels ?"
+            },
+            "options": [
+                {
+                    "value": "daily",
+                    "label": {
+                        "en": "Every day",
+                        "fr": "Tous les jours"
+                    }
+                },
+                {
+                    "value": "several_week",
+                    "label": {
+                        "en": "Several times a week",
+                        "fr": "Plusieurs fois par semaine"
+                    }
+                },
+                {
+                    "value": "once_week",
+                    "label": {
+                        "en": "Once a week",
+                        "fr": "Une fois par semaine"
+                    }
+                },
+                {
+                    "value": "once_month",
+                    "label": {
+                        "en": "Once a month",
+                        "fr": "Une fois par mois"
+                    }
+                },
+                {
+                    "value": "no_answer",
+                    "label": {
+                        "en": "I don't want to answer",
+                        "fr": "Je ne veux pas répondre"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_dr_kegel_projection",
+            "type": "PlanProjection",
+            "weeks": 6,
+            "title": {
+                "en": "Based on our calculations, you'll reach your goal of lasting {{goal}} min 🎉 by",
+                "fr": "D'après nos calculs, tu atteindras ton objectif de tenir {{goal}} min 🎉 d'ici"
+            },
+            "showReview": true
+        },
+        {
+            "id": "dr_kegel_libido",
+            "type": "Rating",
+            "text": {
+                "en": "How would you rate your libido (sex drive) in the last 3 months?",
+                "fr": "Comment évaluerais-tu ta libido (désir sexuel) au cours des 3 derniers mois ?"
+            },
+            "subtitle": {
+                "en": "Rate from 1 to 5",
+                "fr": "Note de 1 à 5"
+            },
+            "minLabel": {
+                "en": "Low",
+                "fr": "Faible"
+            },
+            "maxLabel": {
+                "en": "High",
+                "fr": "Élevée"
+            },
+            "options": [
+                {
+                    "value": "1",
+                    "label": {
+                        "en": "1",
+                        "fr": "1"
+                    }
+                },
+                {
+                    "value": "2",
+                    "label": {
+                        "en": "2",
+                        "fr": "2"
+                    }
+                },
+                {
+                    "value": "3",
+                    "label": {
+                        "en": "3",
+                        "fr": "3"
+                    }
+                },
+                {
+                    "value": "4",
+                    "label": {
+                        "en": "4",
+                        "fr": "4"
+                    }
+                },
+                {
+                    "value": "5",
+                    "label": {
+                        "en": "5",
+                        "fr": "5"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "dr_kegel_pills",
+            "type": "QCM",
+            "text": {
+                "en": "Do you take any pills to improve sexual performance?",
+                "fr": "Prends-tu des pilules pour améliorer tes performances sexuelles ?"
+            },
+            "options": [
+                {
+                    "value": "yes_always",
+                    "label": {
+                        "en": "Yes, every time",
+                        "fr": "Oui, à chaque fois"
+                    }
+                },
+                {
+                    "value": "yes_sometimes",
+                    "label": {
+                        "en": "I take them sometimes",
+                        "fr": "J'en prends parfois"
+                    }
+                },
+                {
+                    "value": "no",
+                    "label": {
+                        "en": "No, I don't",
+                        "fr": "Non, je n'en prends pas"
+                    }
+                },
+                {
+                    "value": "no_answer",
+                    "label": {
+                        "en": "I don't want to answer",
+                        "fr": "Je ne veux pas répondre"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_dr_kegel_pills_comparison",
+            "type": "ComparisonTable",
+            "title": {
+                "en": "The Kegel Plan is better than pills",
+                "fr": "Le Plan Kegel est meilleur que les pilules"
+            },
+            "imageUrl": "/images/dr_kegel/better_than_pills_table.png",
+            "cta": {
+                "en": "I got it",
+                "fr": "J'ai compris"
+            }
+        },
+        {
+            "id": "dr_kegel_alcohol",
+            "type": "QCM",
+            "text": {
+                "en": "How often do you drink alcohol?",
+                "fr": "À quelle fréquence consommes-tu de l'alcool ?"
+            },
+            "options": [
+                {
+                    "value": "daily",
+                    "label": {
+                        "en": "Every day",
+                        "fr": "Tous les jours"
+                    }
+                },
+                {
+                    "value": "several_week",
+                    "label": {
+                        "en": "Several times a week",
+                        "fr": "Plusieurs fois par semaine"
+                    }
+                },
+                {
+                    "value": "once_week",
+                    "label": {
+                        "en": "Once a week",
+                        "fr": "Une fois par semaine"
+                    }
+                },
+                {
+                    "value": "once_month",
+                    "label": {
+                        "en": "Once a month",
+                        "fr": "Une fois par mois"
+                    }
+                },
+                {
+                    "value": "never",
+                    "label": {
+                        "en": "I don't drink at all",
+                        "fr": "Je ne bois pas du tout"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "dr_kegel_smoke",
+            "type": "QCM",
+            "text": {
+                "en": "Do you smoke?",
+                "fr": "Fumes-tu ?"
+            },
+            "options": [
+                {
+                    "value": "yes",
+                    "label": {
+                        "en": "Yes, I do",
+                        "fr": "Oui, je fume"
+                    }
+                },
+                {
+                    "value": "no",
+                    "label": {
+                        "en": "No, I don't",
+                        "fr": "Non, je ne fume pas"
+                    }
+                },
+                {
+                    "value": "sometimes",
+                    "label": {
+                        "en": "Sometimes",
+                        "fr": "Parfois"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "dr_kegel_diet",
+            "type": "Rating",
+            "text": {
+                "en": "How healthy is your diet?",
+                "fr": "Ton alimentation est-elle saine ?"
+            },
+            "subtitle": {
+                "en": "Rate from 1 to 5",
+                "fr": "Note de 1 à 5"
+            },
+            "minLabel": {
+                "en": "Unhealthy",
+                "fr": "Malsaine"
+            },
+            "maxLabel": {
+                "en": "Healthy",
+                "fr": "Saine"
+            },
+            "options": [
+                {
+                    "value": "1",
+                    "label": {
+                        "en": "1",
+                        "fr": "1"
+                    }
+                },
+                {
+                    "value": "2",
+                    "label": {
+                        "en": "2",
+                        "fr": "2"
+                    }
+                },
+                {
+                    "value": "3",
+                    "label": {
+                        "en": "3",
+                        "fr": "3"
+                    }
+                },
+                {
+                    "value": "4",
+                    "label": {
+                        "en": "4",
+                        "fr": "4"
+                    }
+                },
+                {
+                    "value": "5",
+                    "label": {
+                        "en": "5",
+                        "fr": "5"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_dr_kegel_plan_preview",
+            "type": "PlanProjection",
+            "title": {
+                "en": "Based on our calculations, you'll reach your goal of lasting {{goal}} min 🎉 by",
+                "fr": "D'après nos calculs, tu atteindras ton objectif de tenir {{goal}} min 🎉 d'ici"
+            },
+            "weeks": 5,
+            "badge": {
+                "en": "19% Faster",
+                "fr": "19% plus rapide"
+            },
+            "showDetails": true
+        },
+        {
+            "id": "dr_kegel_activity",
+            "type": "Rating",
+            "text": {
+                "en": "What's your level of physical activity?",
+                "fr": "Quel est ton niveau d'activité physique ?"
+            },
+            "subtitle": {
+                "en": "Rate from 1 to 5",
+                "fr": "Note de 1 à 5"
+            },
+            "minLabel": {
+                "en": "Low",
+                "fr": "Faible"
+            },
+            "maxLabel": {
+                "en": "High",
+                "fr": "Élevé"
+            },
+            "options": [
+                {
+                    "value": "1",
+                    "label": {
+                        "en": "1",
+                        "fr": "1"
+                    }
+                },
+                {
+                    "value": "2",
+                    "label": {
+                        "en": "2",
+                        "fr": "2"
+                    }
+                },
+                {
+                    "value": "3",
+                    "label": {
+                        "en": "3",
+                        "fr": "3"
+                    }
+                },
+                {
+                    "value": "4",
+                    "label": {
+                        "en": "4",
+                        "fr": "4"
+                    }
+                },
+                {
+                    "value": "5",
+                    "label": {
+                        "en": "5",
+                        "fr": "5"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "dr_kegel_stress",
+            "type": "Rating",
+            "text": {
+                "en": "How would you rate your daily stress level?",
+                "fr": "Comment évaluerais-tu ton niveau de stress quotidien ?"
+            },
+            "subtitle": {
+                "en": "Rate from 1 to 5",
+                "fr": "Note de 1 à 5"
+            },
+            "minLabel": {
+                "en": "Low",
+                "fr": "Faible"
+            },
+            "maxLabel": {
+                "en": "High",
+                "fr": "Élevé"
+            },
+            "options": [
+                {
+                    "value": "1",
+                    "label": {
+                        "en": "1",
+                        "fr": "1"
+                    }
+                },
+                {
+                    "value": "2",
+                    "label": {
+                        "en": "2",
+                        "fr": "2"
+                    }
+                },
+                {
+                    "value": "3",
+                    "label": {
+                        "en": "3",
+                        "fr": "3"
+                    }
+                },
+                {
+                    "value": "4",
+                    "label": {
+                        "en": "4",
+                        "fr": "4"
+                    }
+                },
+                {
+                    "value": "5",
+                    "label": {
+                        "en": "5",
+                        "fr": "5"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "dr_kegel_consent",
+            "type": "Consent",
+            "text": {
+                "en": "Creating your plan",
+                "fr": "Création de ton plan"
+            },
+            "subtitle": {
+                "en": "I consent to Viril App processing my health onboarding data to provide services and enhance my user experience.",
+                "fr": "Je consens à ce que Viril App traite mes données de santé pour fournir des services et améliorer mon expérience utilisateur."
+            },
+            "options": [
+                {
+                    "value": "consent",
+                    "label": {
+                        "en": "Continue",
+                        "fr": "Continuer"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "loading_dr_kegel",
+            "type": "AnalyzeResults"
+        },
+        {
+            "id": "info_dr_kegel_congrats",
+            "type": "InfoSlide",
+            "title": {
+                "en": "Congratulations on joining the millions of men prioritizing sexual wellness",
+                "fr": "Félicitations pour avoir rejoint les millions d'hommes qui priorisent leur bien-être sexuel"
+            },
+            "subtitle": {
+                "en": "Trusted by over 4,000,000 men worldwide",
+                "fr": "Approuvé par plus de 4 000 000 d'hommes dans le monde"
+            },
+            "imageUrl": "/images/dr_kegel/congrats_faces.png",
+            "cta": {
+                "en": "Continue",
+                "fr": "Continuer"
+            }
+        },
+        {
+            "id": "info_dr_kegel_benefits",
+            "type": "BenefitsList",
+            "title": {
+                "en": "Your Kegel plan will help you to improve:",
+                "fr": "Ton plan Kegel t'aidera à améliorer :"
+            },
+            "imageUrl": "/images/dr_kegel/benefits_list.png",
+            "cta": {
+                "en": "I got it",
+                "fr": "J'ai compris"
+            }
+        },
+        {
+            "id": "info_dr_kegel_5min",
+            "type": "InfoSlide",
+            "title": {
+                "en": "The best thing? It takes just 5 min a day",
+                "fr": "Le meilleur ? Cela ne prend que 5 min par jour"
+            },
+            "showDetails": true,
+            "cta": {
+                "en": "I got it",
+                "fr": "J'ai compris"
+            }
+        },
+        {
+            "id": "info_dr_kegel_final_adjustment",
+            "type": "PlanProjection",
+            "title": {
+                "en": "Final adjustment",
+                "fr": "Ajustement final"
+            },
+            "subtitle": {
+                "en": "Based on the new data, you can reach your goal of {{goal}} min by",
+                "fr": "D'après les nouvelles données, tu peux atteindre ton objectif de {{goal}} min"
+            },
+            "weeks": 4,
+            "badge": {
+                "en": "34% Faster",
+                "fr": "34% plus rapide"
+            },
+            "showGauge": true,
+            "showCompatibilityScore": true,
+            "cta": {
+                "en": "Continue",
+                "fr": "Continuer"
+            }
+        },
+        {
+            "id": "email_dr_kegel",
+            "type": "Email",
+            "text": {
+                "en": "Enter email to get your personal Kegel Plan",
+                "fr": "Entre ton email pour obtenir ton Plan Kegel personnel"
+            },
+            "buttonText": {
+                "en": "Continue",
+                "fr": "Continuer"
+            },
+            "disclaimer": {
+                "en": "Your personal data is safe with us. We'll use your email for updates, receipts, and subscription details.",
+                "fr": "Tes données personnelles sont en sécurité avec nous. Nous utiliserons ton email pour les mises à jour, reçus et détails d'abonnement."
+            }
+        }
+    ]
+}

@@ -29,10 +29,11 @@ export const getServerSideProps: GetServerSideProps = async ({ query, req }) => 
   }
   const theme: Theme = await readJson('/data/theme.json');
   const lang: LangDict = await readJson('/data/lang.json');
-  const test: { questions: Question[] } = await readJson('/data/test.json');
+  const quizVersionParam = getParamFromQuery(query as any, 'version', 'v_viril');
+  const test: { questions: Question[] } = await readJson(`/data/quizzes/${quizVersionParam}.json`);
   const langCode = getParamFromQuery(query as any, 'lang', 'en');
   const step = parseInt(getParamFromQuery(query as any, 'step', '0'), 10) || 0;
-  return { props: { theme, lang, test, langCode, step } };
+  return { props: { theme, lang, test, langCode, step, quizVersion: quizVersionParam } };
 };
 
 export default function Home({ theme, lang, test, langCode, step }: { theme: Theme; lang: LangDict; test: { questions: Question[] }; langCode: string; step: number; }) {
@@ -66,8 +67,8 @@ export default function Home({ theme, lang, test, langCode, step }: { theme: The
     set('--slider-track', c.optionBackground || '#E6E3DC');
     set('--slider-fill', c.emailButton || c.primary || '#80C9AC');
     set('--slider-thumb', '#FFFFFF');
-    r.style.setProperty('--radius', String(theme.radius)+'px');
-    r.style.setProperty('--border', String(theme.border)+'px');
+    r.style.setProperty('--radius', String(theme.radius) + 'px');
+    r.style.setProperty('--border', String(theme.border) + 'px');
   }, [theme]);
 
   // Keep SSR block identical across server and first client render to avoid hydration mismatch
@@ -106,7 +107,7 @@ export default function Home({ theme, lang, test, langCode, step }: { theme: The
     }
     let top = '';
     let max = -1;
-    Object.entries(counts).forEach(([k,v]) => { if (v > max) { max = v; top = k; } });
+    Object.entries(counts).forEach(([k, v]) => { if (v > max) { max = v; top = k; } });
     return { top, scores: counts };
   }
 
@@ -138,25 +139,29 @@ export default function Home({ theme, lang, test, langCode, step }: { theme: The
         {/* Single-locale FR; no hreflang alternates */}
         {/* JSON-LD */}
         <script type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Organization',
-            name: siteName,
-            url: origin || 'https://example.com',
-            logo: theme.logoUrl || undefined
-          }) }} />
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: siteName,
+              url: origin || 'https://example.com',
+              logo: theme.logoUrl || undefined
+            })
+          }} />
         <script type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'WebSite',
-            name: siteName,
-            url: origin || 'https://example.com',
-            potentialAction: {
-              '@type': 'SearchAction',
-              target: `${origin || 'https://example.com'}/?q={search_term_string}`,
-              'query-input': 'required name=search_term_string'
-            }
-          }) }} />
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: siteName,
+              url: origin || 'https://example.com',
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: `${origin || 'https://example.com'}/?q={search_term_string}`,
+                'query-input': 'required name=search_term_string'
+              }
+            })
+          }} />
       </Head>
       <div id="ssr-landing" className="container" suppressHydrationWarning>
         {theme.logoUrl && (

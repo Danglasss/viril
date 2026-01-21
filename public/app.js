@@ -45,17 +45,18 @@ window.__renderQuestionElement = (question, value, onChange, lang) => {
 function App() {
   const langCode = getParam('lang', 'fr');
   const stepParam = parseInt(getParam('step', '0'), 10);
+  const quizVersionParam = getParam('version', 'v_viril');
 
   const { data: theme } = useFetch('/data/theme.json');
   const { data: langDict } = useFetch('/data/lang.json');
-  const { data: test } = useFetch('/data/test.json');
+  const { data: test } = useFetch(`/data/quizzes/${quizVersionParam}.json`);
 
   // Restore answers from localStorage on load
   const [answers, setAnswers] = React.useState(() => {
     try {
       const stored = localStorage.getItem('viril_answers');
       return stored ? JSON.parse(stored) : {};
-    } catch(_) { return {}; }
+    } catch (_) { return {}; }
   });
   const [results, setResults] = React.useState(null);
   // Keep step in state so UI updates when navigating
@@ -77,17 +78,17 @@ function App() {
     // Guard: si déjà initialisé, ne rien faire
     if (sessionInitRef.current) return;
     sessionInitRef.current = true;
-    
+
     try {
       if (window.sbApi) {
         console.info('[app] ensureSession call (once)');
         Promise.resolve(window.sbApi.ensureSession())
-          .then(function(){ console.info('[app] session ready'); })
-          .catch(function(e){ console.error('[app] ensureSession error', e); });
+          .then(function () { console.info('[app] session ready'); })
+          .catch(function (e) { console.error('[app] ensureSession error', e); });
       }
-    } catch(e) { console.error('[app] ensureSession error', e); }
+    } catch (e) { console.error('[app] ensureSession error', e); }
   }, []); // ⭐ Dépendances vides = exécution UNE SEULE fois au montage
-  
+
   React.useEffect(() => {
     if (!theme) return;
     const r = document.documentElement;
@@ -111,24 +112,24 @@ function App() {
   }, [theme]);
 
   // Persist progress even during early loading renders (use step, not derived current)
-  React.useEffect(()=>{
+  React.useEffect(() => {
     try {
       if (window.sbApi) {
         console.info('[app] saveProgress call', { step });
         Promise.resolve(window.sbApi.saveProgress({ step, answers }))
-          .then(function(ok){ console.info('[app] saveProgress result', ok); })
-          .catch(function(e){ console.error('[app] saveProgress error', e); });
+          .then(function (ok) { console.info('[app] saveProgress result', ok); })
+          .catch(function (e) { console.error('[app] saveProgress error', e); });
       }
-    } catch(e) { console.error('[app] saveProgress thrown', e); }
+    } catch (e) { console.error('[app] saveProgress thrown', e); }
   }, [step, answers]);
 
   // Auto-sync profile fields from quiz answers (fire-and-forget, never blocks UI)
-  React.useEffect(()=>{
+  React.useEffect(() => {
     try {
       if (window.profileSync && Object.keys(answers).length > 0) {
         window.profileSync.syncAnswers(answers);
       }
-    } catch(e) { console.error('[app] profileSync thrown', e); }
+    } catch (e) { console.error('[app] profileSync thrown', e); }
   }, [answers]);
   // Persist answers locally for client-side personalization and resilience on back/refresh
   React.useEffect(() => {
@@ -147,8 +148,8 @@ function App() {
         updatedAt: Date.now()
       };
       localStorage.setItem('viril_personalization', JSON.stringify(personalization));
-      try { if (typeof window !== 'undefined') { window.__getPersonalization = function(){ return personalization; }; } } catch(_) {}
-    } catch(_) {}
+      try { if (typeof window !== 'undefined') { window.__getPersonalization = function () { return personalization; }; } } catch (_) { }
+    } catch (_) { }
   }, [answers, langCode]);
   // Restore answers from localStorage on first mount (if any)
   React.useEffect(() => {
@@ -160,7 +161,7 @@ function App() {
           setAnswers(parsed);
         }
       }
-    } catch(_) {}
+    } catch (_) { }
   }, []);
   if (!theme || !langDict || !test) return React.createElement('div', { className: 'container' }, 'Loading...');
 
@@ -177,13 +178,13 @@ function App() {
       // Expose specific question options for localized mapping (e.g., proj_main_reason → profiles.goal)
       try {
         window.__QUIZ_OPTIONS = window.__QUIZ_OPTIONS || {};
-        const reasonQ = (test && Array.isArray(test.questions)) ? test.questions.find(function(q){ return q && q.id === 'proj_main_reason'; }) : null;
+        const reasonQ = (test && Array.isArray(test.questions)) ? test.questions.find(function (q) { return q && q.id === 'proj_main_reason'; }) : null;
         if (reasonQ && Array.isArray(reasonQ.options)) {
           window.__QUIZ_OPTIONS['proj_main_reason'] = reasonQ.options;
         }
-      } catch(_) {}
+      } catch (_) { }
     }
-  } catch(_) {}
+  } catch (_) { }
 
   const t = (k) => (langDict[langCode] && langDict[langCode][k]) || k;
 
@@ -200,12 +201,12 @@ function App() {
   const qs = test.questions.slice(1);
   const withExplainer = qs.slice();
   // Insert Graphique right after partner satisfaction question (content from test.json)
-  (function(){
-    const idxPartner = withExplainer.findIndex(function(q){ return q && q.id === 'diag_partner_satisfaction'; });
-    const already = withExplainer.some(function(s){ return s && s.id === '__exp_fem_duration'; });
+  (function () {
+    const idxPartner = withExplainer.findIndex(function (q) { return q && q.id === 'diag_partner_satisfaction'; });
+    const already = withExplainer.some(function (s) { return s && s.id === '__exp_fem_duration'; });
     if (idxPartner !== -1 && !already) {
       // find the Graphique config from test data
-      const g = test.questions.find(function(q){ return q && q.id === '__exp_fem_duration'; });
+      const g = test.questions.find(function (q) { return q && q.id === '__exp_fem_duration'; });
       if (g) {
         // enrich with dynamic marker from prior answer
         const xFrom = g.dynamicMarkerFrom || 'diag_duration';
@@ -222,7 +223,7 @@ function App() {
       }
     }
     // Always refresh the dynamic marker on the existing Graphique slide
-    const idxGraph = withExplainer.findIndex(function(q){ return q && q.id === '__exp_fem_duration'; });
+    const idxGraph = withExplainer.findIndex(function (q) { return q && q.id === '__exp_fem_duration'; });
     if (idxGraph !== -1) {
       const g = withExplainer[idxGraph];
       const xFrom = (g && g.dynamicMarkerFrom) || 'diag_duration';
@@ -237,16 +238,16 @@ function App() {
     }
   })();
   // Ensure AnalyzeResults is placed just before Email step
-  if (!withExplainer.some(function(s){ return s && s.id === '__analyze'; })) {
+  if (!withExplainer.some(function (s) { return s && s.id === '__analyze'; })) {
     withExplainer.push({ id: '__analyze', type: 'AnalyzeResults' });
   }
   // Move engagement question just after AnalyzeResults and before Email
-  (function(){
-    let engIdx = withExplainer.findIndex(function(q){ return q && q.id === 'eng_try_program'; });
+  (function () {
+    let engIdx = withExplainer.findIndex(function (q) { return q && q.id === 'eng_try_program'; });
     let eng = null;
     if (engIdx !== -1) { eng = withExplainer.splice(engIdx, 1)[0]; }
-    if (!eng) { eng = test.questions.find(function(q){ return q && q.id === 'eng_try_program'; }); }
-    const idxAnalyze = withExplainer.findIndex(function(q){ return q && q.id === '__analyze'; });
+    if (!eng) { eng = test.questions.find(function (q) { return q && q.id === 'eng_try_program'; }); }
+    const idxAnalyze = withExplainer.findIndex(function (q) { return q && q.id === '__analyze'; });
     if (eng) {
       const insertPos = (idxAnalyze !== -1 ? idxAnalyze + 1 : withExplainer.length);
       withExplainer.splice(insertPos, 0, eng);
@@ -262,38 +263,42 @@ function App() {
     saleType = viewParam;
   }
 
+  const goalDuration = (answers && answers['goal_duration']) ? answers['goal_duration'] : '';
+  const resultTitleFr = goalDuration ? `Ton plan personnalisé pour tenir ${goalDuration} minutes` : 'Ton plan personnalisé';
+  const resultTitleEn = goalDuration ? `Your personalized plan to last ${goalDuration} minutes` : 'Your personalized plan';
+
   const flow = [
     landingStep,
     ...withExplainer,
-    { id: '__email', type: 'Email', text: { placeholder: (langCode==='fr' ? 'ton@email.com' : 'your@email.com'), cta: (langCode==='fr' ? 'Voir mon plan' : 'See my plan') } },
-    { id: '__results', type: 'Results', results: results || { top: '', scores: {} }, title: (langCode==='fr' ? 'Ton plan personnalisé' : 'Your personalized plan') },
+    { id: '__email', type: 'Email', text: { placeholder: (langCode === 'fr' ? 'ton@email.com' : 'your@email.com'), cta: (langCode === 'fr' ? 'OBTENIR MON PLAN' : 'GET MY PLAN') } },
+    { id: '__results', type: 'Results', results: results || { top: '', scores: {} }, title: (langCode === 'fr' ? resultTitleFr : resultTitleEn) },
     { id: '__sale', type: saleType }
   ];
 
-  const totalQuestions = (test.questions || []).filter(function(it){
-    return it && (it.type === 'QCM' || it.type === 'ImageChoice' || it.type === 'Slider' || it.type === 'Text');
+  const totalQuestions = (test.questions || []).filter(function (it) {
+    return it && (it.type === 'QCM' || it.type === 'ImageChoice' || it.type === 'Slider' || it.type === 'Text' || it.type === 'Rating');
   }).length;
   const total = flow.length;
   // Allow alternate routing: ?view=plan to jump directly to plan screen (for GTM events)
   const saleView = (viewParam === 'sale' || viewParam === 'sale_violent' || viewParam === 'lp_emotion' || viewParam === 'lp_science');
-  const current = saleView ? (flow.findIndex(i=>i.type===saleType) !== -1 ? flow.findIndex(i=>i.type===saleType) : (total - 1))
-                           : (viewParam === 'plan' ? (total - 1) : Math.max(0, Math.min(step, total - 1)));
+  const current = saleView ? (flow.findIndex(i => i.type === saleType) !== -1 ? flow.findIndex(i => i.type === saleType) : (total - 1))
+    : (viewParam === 'plan' ? (total - 1) : Math.max(0, Math.min(step, total - 1)));
 
   const q = flow[current];
   const qText = q.text && (q.text[langCode] || q.text['en'] || '');
 
   const onChange = (v) => setAnswers(a => ({ ...a, [q.id]: v }));
   // expose answers getter for components needing dynamic copy
-  try { if (typeof window !== 'undefined') { window.__getAnswers = function(){ return answers; }; } } catch(_) {}
+  try { if (typeof window !== 'undefined') { window.__getAnswers = function () { return answers; }; } } catch (_) { }
   // expose setter for Landing to save under real question ID (demo_age) not __landing
-  try { if (typeof window !== 'undefined') { window.__setAnswer = function(id, val){ setAnswers(a => ({ ...a, [id]: val })); }; } } catch(_) {}
+  try { if (typeof window !== 'undefined') { window.__setAnswer = function (id, val) { setAnswers(a => ({ ...a, [id]: val })); }; } } catch (_) { }
   const goTo = (n) => {
     try {
       const url = new URL(window.location.href);
       url.searchParams.delete('view');
       url.searchParams.set('step', String(n));
       window.history.pushState({}, '', url.toString());
-    } catch(_) {
+    } catch (_) {
       setParam('step', n);
     }
     setStep(n);
@@ -301,7 +306,7 @@ function App() {
 
   // expose global next for components that auto-advance
   window.__goNext = () => {
-    try { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'quiz_step', step: Math.min(current + 1, total - 1) }); } catch(_) {}
+    try { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'quiz_step', step: Math.min(current + 1, total - 1) }); } catch (_) { }
     goTo(Math.min(current + 1, total - 1));
   };
 
@@ -319,7 +324,7 @@ function App() {
     }
     let top = '';
     let max = -1;
-    Object.entries(counts).forEach(([k,v]) => { if (v > max) { max = v; top = k; } });
+    Object.entries(counts).forEach(([k, v]) => { if (v > max) { max = v; top = k; } });
     return { top, scores: counts };
   }
   window.__submitEmail = () => {
@@ -337,7 +342,7 @@ function App() {
       url.searchParams.set('view', 'plan');
       url.searchParams.delete('step');
       window.history.pushState({}, '', url.toString());
-    } catch(_) {}
+    } catch (_) { }
     setStep(flow.length - 1);
   };
 
@@ -352,35 +357,32 @@ function App() {
 
   return React.createElement(ThemeContext.Provider, { value: theme },
     React.createElement('div', { className: 'container' },
-      q.type !== 'Landing' && q.type !== 'Results' && q.type !== 'lp_emotion' && q.type !== 'lp_science' && React.createElement('div', { className: 'topline', style: { alignItems: 'center', gap: 12 } },
-        React.createElement('img', { src: theme.logoUrl, alt: 'logo', style: { height: 24 } }),
-        React.createElement('div', { style: { flex: 1, height: 6, background: 'var(--slider-track)', borderRadius: 999, overflow: 'hidden' } },
-          React.createElement('div', { style: { width: `${(questionNumber / totalQuestions) * 100}%`, height: '100%', background: 'var(--slider-fill)' } })
-        ),
-        React.createElement('div', { className: 'bubble' }, `${questionNumber}/${totalQuestions}`)
-      ),
-      React.createElement('div', { className: 'card' },
-        ((q.type === 'Landing' || q.type === 'Results') ? null : React.createElement('h2', null, qText || '')),
-        React.createElement(QuestionRenderer, { question: q, value: answers[q.id], onChange, lang: langCode }),
-        !hideNav && React.createElement('div', { className: 'nav' },
-          React.createElement('button', { className: 'btn secondary', onClick: () => goTo(Math.max(0, current - 1)) }, '←'),
-          !isChoice && current > 0 && current < 1 + totalQuestions && React.createElement('button', { className: 'btn', onClick: () => goTo(current + 1) }, t('next_question'))
+      q.type !== 'Landing' && q.type !== 'Results' && q.type !== 'lp_emotion' && q.type !== 'lp_science' && React.createElement('div', { className: 'header' },
+        React.createElement('img', { src: theme.logoUrl, alt: 'logo', className: 'logo' }),
+        q.type !== 'Email' && React.createElement('div', { className: 'progress-row' },
+          current >= 1 && React.createElement('button', { className: 'back-btn', onClick: () => goTo(Math.max(0, current - 1)) }, '‹'),
+          React.createElement('div', { className: 'progress-bar' },
+            React.createElement('div', { className: 'progress-fill', style: { width: `${(questionNumber / totalQuestions) * 100}%` } })
+          ),
+          React.createElement('div', { className: 'progress-text' }, `${questionNumber}/${totalQuestions}`)
         )
-      )
+      ),
+      ((q.type === 'Landing' || q.type === 'Results' || q.type === 'Email' || q.type === 'InfoSlide' || q.type === 'StudyFact' || q.type === 'EightOfTen' || q.type === 'UserSurvey' || q.type === 'ComparisonTable' || q.type === 'BenefitsList' || q.type === 'PlanProjection' || q.type === 'Benefits' || q.type === 'PerineeDiag') ? null : React.createElement('h1', { className: 'question-headline' }, qText || '')),
+      React.createElement(QuestionRenderer, { question: q, value: answers[q.id], onChange, lang: langCode })
     ),
-    q.type === 'Landing' && React.createElement('footer', { style: { position: 'fixed', left: 0, right: 0, bottom: 16, textAlign: 'center', opacity: .7, fontSize: 12 } },
-      React.createElement('a', { href: '/terms.html', style: { color: 'inherit', textDecoration: 'none', marginRight: 8 } }, 'Terms'),
+    q.type === 'Landing' && React.createElement('footer', { className: 'footer-links' },
+      React.createElement('a', { href: '/terms.html' }, 'Terms'),
       ' · ',
-      React.createElement('a', { href: '/privacy.html', style: { color: 'inherit', textDecoration: 'none', margin: '0 8px' } }, 'Privacy'),
+      React.createElement('a', { href: '/privacy.html' }, 'Privacy'),
       ' · ',
-      React.createElement('a', { href: '/cookies.html', style: { color: 'inherit', textDecoration: 'none', marginLeft: 8 } }, 'Cookies')
+      React.createElement('a', { href: '/cookies.html' }, 'Cookies')
     )
   );
 }
 
 // Register components dynamically by loading scripts and wait for them before rendering
 function loadComponent(name) {
-  return new Promise(function(resolve){
+  return new Promise(function (resolve) {
     const s = document.createElement('script');
     s.src = `/components/${name}.js`;
     s.async = true;
@@ -389,7 +391,7 @@ function loadComponent(name) {
     document.body.appendChild(s);
   });
 }
-const baseComponents = ['Landing','QCM','Slider','ImageChoice','Text','Email','Results','Graphique','AnalyzeResults','InfoSlide','PerineeDiag','EightOfTen','PlanProjection','Benefits'];
+const baseComponents = ['StickyFooterButton', 'TrustpilotReview', 'Landing', 'QCM', 'Slider', 'ImageChoice', 'Text', 'Email', 'Results', 'Graphique', 'AnalyzeResults', 'InfoSlide', 'PerineeDiag', 'EightOfTen', 'PlanProjection', 'Benefits', 'StudyFact', 'Rating', 'UserSurvey', 'ComparisonTable', 'Consent', 'BenefitsList', 'ProjectionGraph', 'ImprovementGraph'];
 const urlParams = new URL(window.location.href).searchParams;
 const viewRaw = urlParams.get('view') || '';
 const view = (viewRaw === 'p_science' ? 'lp_science' : (viewRaw === 'p_emotion' ? 'lp_emotion' : viewRaw));
@@ -399,8 +401,8 @@ let saleScript = (lp === 'emotion') ? 'ResultsSale_violent' : 'ResultsSale';
 if (view === 'lp_emotion') saleScript = 'ResultsSale_violent';
 if (view === 'lp_science') saleScript = 'ResultsSale';
 const componentsToLoad = baseComponents.concat([saleScript]);
-function waitForSb(){ return new Promise(function(res){ var t=0; var id=setInterval(function(){ if (window.sbApi || t++>200){ clearInterval(id); res(); } }, 25); }); }
-Promise.all(componentsToLoad.map(loadComponent).concat([waitForSb()])).then(function(){
+function waitForSb() { return new Promise(function (res) { var t = 0; var id = setInterval(function () { if (window.sbApi || t++ > 200) { clearInterval(id); res(); } }, 25); }); }
+Promise.all(componentsToLoad.map(loadComponent).concat([waitForSb()])).then(function () {
   const root = ReactDOM.createRoot(document.getElementById('root'));
   root.render(React.createElement(App));
 });

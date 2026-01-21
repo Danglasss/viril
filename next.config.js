@@ -6,7 +6,8 @@ const nextConfig = {
       { source: '/sitemap.xml', destination: '/api/sitemap.xml' },
       // Pretty URLs to choose LP variant
       { source: '/lp/emotion', destination: '/test?lp=emotion' },
-      { source: '/lp/science', destination: '/test?lp=science' }
+      { source: '/lp/science', destination: '/test?lp=science' },
+      { source: '/lp/45-55', destination: '/test?lp=45-55' }
     ];
   }
 };
