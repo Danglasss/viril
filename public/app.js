@@ -193,8 +193,9 @@ function App() {
   const landingStep = {
     id: '__landing',
     type: 'Landing',
-    headline: { fr: 'Solution pour éjaculation précoce', en: 'Premature ejaculation solution' },
-    subtitle: { fr: 'Passe ce test et recois un plan personnalisé pour ne plus jamais venir trop tôt', en: 'Improve control and confidence in bed' },
+    headline: { fr: 'Vaincre ton éjaculation précoce', en: 'Overcome premature ejaculation' },
+    subtitle: { fr: 'Réponds à ce test rapide pour recevoir ton plan personnalisé', en: 'Take this quick test to receive your personalized plan' },
+    privacy: { fr: 'ℹ️ Toutes les données de ce test sont anonymes', en: 'ℹ️ All data from this test is anonymous' },
     first: firstQuestion
   };
   // Build questions with an explanatory step after partner satisfaction
@@ -275,7 +276,7 @@ function App() {
     { id: '__sale', type: saleType }
   ];
 
-  const totalQuestions = (test.questions || []).filter(function (it) {
+  const totalQuestions = flow.filter(function (it) {
     return it && (it.type === 'QCM' || it.type === 'ImageChoice' || it.type === 'Slider' || it.type === 'Text' || it.type === 'Rating');
   }).length;
   const total = flow.length;

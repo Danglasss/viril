@@ -70,7 +70,7 @@
         default: return 'ta partenaire';
       }
     }
-    const desired = mapDesired(answers['proj_target_duration'] || (personalization && personalization.proj_target_duration));
+    const desired = mapDesired(answers['proj_target_duration'] || answers['goal_duration'] || answers['dr_kegel_goal_duration'] || (personalization && personalization.proj_target_duration) || (personalization && personalization.goal_duration));
     const reasonText = mapReason(answers['proj_main_reason'] || (personalization && personalization.proj_main_reason));
     const statusText = mapStatus(answers['demo_status'] || (personalization && personalization.demo_status));
 

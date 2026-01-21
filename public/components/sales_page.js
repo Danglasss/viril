@@ -29,8 +29,8 @@
       if (/^\d+$/.test(v)) return Number(v);
       return 2;
     }
-    const beforeMin = mapMinutes(answers['diag_duration'] || (personalization && personalization.diag_duration));
-    const targetMin = mapMinutes(answers['proj_target_duration'] || (personalization && personalization.proj_target_duration));
+    const beforeMin = mapMinutes(answers['diag_duration'] || answers['dr_kegel_duration'] || (personalization && personalization.diag_duration));
+    const targetMin = mapMinutes(answers['proj_target_duration'] || answers['goal_duration'] || answers['dr_kegel_goal_duration'] || (personalization && personalization.proj_target_duration) || (personalization && personalization.goal_duration));
 
     // selection du plan
     const [plan, setPlan] = React.useState('4w');
