@@ -45,28 +45,28 @@
             "type": "QCM",
             "text": {
                 "en": "Choose your main goal",
-                "fr": "Choisis ton objectif principal"
+                "fr": "Quel est ton objectif ?"
             },
             "options": [
                 {
                     "value": "erectile_function",
                     "label": {
                         "en": "Improve Erectile Function",
-                        "fr": "Améliorer la fonction érectile"
+                        "fr": "Améliorer la qualité de mon érection"
                     }
                 },
                 {
                     "value": "ejaculation_control",
                     "label": {
                         "en": "Improve Ejaculation Control",
-                        "fr": "Améliorer le contrôle de l'éjaculation"
+                        "fr": "Durer plus longtemps"
                     }
                 },
                 {
                     "value": "maximize_wellness",
                     "label": {
                         "en": "Maximize Sexual Wellness (Improve both of the above)",
-                        "fr": "Maximiser le bien-être sexuel (Améliorer les deux)"
+                        "fr": "Améliorer les deux"
                     }
                 }
             ]
@@ -76,7 +76,7 @@
             "type": "Rating",
             "text": {
                 "en": "How satisfied are you with your sexual wellness (erection quality & ejaculation control)?",
-                "fr": "Quel est ton niveau de satisfaction concernant ton bien-être sexuel (qualité d'érection & contrôle de l'éjaculation) ?"
+                "fr": "Quel est ton niveau de satisfaction concernant ton bien-être sexuel ?"
             },
             "subtitle": {
                 "en": "Rate from 1 to 5",
@@ -167,7 +167,7 @@
             "type": "QCM",
             "text": {
                 "en": "How long does your sex typically last?",
-                "fr": "Combien de temps durent tes rapports sexuels généralement ?"
+                "fr": "Combien de temps durent tes rapports sexuels en moyenne ?"
             },
             "options": [
                 {
@@ -250,7 +250,7 @@
             "type": "QCM",
             "text": {
                 "en": "How long do you want to last?",
-                "fr": "Combien de temps souhaites-tu durer ?"
+                "fr": "Combien de temps aimerais-tu durer ?"
             },
             "options": [
                 {
@@ -305,7 +305,7 @@
             "type": "QCM",
             "text": {
                 "en": "How would you describe your Erectile function?",
-                "fr": "Comment décrirais-tu ta fonction érectile ?"
+                "fr": "Comment décrirais-tu la qualité de ton érection ?"
             },
             "options": [
                 {
@@ -319,7 +319,7 @@
                     "value": "mostly_fine",
                     "label": {
                         "en": "Mostly fine, but sometimes I have problems",
-                        "fr": "La plupart du temps bien, mais parfois j'ai des problèmes"
+                        "fr": "J'ai parfois des problèmes"
                     }
                 },
                 {
@@ -343,7 +343,7 @@
             "type": "QCM",
             "text": {
                 "en": "How often do you experience difficulty getting an erection for sex?",
-                "fr": "À quelle fréquence as-tu des difficultés à obtenir une érection pour un rapport sexuel ?"
+                "fr": "À quelle fréquence n'arrives-tu pas à obtenir une érection pour un rapport sexuel ?"
             },
             "options": [
                 {
@@ -433,7 +433,7 @@
             "type": "QCM",
             "text": {
                 "en": "Can you have sex 2 times in a row?",
-                "fr": "Peux-tu avoir des rapports sexuels 2 fois de suite ?"
+                "fr": "Arrives-tu à avoir des rapports sexuels 2 fois de suite ?"
             },
             "options": [
                 {
@@ -632,7 +632,7 @@
             "weeks": 6,
             "title": {
                 "en": "Based on our calculations, you'll reach your goal of lasting {{goal}} min 🎉 by",
-                "fr": "D'après nos calculs, tu atteindras ton objectif de tenir {{goal}} min 🎉 d'ici"
+                "fr": "Avec nos méthodes, tu atteindras ton objectif de tenir {{goal}} min 🎉 d'ici"
             },
             "showReview": true
         },
@@ -736,7 +736,7 @@
             "type": "ComparisonTable",
             "title": {
                 "en": "The Kegel Plan is better than pills",
-                "fr": "Le Plan Kegel est meilleur que les pilules"
+                "fr": "Notre Plan Kegel est 2 fois plus efficace que les pilules"
             },
             "imageUrl": "/images/dr_kegel/better_than_pills_table.png",
             "cta": {
@@ -882,7 +882,7 @@
             "type": "PlanProjection",
             "title": {
                 "en": "Based on our calculations, you'll reach your goal of lasting {{goal}} min 🎉 by",
-                "fr": "D'après nos calculs, tu atteindras ton objectif de tenir {{goal}} min 🎉 d'ici"
+                "fr": "Avec nos méthodes, tu atteindras ton objectif de tenir {{goal}} min 🎉 d'ici"
             },
             "weeks": 5,
             "badge": {
@@ -1035,13 +1035,12 @@
             "type": "InfoSlide",
             "title": {
                 "en": "Congratulations on joining the millions of men prioritizing sexual wellness",
-                "fr": "Félicitations pour avoir rejoint les millions d'hommes qui priorisent leur bien-être sexuel"
+                "fr": "Félicitations ! Tu fais partie des millions d'hommes qui privilégient leur bien-être sexuel"
             },
             "subtitle": {
                 "en": "Trusted by over 4,000,000 men worldwide",
-                "fr": "Approuvé par plus de 4 000 000 d'hommes dans le monde"
+                "fr": "Approuvé par plus de 47 000 hommes en France"
             },
-            "imageUrl": "/images/dr_kegel/congrats_faces.png",
             "cta": {
                 "en": "Continue",
                 "fr": "Continuer"
@@ -1065,7 +1064,7 @@
             "type": "InfoSlide",
             "title": {
                 "en": "The best thing? It takes just 5 min a day",
-                "fr": "Le meilleur ? Cela ne prend que 5 min par jour"
+                "fr": "Tu vas améliorer ta vie sexuelle en 5 min par jour"
             },
             "showDetails": true,
             "cta": {
@@ -1078,11 +1077,11 @@
             "type": "PlanProjection",
             "title": {
                 "en": "Final adjustment",
-                "fr": "Ajustement final"
+                "fr": "Mise à jour"
             },
             "subtitle": {
                 "en": "Based on the new data, you can reach your goal of {{goal}} min by",
-                "fr": "D'après les nouvelles données, tu peux atteindre ton objectif de {{goal}} min"
+                "fr": "D'après tes nouvelles données, tu vas atteindre ton objectif de {{goal}} min le"
             },
             "weeks": 4,
             "badge": {

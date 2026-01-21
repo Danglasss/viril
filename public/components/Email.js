@@ -95,8 +95,11 @@
       firedRef.current = true;
       setTimeout(function () { firedRef.current = false; }, 1500);
 
+      // Sync data to parent state before proceeding
+      onChange({ ...data });
+
       function proceed() {
-        try { if (window.__submitEmail) window.__submitEmail(); } catch (_) { }
+        try { if (window.__submitEmail) window.__submitEmail(data); } catch (_) { }
         // Fire-and-forget Loops event (non-blocking)
         try {
           (async function () {

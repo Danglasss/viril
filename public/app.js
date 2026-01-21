@@ -328,12 +328,11 @@ function App() {
     Object.entries(counts).forEach(([k, v]) => { if (v > max) { max = v; top = k; } });
     return { top, scores: counts };
   }
-  window.__submitEmail = () => {
-    const v = answers['__email'];
-    const email = v && v.email ? v.email : '';
-    const firstName = v && v.firstName ? v.firstName : '';
+  window.__submitEmail = (emailData) => {
+    const v = emailData || answers['__email'] || {};
+    const email = v.email || '';
+    const firstName = v.firstName || '';
     const okEmail = /.+@.+\..+/.test(email);
-    if (!firstName) { alert(t('enter_first_name')); return; }
     if (!okEmail) { alert(t('invalid_email')); return; }
     const r = computeScores();
     setResults(r);
@@ -396,7 +395,7 @@ const baseComponents = ['StickyFooterButton', 'TrustpilotReview', 'Landing', 'QC
 const urlParams = new URL(window.location.href).searchParams;
 const viewRaw = urlParams.get('view') || '';
 const view = (viewRaw === 'p_science' ? 'lp_science' : (viewRaw === 'p_emotion' ? 'lp_emotion' : viewRaw));
-const lp = urlParams.get('lp') || (window.location.pathname.indexOf('/emotion') !== -1 ? 'emotion' : (window.location.pathname.indexOf('/science') !== -1 ? 'science' : 'science'));
+const lp = urlParams.get('lp') || (window.location.pathname.indexOf('/emotion') !== -1 ? 'emotion' : (window.location.pathname.indexOf('/science') !== -1 ? 'science' : 'new'));
 // Keep file names as original for now, but components register as lp_emotion/lp_science/lp_new
 let saleScript = (lp === 'emotion') ? 'ResultsSale_violent' : (lp === 'new') ? 'sales_page' : 'ResultsSale';
 if (view === 'lp_emotion') saleScript = 'ResultsSale_violent';
