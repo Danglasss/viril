@@ -1,0 +1,708 @@
+{
+    "version": "v_viril_2",
+    "questions": [
+        {
+            "id": "demo_age",
+            "type": "QCM",
+            "text": {
+                "en": "How old are you?",
+                "fr": "Quel âge as-tu ?"
+            },
+            "options": [
+                {
+                    "value": "18-29",
+                    "label": {
+                        "en": "18-29",
+                        "fr": "18-29"
+                    }
+                },
+                {
+                    "value": "30-39",
+                    "label": {
+                        "en": "30-39",
+                        "fr": "30-39"
+                    }
+                },
+                {
+                    "value": "40-49",
+                    "label": {
+                        "en": "40-49",
+                        "fr": "40-49"
+                    }
+                },
+                {
+                    "value": "50+",
+                    "label": {
+                        "en": "50+",
+                        "fr": "50+"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "demo_status",
+            "type": "QCM",
+            "text": {
+                "en": "What is your situation?",
+                "fr": "Quelle est ta situation ?"
+            },
+            "options": [
+                {
+                    "value": "couple",
+                    "label": {
+                        "en": "In a relationship",
+                        "fr": "En couple"
+                    }
+                },
+                {
+                    "value": "single",
+                    "label": {
+                        "en": "Single",
+                        "fr": "Célibataire"
+                    }
+                },
+                {
+                    "value": "married",
+                    "label": {
+                        "en": "Married",
+                        "fr": "Marié"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "proj_main_reason",
+            "type": "QCM",
+            "text": {
+                "en": "Why do you want to last longer?",
+                "fr": "Pourquoi veux-tu durer plus longtemps ?"
+            },
+            "options": [
+                {
+                    "value": "partner_pleasure",
+                    "label": {
+                        "en": "Fully satisfy my partner",
+                        "fr": "Satisfaire pleinement ma partenaire"
+                    }
+                },
+                {
+                    "value": "confidence",
+                    "label": {
+                        "en": "Regain confidence in myself",
+                        "fr": "Retrouver confiance en moi"
+                    }
+                },
+                {
+                    "value": "avoid_frustration",
+                    "label": {
+                        "en": "End the frustration and shame",
+                        "fr": "En finir avec la frustration et la honte"
+                    }
+                },
+                {
+                    "value": "enjoy_more",
+                    "label": {
+                        "en": "Enjoy sex without stress",
+                        "fr": "Vivre ma sexualité sans stress"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "diag_satisfaction",
+            "type": "Rating",
+            "text": {
+                "en": "How satisfied are you with your sexual health (control & firmness)?",
+                "fr": "Quel est ton niveau de satisfaction concernant ta vie sexuelle ?"
+            },
+            "options": [
+                {
+                    "value": "1",
+                    "label": {
+                        "en": "1",
+                        "fr": "1"
+                    }
+                },
+                {
+                    "value": "2",
+                    "label": {
+                        "en": "2",
+                        "fr": "2"
+                    }
+                },
+                {
+                    "value": "3",
+                    "label": {
+                        "en": "3",
+                        "fr": "3"
+                    }
+                },
+                {
+                    "value": "4",
+                    "label": {
+                        "en": "4",
+                        "fr": "4"
+                    }
+                },
+                {
+                    "value": "5",
+                    "label": {
+                        "en": "5",
+                        "fr": "5"
+                    }
+                }
+            ],
+            "minLabel": {
+                "en": "Not satisfied at all",
+                "fr": "Pas du tout satisfait"
+            },
+            "maxLabel": {
+                "en": "Very satisfied",
+                "fr": "Très satisfait"
+            }
+        },
+        {
+            "id": "info_perineum_mechanism",
+            "type": "InfoSlide",
+            "title": {
+                "en": "Your ejaculation is controlled by a specific muscle: the pelvic floor.",
+                "fr": "Ton éjaculation est contrôlée par un muscle précis : le périnée."
+            },
+            "subtitle": {
+                "en": "A stronger pelvic floor means longer-lasting intercourse.",
+                "fr": "Un périnée plus musclé permet des rapports plus longs."
+            },
+            "imageUrl": "/images/dr_kegel/step_3_illustrations.png",
+            "cta": {
+                "en": "Got it",
+                "fr": "Compris"
+            }
+        },
+        {
+            "id": "diag_frequency",
+            "type": "QCM",
+            "text": {
+                "en": "How often do you finish faster than you'd like?",
+                "fr": "À quelle fréquence tu jouis plus vite que tu ne le voudrais ?"
+            },
+            "options": [
+                {
+                    "value": "almost_never",
+                    "label": {
+                        "en": "Almost never",
+                        "fr": "Presque jamais"
+                    }
+                },
+                {
+                    "value": "sometimes",
+                    "label": {
+                        "en": "Sometimes",
+                        "fr": "Parfois"
+                    }
+                },
+                {
+                    "value": "often",
+                    "label": {
+                        "en": "Often",
+                        "fr": "Souvent"
+                    }
+                },
+                {
+                    "value": "almost_always",
+                    "label": {
+                        "en": "Almost always",
+                        "fr": "Presque toujours"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "diag_duration",
+            "type": "QCM",
+            "text": {
+                "en": "Your average time before ejaculation?",
+                "fr": "Ta durée moyenne avant d'éjaculer ?"
+            },
+            "options": [
+                {
+                    "value": "<1",
+                    "label": {
+                        "en": "Less than 1 min",
+                        "fr": "Moins de 1 min"
+                    }
+                },
+                {
+                    "value": "1-2",
+                    "label": {
+                        "en": "1-2 min",
+                        "fr": "1-2 min"
+                    }
+                },
+                {
+                    "value": "3-5",
+                    "label": {
+                        "en": "3-5 min",
+                        "fr": "3-5 min"
+                    }
+                },
+                {
+                    "value": "5+",
+                    "label": {
+                        "en": "More than 5 min",
+                        "fr": "Plus de 5 min"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_benchmark_shock",
+            "type": "BenchmarkGraph",
+            "title": {
+                "en": "Here's where you really stand",
+                "fr": "Voici où tu te situes vraiment"
+            },
+            "subtitle": {
+                "en": "85% of men your age last more than 7 minutes in bed. Right now, you're in the red zone: complete loss of control.",
+                "fr": "85% des hommes de ton âge tiennent plus de 7 minutes au lit. Actuellement, tu es dans la zone rouge : celle de la perte de contrôle totale."
+            },
+            "cta": {
+                "en": "Continue",
+                "fr": "Continuer"
+            }
+        },
+        {
+            "id": "__exp_fem_duration",
+            "type": "Graphique",
+            "title": {
+                "en": "On average, a woman reaches orgasm after 14 minutes of stimulation",
+                "fr": "En moyenne, une femme atteint l'orgasme après 14 minutes de stimulation"
+            },
+            "subtitle": {
+                "en": "Below 6 minutes, female satisfaction is very low.",
+                "fr": "En dessous de 6 minutes, la satisfaction féminine est très faible."
+            },
+            "xAxisLabel": {
+                "en": "Duration (min)",
+                "fr": "Durée (min)"
+            },
+            "yAxisLabel": {
+                "en": "Satisfaction (%)",
+                "fr": "Satisfaction (%)"
+            },
+            "dynamicMarkerFrom": "diag_duration",
+            "cta": {
+                "en": "Continue",
+                "fr": "Continuer"
+            }
+        },
+        {
+            "id": "goal_duration",
+            "type": "QCM",
+            "text": {
+                "en": "In 30 days, how long do you want to last in bed?",
+                "fr": "Dans 30 jours, combien de temps veux-tu tenir au lit ?"
+            },
+            "options": [
+                {
+                    "value": "10",
+                    "label": {
+                        "en": "10 minutes",
+                        "fr": "10 minutes"
+                    }
+                },
+                {
+                    "value": "15",
+                    "label": {
+                        "en": "15 minutes",
+                        "fr": "15 minutes"
+                    }
+                },
+                {
+                    "value": "30",
+                    "label": {
+                        "en": "30 minutes",
+                        "fr": "30 minutes"
+                    }
+                },
+                {
+                    "value": "as_long_as_wanted",
+                    "label": {
+                        "en": "As long as I want",
+                        "fr": "Aussi longtemps que je veux"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_kegel_mechanism",
+            "type": "InfoSlide",
+            "title": {
+                "en": "Kegel Exercises strengthen PF muscles, significantly increasing ejaculation control.",
+                "fr": "Les exercices de Kegel renforcent les muscles du plancher pelvien, ce qui augmente significativement le contrôle de l'éjaculation."
+            },
+            "useImprovementGraph": true,
+            "cta": {
+                "en": "Got it",
+                "fr": "Compris"
+            }
+        },
+        {
+            "id": "info_8_of_10",
+            "type": "EightOfTen",
+            "title": {
+                "en": "8 out of 10 men improved their ejaculation control by following the Kegel Plan",
+                "fr": "8 hommes sur 10 ont amélioré leur contrôle de l'éjaculation en suivant le Plan Kegel"
+            },
+            "cta": {
+                "en": "Continue",
+                "fr": "Continuer"
+            }
+        },
+        {
+            "id": "lifestyle_tobacco",
+            "type": "QCM",
+            "text": {
+                "en": "Do you smoke?",
+                "fr": "Est-ce que tu fumes ?"
+            },
+            "options": [
+                {
+                    "value": "no",
+                    "label": {
+                        "en": "No",
+                        "fr": "Non"
+                    }
+                },
+                {
+                    "value": "occasionally",
+                    "label": {
+                        "en": "Occasionally",
+                        "fr": "Occasionnellement"
+                    }
+                },
+                {
+                    "value": "regularly",
+                    "label": {
+                        "en": "Regularly",
+                        "fr": "Régulièrement"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "lifestyle_alcohol",
+            "type": "QCM",
+            "text": {
+                "en": "Do you drink alcohol?",
+                "fr": "Est-ce que tu bois de l'alcool ?"
+            },
+            "options": [
+                {
+                    "value": "rarely",
+                    "label": {
+                        "en": "Rarely or never",
+                        "fr": "Rarement ou jamais"
+                    }
+                },
+                {
+                    "value": "moderate",
+                    "label": {
+                        "en": "A few drinks per week",
+                        "fr": "Quelques verres par semaine"
+                    }
+                },
+                {
+                    "value": "regularly",
+                    "label": {
+                        "en": "Regularly",
+                        "fr": "Régulièrement"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "lifestyle_diet",
+            "type": "QCM",
+            "text": {
+                "en": "Do you eat healthy?",
+                "fr": "Est-ce que tu manges sainement ?"
+            },
+            "options": [
+                {
+                    "value": "often",
+                    "label": {
+                        "en": "Often",
+                        "fr": "Souvent"
+                    }
+                },
+                {
+                    "value": "sometimes",
+                    "label": {
+                        "en": "Sometimes",
+                        "fr": "Parfois"
+                    }
+                },
+                {
+                    "value": "rarely",
+                    "label": {
+                        "en": "Rarely",
+                        "fr": "Rarement"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_projection_intermediate",
+            "type": "PlanProjection",
+            "title": {
+                "en": "Your estimated progress",
+                "fr": "Ta progression estimée"
+            },
+            "subtitle": {
+                "en": "With {{time}} min/day of training, you can reach {{goal}} minutes in 4 weeks.",
+                "fr": "Avec {{time}} min/jour d'entraînement, tu peux atteindre {{goal}} minutes en 4 semaines."
+            },
+            "weeks": 4,
+            "showGauge": true,
+            "cta": {
+                "en": "Continue",
+                "fr": "Continuer"
+            }
+        },
+        {
+            "id": "time_available",
+            "type": "QCM",
+            "text": {
+                "en": "How much time can you invest each day?",
+                "fr": "Combien de temps peux-tu investir chaque jour ?"
+            },
+            "options": [
+                {
+                    "value": "5",
+                    "label": {
+                        "en": "5 min",
+                        "fr": "5 min"
+                    }
+                },
+                {
+                    "value": "10",
+                    "label": {
+                        "en": "10 min",
+                        "fr": "10 min"
+                    }
+                },
+                {
+                    "value": "15",
+                    "label": {
+                        "en": "15 min",
+                        "fr": "15 min"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_discretion",
+            "type": "InfoSlide",
+            "title": {
+                "en": "The Viril method is 100% discreet",
+                "fr": "La méthode Viril est 100% discrète"
+            },
+            "bulletType": "check",
+            "bullets": [
+                {
+                    "en": "Train anywhere: office, car, shower",
+                    "fr": "Entraîne-toi où tu veux : bureau, voiture, douche"
+                },
+                {
+                    "en": "No one will notice",
+                    "fr": "Personne ne verra rien"
+                },
+                {
+                    "en": "No embarrassing equipment",
+                    "fr": "Pas de matériel embarrassant"
+                },
+                {
+                    "en": "5 minutes a day to change your sex life",
+                    "fr": "5 minutes par jour pour changer ta vie sexuelle"
+                }
+            ],
+            "cta": {
+                "en": "Got it",
+                "fr": "Compris"
+            }
+        },
+        {
+            "id": "emotional_duration",
+            "type": "QCM",
+            "text": {
+                "en": "How long have you been ejaculating too quickly?",
+                "fr": "Depuis combien de temps éjacules-tu trop rapidement ?"
+            },
+            "options": [
+                {
+                    "value": "<6m",
+                    "label": {
+                        "en": "Less than 6 months",
+                        "fr": "Moins de 6 mois"
+                    }
+                },
+                {
+                    "value": "6m-2y",
+                    "label": {
+                        "en": "6 months to 2 years",
+                        "fr": "6 mois à 2 ans"
+                    }
+                },
+                {
+                    "value": "2-5y",
+                    "label": {
+                        "en": "2 to 5 years",
+                        "fr": "2 à 5 ans"
+                    }
+                },
+                {
+                    "value": "always",
+                    "label": {
+                        "en": "Always",
+                        "fr": "Depuis toujours"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "emotional_cost",
+            "type": "QCM",
+            "text": {
+                "en": "What has this problem already cost you?",
+                "fr": "Qu'est-ce que ce problème t'a déjà coûté ?"
+            },
+            "options": [
+                {
+                    "value": "avoided_opportunities",
+                    "label": {
+                        "en": "Avoided sexual opportunities",
+                        "fr": "Des opportunités sexuelles évitées"
+                    }
+                },
+                {
+                    "value": "relationship_damage",
+                    "label": {
+                        "en": "My relationship deteriorated",
+                        "fr": "Ma relation qui s'est dégradée"
+                    }
+                },
+                {
+                    "value": "frustration_shame",
+                    "label": {
+                        "en": "Frustration and shame",
+                        "fr": "De la frustration et de la honte"
+                    }
+                },
+                {
+                    "value": "confidence_loss",
+                    "label": {
+                        "en": "My self-confidence",
+                        "fr": "Ma confiance en moi"
+                    }
+                },
+                {
+                    "value": "nothing",
+                    "label": {
+                        "en": "None of the above",
+                        "fr": "Rien de tout cela"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "features_choice",
+            "type": "QCM",
+            "multiSelect": true,
+            "text": {
+                "en": "What would make a real difference for you?",
+                "fr": "Qu'est-ce qui ferait vraiment la différence pour toi ?"
+            },
+            "options": [
+                {
+                    "value": "tracker",
+                    "label": {
+                        "en": "Progress tracker",
+                        "fr": "Tracker de progression"
+                    }
+                },
+                {
+                    "value": "audio_exercises",
+                    "label": {
+                        "en": "Guided exercises (5 min/day)",
+                        "fr": "Exercices guidés (5 min/jour)"
+                    }
+                },
+                {
+                    "value": "video_courses",
+                    "label": {
+                        "en": "Expert video courses",
+                        "fr": "Cours vidéos expert"
+                    }
+                },
+                {
+                    "value": "personalized_coaching",
+                    "label": {
+                        "en": "Anonymous personalized coaching",
+                        "fr": "Coaching anonyme personnalisé"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "info_roadmap_7days",
+            "type": "InfoSlide",
+            "title": {
+                "en": "First results in 7 days",
+                "fr": "Les premiers résultats en 7 jours"
+            },
+            "bulletType": "check",
+            "bullets": [
+                {
+                    "en": "Day 1: Reactivation of the muscle brake",
+                    "fr": "Jour 1 : Réactivation du frein musculaire"
+                },
+                {
+                    "en": "Day 3: First endurance increase",
+                    "fr": "Jour 3 : Première augmentation de l'endurance"
+                },
+                {
+                    "en": "Day 7: Mastery of pleasure build-up",
+                    "fr": "Jour 7 : Maîtrise de la montée de plaisir"
+                }
+            ],
+            "cta": {
+                "en": "Continue",
+                "fr": "Continuer"
+            }
+        },
+        {
+            "id": "__analyze",
+            "type": "AnalyzeResults"
+        },
+        {
+            "id": "info_projection_final",
+            "type": "PlanProjection",
+            "title": {
+                "en": "Final adjustment",
+                "fr": "Dernier ajustement"
+            },
+            "subtitle": {
+                "en": "With your current duration of {{baseline}} min and {{time}} min/day of training, you'll reach {{goal}} minutes in 4 weeks. First result visible from day 3.",
+                "fr": "Avec ta durée actuelle de {{baseline}} min et {{time}} min/jour d'entraînement, tu atteindras {{goal}} minutes en 4 semaines. Premier résultat visible dès le jour 3."
+            },
+            "weeks": 4,
+            "badge": true,
+            "showGauge": true,
+            "showCompatibilityScore": true,
+            "cta": {
+                "en": "See my plan",
+                "fr": "Voir mon plan"
+            }
+        }
+    ]
+}

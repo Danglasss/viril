@@ -254,12 +254,12 @@ function App() {
     }
   })();
   // Decide which landing page variant (LP) to use for the sale screen
-  const lpParam = getParam('lp', 'science'); // default to science
-  let saleType = (lpParam === 'emotion') ? 'lp_emotion' : 'lp_science';
+  const lpParam = getParam('lp', 'new'); // default to new (sales_page.js)
+  let saleType = (lpParam === 'emotion') ? 'lp_emotion' : (lpParam === 'new') ? 'lp_new' : 'lp_science';
   // Allow explicit override via view param before building the flow
-  const normalizeViewEarly = (v) => (v === 'p_science' ? 'lp_science' : (v === 'p_emotion' ? 'lp_emotion' : v));
+  const normalizeViewEarly = (v) => (v === 'p_science' ? 'lp_science' : (v === 'p_emotion' ? 'lp_emotion' : (v === 'p_new' ? 'lp_new' : v)));
   const viewParam = normalizeViewEarly(getParam('view', ''));
-  if (viewParam === 'lp_emotion' || viewParam === 'lp_science') {
+  if (viewParam === 'lp_emotion' || viewParam === 'lp_science' || viewParam === 'lp_new') {
     saleType = viewParam;
   }
 
@@ -271,7 +271,7 @@ function App() {
     landingStep,
     ...withExplainer,
     { id: '__email', type: 'Email', text: { placeholder: (langCode === 'fr' ? 'ton@email.com' : 'your@email.com'), cta: (langCode === 'fr' ? 'OBTENIR MON PLAN' : 'GET MY PLAN') } },
-    { id: '__results', type: 'Results', results: results || { top: '', scores: {} }, title: (langCode === 'fr' ? resultTitleFr : resultTitleEn) },
+    // { id: '__results', type: 'Results', results: results || { top: '', scores: {} }, title: (langCode === 'fr' ? resultTitleFr : resultTitleEn) },
     { id: '__sale', type: saleType }
   ];
 
@@ -280,7 +280,7 @@ function App() {
   }).length;
   const total = flow.length;
   // Allow alternate routing: ?view=plan to jump directly to plan screen (for GTM events)
-  const saleView = (viewParam === 'sale' || viewParam === 'sale_violent' || viewParam === 'lp_emotion' || viewParam === 'lp_science');
+  const saleView = (viewParam === 'sale' || viewParam === 'sale_violent' || viewParam === 'lp_emotion' || viewParam === 'lp_science' || viewParam === 'lp_new');
   const current = saleView ? (flow.findIndex(i => i.type === saleType) !== -1 ? flow.findIndex(i => i.type === saleType) : (total - 1))
     : (viewParam === 'plan' ? (total - 1) : Math.max(0, Math.min(step, total - 1)));
 
@@ -347,7 +347,7 @@ function App() {
   };
 
   const isChoice = q.type === 'QCM' || q.type === 'ImageChoice';
-  const hideNav = q.type === 'Email' || q.type === 'Landing' || q.type === 'Results' || q.type === 'Graphique' || q.type === 'Cycle' || q.type === 'InfoSlide' || q.type === 'PerineeDiag' || q.type === 'EightOfTen' || q.type === 'PlanProjection' || q.type === 'Benefits' || q.type === 'AnalyzeResults' || q.type === 'lp_emotion' || q.type === 'lp_science';
+  const hideNav = q.type === 'Email' || q.type === 'Landing' || q.type === 'Results' || q.type === 'Graphique' || q.type === 'Cycle' || q.type === 'InfoSlide' || q.type === 'PerineeDiag' || q.type === 'EightOfTen' || q.type === 'PlanProjection' || q.type === 'Benefits' || q.type === 'AnalyzeResults' || q.type === 'lp_emotion' || q.type === 'lp_science' || q.type === 'lp_new';
 
   function isQuestionType(item) { return item && (item.type === 'QCM' || item.type === 'ImageChoice' || item.type === 'Slider' || item.type === 'Text'); }
   const questionNumber = Math.min(
@@ -357,7 +357,7 @@ function App() {
 
   return React.createElement(ThemeContext.Provider, { value: theme },
     React.createElement('div', { className: 'container' },
-      q.type !== 'Landing' && q.type !== 'Results' && q.type !== 'lp_emotion' && q.type !== 'lp_science' && React.createElement('div', { className: 'header' },
+      q.type !== 'Landing' && q.type !== 'Results' && q.type !== 'lp_emotion' && q.type !== 'lp_science' && q.type !== 'lp_new' && React.createElement('div', { className: 'header' },
         React.createElement('img', { src: theme.logoUrl, alt: 'logo', className: 'logo' }),
         q.type !== 'Email' && React.createElement('div', { className: 'progress-row' },
           current >= 1 && React.createElement('button', { className: 'back-btn', onClick: () => goTo(Math.max(0, current - 1)) }, '‹'),
@@ -391,15 +391,16 @@ function loadComponent(name) {
     document.body.appendChild(s);
   });
 }
-const baseComponents = ['StickyFooterButton', 'TrustpilotReview', 'Landing', 'QCM', 'Slider', 'ImageChoice', 'Text', 'Email', 'Results', 'Graphique', 'AnalyzeResults', 'InfoSlide', 'PerineeDiag', 'EightOfTen', 'PlanProjection', 'Benefits', 'StudyFact', 'Rating', 'UserSurvey', 'ComparisonTable', 'Consent', 'BenefitsList', 'ProjectionGraph', 'ImprovementGraph'];
+const baseComponents = ['StickyFooterButton', 'TrustpilotReview', 'Landing', 'QCM', 'Slider', 'ImageChoice', 'Text', 'Email', 'Results', 'Graphique', 'AnalyzeResults', 'InfoSlide', 'PerineeDiag', 'EightOfTen', 'PlanProjection', 'Benefits', 'StudyFact', 'Rating', 'UserSurvey', 'ComparisonTable', 'Consent', 'BenefitsList', 'ProjectionGraph', 'ImprovementGraph', 'BenchmarkGraph'];
 const urlParams = new URL(window.location.href).searchParams;
 const viewRaw = urlParams.get('view') || '';
 const view = (viewRaw === 'p_science' ? 'lp_science' : (viewRaw === 'p_emotion' ? 'lp_emotion' : viewRaw));
 const lp = urlParams.get('lp') || (window.location.pathname.indexOf('/emotion') !== -1 ? 'emotion' : (window.location.pathname.indexOf('/science') !== -1 ? 'science' : 'science'));
-// Keep file names as original for now, but components register as lp_emotion/lp_science
-let saleScript = (lp === 'emotion') ? 'ResultsSale_violent' : 'ResultsSale';
+// Keep file names as original for now, but components register as lp_emotion/lp_science/lp_new
+let saleScript = (lp === 'emotion') ? 'ResultsSale_violent' : (lp === 'new') ? 'sales_page' : 'ResultsSale';
 if (view === 'lp_emotion') saleScript = 'ResultsSale_violent';
 if (view === 'lp_science') saleScript = 'ResultsSale';
+if (view === 'lp_new') saleScript = 'sales_page';
 const componentsToLoad = baseComponents.concat([saleScript]);
 function waitForSb() { return new Promise(function (res) { var t = 0; var id = setInterval(function () { if (window.sbApi || t++ > 200) { clearInterval(id); res(); } }, 25); }); }
 Promise.all(componentsToLoad.map(loadComponent).concat([waitForSb()])).then(function () {

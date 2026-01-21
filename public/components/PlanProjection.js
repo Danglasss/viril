@@ -36,12 +36,17 @@
     var lang = (new URL(location.href)).searchParams.get('lang') || 'fr';
     var answers = (window.__getAnswers && window.__getAnswers()) || {};
     var currentMin = mapDurationAnswer(answers['diag_duration'] || answers['dr_kegel_duration']);
-    var goalRaw = answers['proj_goal_minutes'] || answers['dr_kegel_goal_duration'] || '';
+    var goalRaw = answers['goal_duration'] || answers['proj_goal_minutes'] || answers['dr_kegel_goal_duration'] || '';
     var goal = parseInt(goalRaw, 10);
     if (!goal || isNaN(goal)) goal = 15;
     if (goalRaw === '15-20') goal = 18;
     if (goalRaw === '20-25') goal = 22;
     if (goalRaw === '25+') goal = 30;
+    if (goalRaw === 'as_long_as_wanted') goal = 20;
+
+    // Time available per day
+    var timeRaw = answers['time_available'] || '5';
+    var timeMin = parseInt(timeRaw, 10) || 5;
 
     // Customization from question prop
     var weeks = (question && question.weeks) || 4;
@@ -90,8 +95,17 @@
       ? 'Selon tes objectifs personnels, tu peux'
       : 'Based on your personal goals you can');
 
-    var title = (customTitle || defaultTitle).replace('{{goal}}', goal);
-    var subtitle = customSubtitle ? customSubtitle.replace('{{goal}}', goal) : null;
+    // Replace all template variables
+    function replaceVars(str) {
+      if (!str) return str;
+      return str
+        .replace(/\{\{goal\}\}/g, goal)
+        .replace(/\{\{time\}\}/g, timeMin)
+        .replace(/\{\{baseline\}\}/g, currentMin);
+    }
+
+    var title = replaceVars(customTitle || defaultTitle);
+    var subtitle = replaceVars(customSubtitle);
 
     return React.createElement(React.Fragment, null,
       React.createElement('div', { style: { padding: '24px 16px', paddingBottom: 140, background: '#000', minHeight: '100vh' } },
@@ -100,7 +114,15 @@
 
         React.createElement('div', { style: { textAlign: 'center', marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 } },
           React.createElement('span', { style: { fontWeight: 800, color: '#5865F2', fontSize: 18 } }, eta),
-          badge && React.createElement('span', { style: { background: '#2EB774', color: 'white', fontSize: 11, fontWeight: 700, padding: '2px 6px', borderRadius: 0 } }, badge)
+          // Dynamic badge: calculate improvement percentage
+          (function () {
+            if (!badge) return null;
+            var improvementPercent = currentMin > 0 ? Math.round(((goal - currentMin) / currentMin) * 100) : 0;
+            var badgeText = badge === true
+              ? (lang === 'fr' ? '+' + improvementPercent + '%' : '+' + improvementPercent + '%')
+              : badge;
+            return React.createElement('span', { style: { background: '#2EB774', color: 'white', fontSize: 11, fontWeight: 700, padding: '2px 6px', borderRadius: 0 } }, badgeText);
+          })()
         ),
 
         // Chart
@@ -180,11 +202,11 @@
         ),
 
 
-        // Compatibility Score Section
+        // Certainty Score Section
         (showCompatibilityScore ? (
           React.createElement('div', { style: { marginTop: 32, padding: '0 16px', textAlign: 'center' } },
             React.createElement('h3', { style: { color: '#fff', fontSize: 18, marginBottom: 24, fontWeight: 700 } },
-              lang === 'fr' ? 'Score de compatibilité : ' : 'Compatibility Score: ',
+              lang === 'fr' ? 'Score de certitude : ' : 'Certainty Score: ',
               React.createElement('span', { style: { color: '#00B67A' } }, lang === 'fr' ? 'Élevé' : 'High')
             ),
 

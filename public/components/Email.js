@@ -153,14 +153,14 @@
     };
     return React.createElement('div', null,
       // Dynamic copy
-      React.createElement('h2', { className: 'email-header' }, headline),
+      React.createElement('h2', { className: 'email-header', style: { fontSize: 26, fontWeight: 900, lineHeight: 1.25, marginBottom: 12 } }, headline),
       React.createElement('p', { className: 'email-subtitle' }, sub),
       React.createElement('input', { type: 'text', placeholder: question.namePlaceholder || (lang === 'fr' ? 'Ton prénom' : 'Your first name'), value: data.firstName, onChange: e => upd('firstName', e.target.value), style: { margin: '12px 0' } }),
       React.createElement('input', { type: 'email', placeholder: question.placeholder || (lang === 'fr' ? 'ton@email.com' : 'your@email.com'), value: data.email, onChange: e => upd('email', e.target.value) }),
       React.createElement('div', { className: 'email-cta-container' },
         React.createElement('button', { className: 'btn primary', onClick: submit }, (question.text && question.text.cta) || (lang === 'fr' ? 'OBTENIR MON PLAN' : 'GET MY PLAN')),
         React.createElement('div', { className: 'trust-badge' },
-          React.createElement('div', { className: 'trust-badge-title' }, lang === 'fr' ? '+ de 100 000 hommes qui ont repris le contrôle 💪' : '200,000+ men chose us 💪'),
+          React.createElement('div', { className: 'trust-badge-title' }, lang === 'fr' ? '+ de 47 000 hommes qui ont repris le contrôle 💪' : '47,000+ men chose us 💪'),
           React.createElement('div', { className: 'trust-badge-text' }, lang === 'fr' ? 'Aucun spam. Recois ton plan personnalisé en toute discrétion et confidentialité.' : 'We respect your privacy and take its protection very seriously — no spam.')
         )
       )
