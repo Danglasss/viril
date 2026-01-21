@@ -334,6 +334,8 @@ function App() {
     const firstName = v.firstName || '';
     const okEmail = /.+@.+\..+/.test(email);
     if (!okEmail) { alert(t('invalid_email')); return; }
+    // Store email data in state so other components can access it
+    if (emailData) setAnswers(a => ({ ...a, '__email': emailData }));
     const r = computeScores();
     setResults(r);
     // Switch URL to view=plan (remove step) so GTM peut écouter un event clair

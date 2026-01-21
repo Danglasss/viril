@@ -25,9 +25,14 @@
       if (v === '<1') return 1;
       if (v === '1-2') return 1;
       if (v === '3-5') return 3;
-      if (v === '5+' || v === '6-10') return 5;
+      if (v === '5+' || v === '6-10') return 6;
+      if (v === '7-15') return 10;
+      if (v === '15-20') return 18;
+      if (v === '20-25') return 22;
+      if (v === '25+') return 30;
+      if (v === 'as_long_as_wanted') return 20;
       if (/^\d+$/.test(v)) return Number(v);
-      return 2;
+      return 15; // Default to 15 instead of 2
     }
     const beforeMin = mapMinutes(answers['diag_duration'] || answers['dr_kegel_duration'] || (personalization && personalization.diag_duration));
     const targetMin = mapMinutes(answers['proj_target_duration'] || answers['goal_duration'] || answers['dr_kegel_goal_duration'] || (personalization && personalization.proj_target_duration) || (personalization && personalization.goal_duration));
@@ -344,12 +349,12 @@
       // Bloc Avis — slider 6 avis, modulable (scroll-snap, user-controlled)
       (function () {
         const reviews = [
-          { name: 'Thomas D.', text: "Après des années de frustration et de honte, j'ai enfin retrouvé confiance en moi. Ma femme et moi n'avons jamais été aussi heureux. Ce programme a sauvé mon couple.", stars: 5, verified: true, photo: '/images/reviews/1.png' },
-          { name: 'Marc B.', text: "J'évitais les relations par peur de décevoir. Maintenant je peux tenir 15 minutes sans problème. Ma vie a changé, je me sens enfin un homme complet.", stars: 4, verified: true, photo: '/images/reviews/3.png' },
+          { name: 'Thomas D.', text: "Après des années de frustration et de honte, j'ai enfin retrouvé confiance en moi. Ma femme et moi n'avons jamais été aussi heureux. Ce programme a sauvé mon couple.", stars: 5, verified: true, photo: '/images/reviews/1.jpg' },
+          { name: 'Marc B.', text: "J'évitais les relations par peur de décevoir. Maintenant je peux tenir 15 minutes sans problème. Ma vie a changé, je me sens enfin un homme complet.", stars: 4, verified: true, photo: '/images/reviews/3.jpg' },
           { name: 'Sophie L.', text: "J'ai convaincu mon mari d'essayer après des mois de tension dans notre couple. Aujourd'hui je le vois épanoui, confiant... Notre intimité est revenue. Merci du fond du cœur.", stars: 5, verified: true },
-          { name: 'Alexandre M.', text: "J'avais perdu espoir... En 3 semaines, je suis passé de 2 à 8 minutes. Je revis enfin et ma partenaire aussi. C'est comme si j'avais retrouvé ma virilité.", stars: 5, verified: true, photo: '/images/reviews/2.png' },
+          { name: 'Alexandre M.', text: "J'avais perdu espoir... En 3 semaines, je suis passé de 2 à 8 minutes. Je revis enfin et ma partenaire aussi. C'est comme si j'avais retrouvé ma virilité.", stars: 5, verified: true, photo: '/images/reviews/2.jpg' },
           { name: 'Lucas R.', text: "Les exercices sont simples mais efficaces. En 1 mois, mes érections sont plus dures et je contrôle parfaitement. Ma copine n'en revient pas du changement.", stars: 4, verified: true },
-          { name: 'David P.', text: "À 45 ans, je pensais que c'était fini pour moi. Ce programme m'a prouvé le contraire. Je me sens comme à 25 ans, ma femme est aux anges.", stars: 5, verified: true, photo: '/images/reviews/4.png' }
+          { name: 'David P.', text: "À 45 ans, je pensais que c'était fini pour moi. Ce programme m'a prouvé le contraire. Je me sens comme à 25 ans, ma femme est aux anges.", stars: 5, verified: true, photo: '/images/reviews/4.jpg' }
         ];
         const [idx, setIdx] = React.useState(0);
         const scRef = React.useRef(null);
